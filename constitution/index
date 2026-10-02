@@ -1,1 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Constitution Explorer - Class 10 Civics</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        saffron: '#FF9933',
+                        indiaGreen: '#138808',
+                        navyBlue: '#000080',
+                        ashokaBlue: '#06038D',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        /* Custom scrollbar for mobile drawers */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-full flex flex-col antialiased selection:bg-saffron selection:text-white">
 
+    <header class="bg-gradient-to-r from-saffron via-white to-indiaGreen text-slate-900 shadow-md sticky top-0 z-50 border-b border-orange-200">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 bg-navyBlue rounded-full flex items-center justify-center text-white shadow-sm ring-2 ring-white">
+                    <i class="fa-solid fa-landmark text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif font-bold text-base tracking-tight leading-tight text-navyBlue">Samvidhan Quest</h1>
+                    <p class="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Class 10 Civics Lab</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1 bg-white/80 backdrop-blur px-2.5 py-1 rounded-full border border-orange-100 shadow-xs">
+                <i class="fa-solid fa-fire text-amber-500 text-xs"></i>
+                <span id="globalScore" class="text-xs font-bold text-slate-700">0 Pts</span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="bg-white border-b border-slate-200 sticky top-[57px] z-40 shadow-xs">
+        <div class="max-w-md mx-auto flex justify-around p-1">
+            <button onclick="switchTab('visualLab')" id="btn-visualLab" class="flex-1 py-2 px-1 text-xs font-semibold rounded-lg transition-all flex flex-col items-center justify-center space-y-0.5 text-navyBlue bg-indigo-50/80 shadow-xs">
+                <i class="fa-solid fa-users-viewfinder text-base"></i>
+                <span>Visual Lab</span>
+            </button>
+            <button onclick="switchTab('flipCards')" id="btn-flipCards" class="flex-1 py-2 px-1 text-xs font-medium rounded-lg transition-all flex flex-col items-center justify-center space-y-0.5 text-slate-500 hover:text-navyBlue">
+                <i class="fa-solid fa-clone text-base"></i>
+                <span>FlipCards</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="btn-quiz" class="flex-1 py-2 px-1 text-xs font-medium rounded-lg transition-all flex flex-col items-center justify-center space-y-0.5 text-slate-500 hover:text-navyBlue">
+                <i class="fa-solid fa-circle-question text-base"></i>
+                <span>Constitution Quiz</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-md w-full mx-auto p-4 overflow-y-auto pb-20">
+
+        <!-- TAB 1: VISUAL LAB -->
+        <section id="tab-visualLab" class="space-y-4">
+            <div class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white p-4 rounded-2xl shadow-md relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/5 rounded-full pointer-events-none"></div>
+                <div class="flex items-center space-x-2 text-saffron text-xs font-bold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-sparkles"></i>
+                    <span>Makers of Modern India</span>
+                </div>
+                <h2 class="font-serif text-xl font-bold mb-1">The Constituent Assembly</h2>
+                <p class="text-xs text-slate-200 leading-relaxed">Meet the visionaries who drafted the longest written Constitution of the world. Tap a leader to hear their vision and explore their historic contributions.</p>
+            </div>
+
+            <!-- Leader Selector Cards Grid -->
+            <div class="grid grid-cols-2 gap-3" id="leaderGrid">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- Leader Detail & Speech Bubble Box -->
+            <div id="leaderDetailCard" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 transition-all duration-300">
+                <div class="text-center py-6 text-slate-400">
+                    <i class="fa-solid fa-hand-pointer text-3xl mb-2 animate-bounce"></i>
+                    <p class="text-xs font-medium">Select any leader above to enter the Visual Lab.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: FLIPCARD ACTIVITY -->
+        <section id="tab-flipCards" class="hidden space-y-4">
+            <div class="bg-gradient-to-br from-amber-600 to-orange-700 text-white p-4 rounded-2xl shadow-md">
+                <div class="flex items-center justify-between mb-1">
+                    <div class="flex items-center space-x-1.5 text-amber-200 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-brain"></i>
+                        <span>Class 10 Civics Terms</span>
+                    </div>
+                    <span id="cardProgress" class="text-xs bg-black/20 px-2 py-0.5 rounded-full font-medium">Card 1 of 6</span>
+                </div>
+                <h2 class="font-serif text-xl font-bold">Challenge FlipCards</h2>
+                <p class="text-xs text-orange-100 mt-1">Tap the card to flip and test your understanding of key constitutional pillars and ideals.</p>
+            </div>
+
+            <!-- Interactive Flip Card Container -->
+            <div class="perspective-1000 w-full h-72 cursor-pointer" onclick="flipActiveCard()">
+                <div id="flipCardInner" class="relative w-full h-full duration-500 transform-style-3d shadow-md rounded-2xl">
+                    <!-- Front Side -->
+                    <div class="absolute inset-0 w-full h-full bg-white rounded-2xl p-6 flex flex-col justify-between border border-slate-200 backface-hidden">
+                        <div class="flex justify-between items-center">
+                            <span id="cardCategory" class="text-[10px] font-bold uppercase bg-orange-100 text-orange-800 px-2.5 py-1 rounded-full">Preamble</span>
+                            <i class="fa-solid fa-rotate text-slate-400 text-sm"></i>
+                        </div>
+                        <div class="text-center my-auto">
+                            <h3 id="cardFrontText" class="font-serif text-lg font-bold text-slate-800">What does 'Secular' mean in the Indian Preamble?</h3>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-[11px] text-indigo-600 font-semibold bg-indigo-50 py-1 px-3 rounded-full inline-flex items-center space-x-1">
+                                <i class="fa-solid fa-hand-tap text-[10px]"></i>
+                                <span>Tap card to reveal answer</span>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Back Side -->
+                    <div class="absolute inset-0 w-full h-full bg-navyBlue text-white rounded-2xl p-6 flex flex-col justify-between transform-style-3d rotate-y-180 backface-hidden">
+                        <div class="flex justify-between items-center text-saffron">
+                            <span class="text-[10px] font-bold uppercase tracking-wider">Correct Definition</span>
+                            <i class="fa-solid fa-circle-check text-sm"></i>
+                        </div>
+                        <div class="my-auto">
+                            <p id="cardBackText" class="text-xs md:text-sm text-slate-100 leading-relaxed text-center font-medium">All religions are given equal respect, protection, and support by the state without establishing any official state religion.</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-[10px] text-slate-300">Tap to flip back</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flipcard Controls -->
+            <div class="flex space-x-3 pt-2">
+                <button onclick="prevCard()" class="flex-1 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 py-2.5 px-4 rounded-xl text-xs font-semibold shadow-xs transition flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Previous</span>
+                </button>
+                <button onclick="nextCard()" class="flex-1 bg-navyBlue hover:bg-indigo-900 text-white py-2.5 px-4 rounded-xl text-xs font-semibold shadow-sm transition flex items-center justify-center space-x-1.5">
+                    <span>Next Term</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 3: QUIZ -->
+        <section id="tab-quiz" class="hidden space-y-4">
+            <div class="bg-gradient-to-br from-emerald-700 to-green-900 text-white p-4 rounded-2xl shadow-md">
+                <div class="flex items-center justify-between mb-1">
+                    <div class="flex items-center space-x-1.5 text-emerald-200 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-award"></i>
+                        <span>Civics Board Prep</span>
+                    </div>
+                    <span id="quizBadgeCount" class="text-xs bg-black/20 px-2 py-0.5 rounded-full font-medium">Question 1 of 5</span>
+                </div>
+                <h2 class="font-serif text-xl font-bold">Constitution Master Quiz</h2>
+                <p class="text-xs text-emerald-100 mt-1">Test your knowledge with immediate explanations designed for Class 10 board exam success.</p>
+            </div>
+
+            <!-- Quiz Card Container -->
+            <div id="quizCardContainer" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex justify-between items-center text-xs text-slate-500 font-medium">
+                    <span id="quizCategoryTag" class="bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold">Fundamental Rights</span>
+                    <span>Score: <strong id="currentQuizScore" class="text-emerald-700">0</strong></span>
+                </div>
+                <div>
+                    <h3 id="quizQuestionText" class="font-serif text-base font-bold text-slate-800 leading-snug">Which Article of the Indian Constitution guarantees the Right to Equality?</h3>
+                </div>
+                <!-- Options Grid -->
+                <div id="quizOptionsGrid" class="space-y-2.5">
+                    <!-- Options injected via JavaScript -->
+                </div>
+                <!-- Explanation Box -->
+                <div id="quizExplanationBox" class="hidden p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-1">
+                    <div class="font-bold flex items-center space-x-1 text-emerald-800">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>Board Exam Tip:</span>
+                    </div>
+                    <p id="quizExplanationText">Explanation goes here...</p>
+                </div>
+                <!-- Next Question Button -->
+                <button id="nextQuizBtn" onclick="nextQuizQuestion()" class="hidden w-full bg-navyBlue hover:bg-indigo-900 text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition shadow-sm flex items-center justify-center space-x-2">
+                    <span>Next Question</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Completion Scoreboard -->
+            <div id="quizResultCard" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center space-y-4">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-slate-800">Quiz Completed!</h3>
+                    <p class="text-xs text-slate-500 mt-1">Fantastic effort in mastering the Indian Constitution.</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 max-w-xs mx-auto">
+                    <span class="text-xs text-slate-500 block">Your Final Score</span>
+                    <span id="finalScoreDisplay" class="font-serif text-2xl font-bold text-emerald-700">5 / 5</span>
+                </div>
+                <button onclick="resetQuiz()" class="w-full bg-navyBlue text-white font-semibold py-2.5 rounded-xl text-xs hover:bg-indigo-900 transition shadow-sm">
+                    <i class="fa-solid fa-rotate-right mr-1.5"></i> Play Quiz Again
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Global State
+        let globalScore = 10;
+        let activeTab = 'visualLab';
+
+        // 1. VISUAL LAB DATA
+        const leadersData = [
+            {
+                id: 'ambedkar',
+                name: 'Dr. B.R. Ambedkar',
+                role: 'Chairman of Drafting Committee',
+                image: 'https://placehold.co/150x150/000080/FFFFFF?text=Dr.+Ambedkar',
+                quote: "Cultivation of mind should be the ultimate aim of human existence. Constitution is not a mere lawyers' document, it is a vehicle of Life.",
+                facts: [
+                    'Known as the Chief Architect of the Indian Constitution.',
+                    'Foresaw the importance of social justice and constitutional morality.',
+                    'Stressed that political democracy cannot last unless there lies at the base of it social democracy.'
+                ]
+            },
+            {
+                id: 'nehru',
+                name: 'Pandit Jawaharlal Nehru',
+                role: 'Mover of Objectives Resolution',
+                image: 'https://placehold.co/150x150/FF9933/FFFFFF?text=J.L.+Nehru',
+                quote: "The service of India means the service of the millions who suffer. It means the ending of poverty and ignorance and disease and inequality of opportunity.",
+                facts: [
+                    'Presented the historic "Objectives Resolution" in December 1946.',
+                    'Laid down the core ideological foundation of sovereign, socialist, secular, democratic republic.',
+                    'Emphasized scientific temper and unity in diversity.'
+                ]
+            },
+            {
+                id: 'rajendra',
+                name: 'Dr. Rajendra Prasad',
+                role: 'President of Constituent Assembly',
+                image: 'https://placehold.co/150x150/138808/FFFFFF?text=Dr.+Rajendra',
+                quote: "We have prepared a Constitution which contains matters both fundamental and detailed, keeping in view the vast size and diversity of our country.",
+                facts: [
+                    'Elected as the permanent President of the Constituent Assembly on June 11, 1947.',
+                    'Guided prolonged debates spanning 2 years, 11 months, and 18 days with patience and fairness.',
+                    'Later became the first President of Independent India.'
+                ]
+            },
+            {
+                id: 'naidu',
+                name: 'Sarojini Naidu',
+                role: 'Prominent Member & Freedom Fighter',
+                image: 'https://placehold.co/150x150/7c3aed/FFFFFF?text=Sarojini+Naidu',
+                quote: "When there is oppression, the only self-respecting thing is to rise and set erect.",
+                facts: [
+                    'Key woman leader in the Constituent Assembly ensuring gender equality and rights.',
+                    'Known as the Nightingale of India and first Indian woman Congress President.',
+                    'Advocated strongly for fundamental freedoms and universal adult suffrage.'
+                ]
+            }
+        ];
+
+        let selectedLeaderId = 'ambedkar';
+
+        function renderVisualLab() {
+            const grid = document.getElementById('leaderGrid');
+            grid.innerHTML = leadersData.map(leader => `
+                <div onclick="selectLeader('${leader.id}')" class="bg-white rounded-xl p-3 border ${selectedLeaderId === leader.id ? 'border-navyBlue ring-2 ring-indigo-100 bg-indigo-50/40' : 'border-slate-200'} shadow-xs cursor-pointer hover:border-indigo-400 transition flex flex-col items-center text-center">
+                    <img src="${leader.image}" alt="${leader.name}" class="w-16 h-16 rounded-full object-cover mb-2 border-2 border-white shadow-sm" onerror="this.src='https://placehold.co/150x150/000080/FFFFFF?text=Leader'">
+                    <h3 class="font-serif font-bold text-xs text-slate-800 line-clamp-1">${leader.name}</h3>
+                    <p class="text-[10px] text-slate-500 line-clamp-1 mt-0.5">${leader.role}</p>
+                </div>
+            `).join('');
+
+            const leader = leadersData.find(l => l.id === selectedLeaderId);
+            const detailCard = document.getElementById('leaderDetailCard');
+            detailCard.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3 border-b border-slate-100 pb-3">
+                        <img src="${leader.image}" alt="${leader.name}" class="w-14 h-14 rounded-full object-cover border border-slate-200" onerror="this.src='https://placehold.co/150x150/000080/FFFFFF?text=Leader'">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-navyBlue bg-indigo-50 px-2 py-0.5 rounded-full">${leader.role}</span>
+                            <h3 class="font-serif font-bold text-base text-slate-900 mt-1">${leader.name}</h3>
+                        </div>
+                    </div>
+                    
+                    <!-- Speech Bubble -->
+                    <div class="bg-indigo-900 text-white p-3.5 rounded-2xl relative shadow-sm">
+                        <div class="absolute -top-2 left-6 w-4 h-4 bg-indigo-900 rotate-45"></div>
+                        <div class="flex items-start space-x-2">
+                            <i class="fa-solid fa-quote-left text-saffron opacity-80 text-sm mt-0.5"></i>
+                            <p class="text-xs italic leading-relaxed text-slate-100">"${leader.quote}"</p>
+                        </div>
+                    </div>
+
+                    <!-- Key Contributions / Facts -->
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center space-x-1">
+                            <i class="fa-solid fa-star text-amber-500"></i>
+                            <span>Key Constitutional Contributions</span>
+                        </h4>
+                        <ul class="space-y-1.5">
+                            ${leader.facts.map(fact => `
+                                <li class="text-xs text-slate-700 bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-start space-x-2">
+                                    <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-[10px]"></i>
+                                    <span>${fact}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectLeader(id) {
+            selectedLeaderId = id;
+            renderVisualLab();
+            addPoints(2);
+        }
+
+        // 2. FLIPCARD DATA
+        const flipCardsData = [
+            { category: 'Preamble', front: "What does 'Secular' mean in the Indian Preamble?", back: "All religions in India receive equal respect, protection, and support from the state without establishing any official religion." },
+            { category: 'Fundamental Rights', front: "Which Article guarantees the 'Right to Constitutional Remedies' and why is it called the heart of the Constitution?", back: "Article 32. Dr. B.R. Ambedkar called it the heart and soul because it allows citizens to move the Supreme Court for enforcement of rights." },
+            { category: 'Key Ideal', front: "What is meant by a 'Democratic' Republic?", back: "The people of India elect their government at all levels through universal adult suffrage, and the head of the state is also elected, not hereditary." },
+            { category: 'Directive Principles', front: "What are Directive Principles of State Policy (DPSP)?", back: "Guidelines and non-justiciable principles outlined in Part IV for the government to frame laws ensuring social and economic democracy." },
+            { category: 'Federalism', front: "What is India's 'Federal Structure' characterized by?", back: "A division of powers between the Central Government and State Governments (Union List, State List, Concurrent List) with an independent judiciary." },
+            { category: 'Sovereignty', front: "What does 'Sovereign' imply for independent India?", back: "India is completely independent and supreme internally and free from any external control or foreign interference." }
+        ];
+
+        let currentCardIndex = 0;
+        let isCardFlipped = false;
+
+        function renderFlipCard() {
+            const card = flipCardsData[currentCardIndex];
+            document.getElementById('cardCategory').innerText = card.category;
+            document.getElementById('cardFrontText').innerText = card.front;
+            document.getElementById('cardBackText').innerText = card.back;
+            document.getElementById('cardProgress').innerText = `Card ${currentCardIndex + 1} of ${flipCardsData.length}`;
+            
+            // Reset flip state
+            isCardFlipped = false;
+            document.getElementById('flipCardInner').style.transform = 'rotateY(0deg)';
+        }
+
+        function flipActiveCard() {
+            isCardFlipped = !isCardFlipped;
+            const inner = document.getElementById('flipCardInner');
+            if (isCardFlipped) {
+                inner.style.transform = 'rotateY(180deg)';
+                addPoints(1);
+            } else {
+                inner.style.transform = 'rotateY(0deg)';
+            }
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % flipCardsData.length;
+            renderFlipCard();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + flipCardsData.length) % flipCardsData.length;
+            renderFlipCard();
+        }
+
+        // 3. QUIZ DATA
+        const quizData = [
+            {
+                category: 'Fundamental Rights',
+                question: 'Which Article of the Indian Constitution guarantees the Right to Equality?',
+                options: ['Articles 14-18', 'Articles 19-22', 'Articles 23-24', 'Articles 25-28'],
+                correct: 0,
+                explanation: 'Articles 14 to 18 guarantee equality before law, prohibition of discrimination, and equality of opportunity in public employment.'
+            },
+            {
+                category: 'Constituent Assembly',
+                question: 'How long did it take to frame the Indian Constitution?',
+                options: ['1 year 10 months', '2 years 11 months and 18 days', '3 years 2 months', '5 years exact'],
+                correct: 1,
+                explanation: 'The Constituent Assembly took 2 years, 11 months, and 18 days to complete the monumental task of drafting the Constitution.'
+            },
+            {
+                category: 'Preamble',
+                question: 'Which 42nd Amendment words were added to the Preamble in 1976?',
+                options: ['Sovereign & Democratic', 'Socialist, Secular & Integrity', 'Republic & Fraternity', 'Justice & Liberty'],
+                correct: 1,
+                explanation: 'The 42nd Constitutional Amendment Act (1976) added the words "Socialist", "Secular", and "Integrity" to the Preamble.'
+            },
+            {
+                category: 'Directive Principles',
+                question: 'Where are the Directive Principles of State Policy (DPSP) borrowed from?',
+                options: ['US Constitution', 'British Constitution', 'Irish Constitution', 'Canadian Constitution'],
+                correct: 2,
+                explanation: 'The framers borrowed the DPSPs from the Irish Constitution (which had borrowed it from Spanish models).'
+            },
+            {
+                category: 'Judiciary',
+                question: 'Who acts as the final guardian and interpreter of the Indian Constitution?',
+                options: ['The Prime Minister', 'The Parliament', 'The Supreme Court of India', 'The President'],
+                correct: 2,
+                explanation: 'The Supreme Court of India acts as the apex court and guardian of fundamental rights and constitutional provisions.'
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        function renderQuiz() {
+            if (currentQuizIndex >= quizData.length) {
+                document.getElementById('quizCardContainer').classList.add('hidden');
+                document.getElementById('quizResultCard').classList.remove('hidden');
+                document.getElementById('finalScoreDisplay').innerText = `${quizScore} / ${quizData.length}`;
+                return;
+            }
+
+            document.getElementById('quizCardContainer').classList.remove('hidden');
+            document.getElementById('quizResultCard').classList.add('hidden');
+
+            const q = quizData[currentQuizIndex];
+            document.getElementById('quizBadgeCount').innerText = `Question ${currentQuizIndex + 1} of ${quizData.length}`;
+            document.getElementById('quizCategoryTag').innerText = q.category;
+            document.getElementById('quizQuestionText').innerText = q.question;
+            document.getElementById('currentQuizScore').innerText = quizScore;
+
+            quizAnswered = false;
+            document.getElementById('quizExplanationBox').classList.add('hidden');
+            document.getElementById('nextQuizBtn').classList.add('hidden');
+
+            const optionsGrid = document.getElementById('quizOptionsGrid');
+            optionsGrid.innerHTML = q.options.map((opt, idx) => `
+                <button onclick="selectQuizOption(${idx})" id="optBtn-${idx}" class="w-full text-left p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-medium text-slate-800 transition flex items-center justify-between shadow-xs">
+                    <span>${opt}</span>
+                    <span class="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] text-slate-400">${String.fromCharCode(65 + idx)}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectQuizOption(selectedIndex) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const q = quizData[currentQuizIndex];
+            const optionsGrid = document.getElementById('quizOptionsGrid');
+            
+            for (let i = 0; i < q.options.length; i++) {
+                const btn = document.getElementById(`optBtn-${i}`);
+                btn.disabled = true;
+                if (i === q.correct) {
+                    btn.className = "w-full text-left p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-xs font-semibold text-emerald-900 flex items-center justify-between shadow-xs";
+                    btn.innerHTML += `<i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>`;
+                } else if (i === selectedIndex) {
+                    btn.className = "w-full text-left p-3 rounded-xl border border-rose-300 bg-rose-50 text-xs font-semibold text-rose-900 flex items-center justify-between shadow-xs";
+                    btn.innerHTML += `<i class="fa-solid fa-circle-xmark text-rose-600 text-sm"></i>`;
+                } else {
+                    btn.className = "w-full text-left p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-400 opacity-60 flex items-center justify-between";
+                }
+            }
+
+            if (selectedIndex === q.correct) {
+                quizScore += 1;
+                addPoints(5);
+            }
+
+            document.getElementById('currentQuizScore').innerText = quizScore;
+            document.getElementById('quizExplanationText').innerText = q.explanation;
+            document.getElementById('quizExplanationBox').classList.remove('hidden');
+            document.getElementById('nextQuizBtn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            renderQuiz();
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            renderQuiz();
+        }
+
+        // Global Score Helper
+        function addPoints(pts) {
+            globalScore += pts;
+            document.getElementById('globalScore').innerText = `${globalScore} Pts`;
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            activeTab = tabId;
+            ['visualLab', 'flipCards', 'quiz'].forEach(t => {
+                const section = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`btn-${t}`);
+                if (t === tabId) {
+                    section.classList.remove('hidden');
+                    btn.className = "flex-1 py-2 px-1 text-xs font-semibold rounded-lg transition-all flex flex-col items-center justify-center space-y-0.5 text-navyBlue bg-indigo-50/80 shadow-xs";
+                } else {
+                    section.classList.add('hidden');
+                    btn.className = "flex-1 py-2 px-1 text-xs font-medium rounded-lg transition-all flex flex-col items-center justify-center space-y-0.5 text-slate-500 hover:text-navyBlue";
+                }
+            });
+        }
+
+        // Initial Load on Window Startup
+        window.onload = function() {
+            renderVisualLab();
+            renderFlipCard();
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
