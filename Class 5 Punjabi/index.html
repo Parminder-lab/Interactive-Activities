@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amardeep School | ਮੇਰਾ ਹਿੰਦੁਸਤਾਨ</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Noto Sans Gurmukhi","Raavi",Arial,sans-serif;
+  background:#f2f7ff;
+  color:#17345f;
+}
+header{
+  display:flex;align-items:center;gap:10px;
+  padding:16px 12px;background:white;
+  border-bottom:4px solid #f5b52e;
+}
+.logo{font-size:35px}
+.school{font-size:20px;font-weight:900;color:#123675}
+.sub{font-size:12px;color:#56708f}
+.hero{
+  text-align:center;padding:24px 12px;
+  color:white;
+  background:linear-gradient(120deg,#f28b20 0%,#fff 48%,#16864b 100%);
+}
+.hero h1{
+  color:#123675;font-size:clamp(28px,7vw,42px);
+  margin:4px 0 8px;
+}
+.hero p{color:#17345f;margin:5px}
+.flag{font-size:42px}
+section{
+  margin:16px 12px;padding:16px;
+  background:white;border-radius:18px;
+  box-shadow:0 3px 12px #17345f12;
+}
+h2{font-size:22px;margin:0 0 8px;color:#123675}
+.intro{line-height:1.8}
+.grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;margin-top:14px;
+}
+.tile{
+  border:2px solid #dbe8f8;border-radius:14px;
+  padding:12px 6px;text-align:center;
+  background:#f8fbff;font-size:15px;
+}
+.tile .pic{font-size:36px;display:block;margin-bottom:5px}
+.tile b{display:block;margin-bottom:4px}
+.small{font-size:13px;color:#536982}
+.cards{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;margin-top:14px;
+}
+.flip{
+  min-height:130px;border:0;border-radius:14px;
+  color:white;font:inherit;font-weight:bold;
+  padding:14px 8px;cursor:pointer;
+  background:#1769aa;
+  box-shadow:0 3px 0 #0d4679;
+}
+.flip:nth-child(2){background:#e85c36;box-shadow:0 3px 0 #a7381d}
+.flip:nth-child(3){background:#13845b;box-shadow:0 3px 0 #07583b}
+.flip:nth-child(4){background:#8b50b9;box-shadow:0 3px 0 #5b2d84}
+.flip .emoji{font-size:30px;display:block;margin-bottom:8px}
+.flip .answer{display:none;font-size:15px;font-weight:normal}
+.flip.revealed .clue{display:none}
+.flip.revealed .answer{display:block}
+.question{
+  border:1px solid #d9e5f4;border-radius:14px;
+  padding:13px;margin:13px 0;
+}
+.question p{font-weight:bold;line-height:1.7;margin:0 0 8px}
+.option{
+  display:block;padding:9px 10px;margin:5px 0;
+  background:#f3f7fc;border-radius:9px;
+  cursor:pointer;line-height:1.5;
+}
+.option input{margin-right:7px;accent-color:#1769aa}
+button.action{
+  width:100%;border:0;border-radius:12px;
+  background:#123675;color:white;padding:13px;
+  font:inherit;font-weight:bold;font-size:17px;
+  cursor:pointer;margin-top:8px;
+}
+button.action:active{transform:scale(.99)}
+#result{
+  display:none;margin-top:14px;padding:14px;
+  border-radius:12px;background:#e6f8ed;
+  color:#145b38;font-weight:bold;line-height:1.8;
+}
+footer{
+  text-align:center;background:#123675;color:white;
+  padding:18px 10px;line-height:1.8;
+}
+@media(min-width:650px){
+  main{max-width:760px;margin:auto}
+  header{padding-left:max(16px,calc((100% - 760px)/2))}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📚</div>
+  <div>
+    <div class="school">Amardeep School</div>
+    <div class="sub">ਸਿੱਖੋ • ਸੋਚੋ • ਅੱਗੇ ਵਧੋ</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="flag">🇮🇳</div>
+  <h1>ਮੇਰਾ ਹਿੰਦੁਸਤਾਨ</h1>
+  <p><b>ਜਮਾਤ ਪੰਜਵੀਂ | ਪੰਜਾਬੀ ਗਤੀਵਿਧੀ</b></p>
+  <p>ਆਓ ਆਪਣੇ ਦੇਸ਼ ਨੂੰ ਜਾਣੀਏ!</p>
+</div>
+
+<main>
+<section>
+  <h2>🌟 1. ਦੇਖੋ ਤੇ ਸਿੱਖੋ — Visual Lab</h2>
+  <p class="intro">
+    ਭਾਰਤ ਸਾਡਾ ਪਿਆਰਾ ਦੇਸ਼ ਹੈ। ਇੱਥੇ ਉੱਚੇ ਪਹਾੜ,
+    ਹਰੇ-ਭਰੇ ਖੇਤ, ਅਨੇਕਾਂ ਭਾਸ਼ਾਵਾਂ ਅਤੇ ਰੰਗ-ਬਿਰੰਗੇ
+    ਤਿਉਹਾਰ ਹਨ। ਆਓ ਭਾਰਤ ਦੀਆਂ ਖ਼ੂਬੀਆਂ ਜਾਣੀਏ।
+  </p>
+  <div class="grid">
+    <div class="tile"><span class="pic">🇮🇳</span><b>ਰਾਸ਼ਟਰੀ ਝੰਡਾ</b><span class="small">ਸਾਡਾ ਮਾਣ</span></div>
+    <div class="tile"><span class="pic">🏔️</span><b>ਹਿਮਾਲਿਆ</b><span class="small">ਉੱਚੇ ਪਹਾੜ</span></div>
+    <div class="tile"><span class="pic">🌾</span><b>ਸਾਡੇ ਕਿਸਾਨ</b><span class="small">ਅੰਨਦਾਤਾ</span></div>
+    <div class="tile"><span class="pic">💃</span><b>ਸਾਡਾ ਸੱਭਿਆਚਾਰ</b><span class="small">ਵੱਖ-ਵੱਖ ਰੰਗ</span></div>
+    <div class="tile"><span class="pic">🐅</span><b>ਜੰਗਲੀ ਜੀਵ</b><span class="small">ਕੁਦਰਤ ਦੀ ਸ਼ਾਨ</span></div>
+    <div class="tile"><span class="pic">🏛️</span><b>ਇਤਿਹਾਸਕ ਥਾਵਾਂ</b><span class="small">ਸਾਡੀ ਵਿਰਾਸਤ</span></div>
+    <div class="tile"><span class="pic">🌊</span><b>ਨਦੀਆਂ</b><span class="small">ਜੀਵਨ ਦਾ ਆਧਾਰ</span></div>
+    <div class="tile"><span class="pic">🤝</span><b>ਏਕਤਾ</b><span class="small">ਅਨੇਕਤਾ ਵਿੱਚ ਏਕਤਾ</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>🎴 2. ਚੁਣੌਤੀ — Flip Cards</h2>
+  <p>ਹਰ ਕਾਰਡ ਉੱਤੇ ਟੈਪ ਕਰੋ ਅਤੇ ਜਵਾਬ ਲੱਭੋ।</p>
+  <div class="cards">
+    <button class="flip" onclick="flip(this)">
+      <span class="clue"><span class="emoji">❓</span>ਭਾਰਤ ਦਾ ਰਾਸ਼ਟਰੀ ਪੰਛੀ ਕਿਹੜਾ ਹੈ?<br><br>ਟੈਪ ਕਰੋ ↻</span>
+      <span class="answer">🦚 ਮੋਰ</span>
+    </button>
+    <button class="flip" onclick="flip(this)">
+      <span class="clue"><span class="emoji">❓</span>ਭਾਰਤ ਦਾ ਰਾਸ਼ਟਰੀ ਜਾਨਵਰ ਕਿਹੜਾ ਹੈ?<br><br>ਟੈਪ ਕਰੋ ↻</span>
+      <span class="answer">🐅 ਬਾਘ</span>
+    </button>
+    <button class="flip" onclick="flip(this)">
+      <span class="clue"><span class="emoji">❓</span>ਸਾਡੇ ਰਾਸ਼ਟਰੀ ਝੰਡੇ ਵਿੱਚ ਕਿੰਨੇ ਰੰਗ ਹਨ?<br><br>ਟੈਪ ਕਰੋ ↻</span>
+      <span class="answer">🎨 ਤਿੰਨ ਰੰਗ</span>
+    </button>
+    <button class="flip" onclick="flip(this)">
+      <span class="clue"><span class="emoji">❓</span>ਸਾਨੂੰ ਆਪਣੇ ਦੇਸ਼ ਨਾਲ ਕਿਵੇਂ ਪੇਸ਼ ਆਉਣਾ ਚਾਹੀਦਾ ਹੈ?<br><br>ਟੈਪ ਕਰੋ ↻</span>
+      <span class="answer">❤️ ਪਿਆਰ ਅਤੇ ਸਤਿਕਾਰ ਨਾਲ</span>
+    </button>
+  </div>
+  <button class="action" onclick="resetCards()">ਕਾਰਡ ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ ↺</button>
+</section>
+
+<section>
+  <h2>🧠 3. ਗਿਆਨ ਪਰਖ — Quiz</h2>
+  <p>ਹਰੇਕ ਸਵਾਲ ਦਾ ਇੱਕ ਸਹੀ ਜਵਾਬ ਚੁਣੋ। ਹਰ ਸਹੀ ਜਵਾਬ ਦਾ 1 ਅੰਕ ਹੈ।</p>
+
+  <form id="quiz">
+    <div class="question">
+      <p>1. ਭਾਰਤ ਦਾ ਰਾਸ਼ਟਰੀ ਝੰਡਾ ਕਿਹੜਾ ਹੈ?</p>
+      <label class="option"><input type="radio" name="q1" value="a"> ਤਿਰੰਗਾ</label>
+      <label class="option"><input type="radio" name="q1" value="b"> ਨੀਲਾ ਝੰਡਾ</label>
+      <label class="option"><input type="radio" name="q1" value="c"> ਲਾਲ ਝੰਡਾ</label>
+    </div>
+
+    <div class="question">
+      <p>2. ਭਾਰਤ ਦਾ ਰਾਸ਼ਟਰੀ ਪੰਛੀ ਕਿਹੜਾ ਹੈ?</p>
+      <label class="option"><input type="radio" name="q2" value="a"> ਤੋਤਾ</label>
+      <label class="option"><input type="radio" name="q2" value="b"> ਮੋਰ</label>
+      <label class="option"><input type="radio" name="q2" value="c"> ਕਬੂਤਰ</label>
+    </div>
+
+    <div class="question">
+      <p>3. ਹਿਮਾਲਿਆ ਕਿਸ ਲਈ ਪ੍ਰਸਿੱਧ ਹੈ?</p>
+      <label class="option"><input type="radio" name="q3" value="a"> ਸਮੁੰਦਰਾਂ ਲਈ</label>
+      <label class="option"><input type="radio" name="q3" value="b"> ਰੇਗਿਸਤਾਨਾਂ ਲਈ</label>
+      <label class="option"><input type="radio" name="q3" value="c"> ਉੱਚੇ ਪਹਾੜਾਂ ਲਈ</label>
+    </div>
+
+    <div class="question">
+      <p>4. ਸਾਨੂੰ ਆਪਣੇ ਦੇਸ਼ ਦੀ ਸਫ਼ਾਈ ਲਈ ਕੀ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ?</p>
+      <label class="option"><input type="radio" name="q4" value="a"> ਕੂੜਾ ਸੜਕ ਉੱਤੇ ਸੁੱਟਣਾ</label>
+      <label class="option"><input type="radio" name="q4" value="b"> ਕੂੜਾ ਕੂੜੇਦਾਨ ਵਿੱਚ ਪਾਉਣਾ</label>
+      <label class="option"><input type="radio" name="q4" value="c"> ਰੁੱਖ ਕੱਟਣੇ</label>
+    </div>
+
+    <div class="question">
+      <p>5. “ਅਨੇਕਤਾ ਵਿੱਚ ਏਕਤਾ” ਦਾ ਕੀ ਅਰਥ ਹੈ?</p>
+      <label class="option"><input type="radio" name="q5" value="a"> ਵੱਖਰੇ ਹੋ ਕੇ ਰਹਿਣਾ</label>
+      <label class="option"><input type="radio" name="q5" value="b"> ਸਿਰਫ਼ ਇੱਕ ਭਾਸ਼ਾ ਬੋਲਣਾ</label>
+      <label class="option"><input type="radio" name="q5" value="c"> ਵੱਖਰੇ ਹੋ ਕੇ ਵੀ ਮਿਲਜੁਲ ਕੇ ਰਹਿਣਾ</label>
+    </div>
+
+    <button class="action" type="submit">ਮੇਰੇ ਅੰਕ ਦੱਸੋ 🎯</button>
+    <button class="action" type="button" onclick="resetQuiz()" style="background:#eaf1fc;color:#123675">ਕੁਇਜ਼ ਮੁੜ ਕਰੋ ↺</button>
+  </form>
+  <div id="result" role="status" aria-live="polite"></div>
+</section>
+
+<section>
+  <h2>💚 ਮੇਰਾ ਪ੍ਰਣ</h2>
+  <p class="intro">
+    ਮੈਂ ਆਪਣੇ ਦੇਸ਼ ਨੂੰ ਪਿਆਰ ਕਰਾਂਗਾ/ਕਰਾਂਗੀ।
+    ਮੈਂ ਸਾਰੇ ਲੋਕਾਂ ਦਾ ਸਤਿਕਾਰ ਕਰਾਂਗਾ/ਕਰਾਂਗੀ
+    ਅਤੇ ਆਪਣੇ ਭਾਰਤ ਨੂੰ ਸਾਫ਼-ਸੁਥਰਾ ਰੱਖਣ ਵਿੱਚ
+    ਮਦਦ ਕਰਾਂਗਾ/ਕਰਾਂਗੀ।
+  </p>
+</section>
+</main>
+
+<footer>
+  🇮🇳 ਮੇਰਾ ਹਿੰਦੁਸਤਾਨ — ਮੇਰਾ ਮਾਣ! 🇮🇳<br>
+  <b>Amardeep School</b><br>
+  ਸਿੱਖੋ • ਵਧੋ • ਚਮਕੋ
+</footer>
+
+<script>
+function flip(card){
+  card.classList.toggle("revealed");
+}
+function resetCards(){
+  document.querySelectorAll(".flip").forEach(card=>{
+    card.classList.remove("revealed");
+  });
+}
+document.getElementById("quiz").addEventListener("submit",function(e){
+  e.preventDefault();
+  const answers={q1:"a",q2:"b",q3:"c",q4:"b",q5:"c"};
+  let score=0, unanswered=0;
+  Object.keys(answers).forEach(q=>{
+    const chosen=document.querySelector('input[name="'+q+'"]:checked');
+    if(!chosen) unanswered++;
+    else if(chosen.value===answers[q]) score++;
+  });
+  const result=document.getElementById("result");
+  result.style.display="block";
+  let message="";
+  if(score===5) message="ਸ਼ਾਬਾਸ਼! ਤੁਸੀਂ ਸਾਰੇ ਜਵਾਬ ਸਹੀ ਦਿੱਤੇ! 🌟";
+  else if(score>=3) message="ਬਹੁਤ ਵਧੀਆ! ਹੋਰ ਅਭਿਆਸ ਕਰੋ! 👏";
+  else message="ਕੋਈ ਗੱਲ ਨਹੀਂ! ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ! 💪";
+  result.innerHTML="ਤੁਹਾਡੇ ਅੰਕ: "+score+" / 5<br>"+message+
+    (unanswered ? "<br>ਤੁਸੀਂ "+unanswered+" ਸਵਾਲਾਂ ਦੇ ਜਵਾਬ ਨਹੀਂ ਦਿੱਤੇ।" : "");
+  result.scrollIntoView({behavior:"smooth",block:"nearest"});
+});
+function resetQuiz(){
+  document.getElementById("quiz").reset();
+  const result=document.getElementById("result");
+  result.style.display="none";
+  result.textContent="";
+}
+</script>
+</body>
+</html>
