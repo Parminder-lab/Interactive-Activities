@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amardeep School - Carbon Nomenclature Lab</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+    <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/60 sticky top-0 z-50 px-4 py-3 shadow-md">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                    <i class="fa-solid fa-atom text-white text-lg animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Amardeep School</h1>
+                    <p class="text-xs text-slate-400 font-medium tracking-wide">Class 10 Chemistry Lab</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 bg-slate-700/50 px-3 py-1.5 rounded-full border border-slate-600/50">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="text-xs font-semibold text-emerald-300">Nomenclature 1-6</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-20 flex flex-col">
+        
+        <!-- Navigation Tabs -->
+        <nav class="grid grid-cols-3 gap-2 bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700/60 mb-6 shadow-inner">
+            <button onclick="switchTab('lab')" id="tab-lab" class="flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-300 bg-emerald-500 text-white shadow-md shadow-emerald-500/20">
+                <i class="fa-solid fa-flask-vial mb-1 text-sm"></i>
+                <span>Visual Lab</span>
+            </button>
+            <button onclick="switchTab('challenge')" id="tab-challenge" class="flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-300 text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-clone mb-1 text-sm"></i>
+                <span>Flip Cards</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-300 text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-award mb-1 text-sm"></i>
+                <span>Quiz Zone</span>
+            </button>
+        </nav>
+
+        <section id="section-lab" class="space-y-4">
+            <div class="bg-gradient-to-br from-slate-800 to-slate-800/80 rounded-2xl p-5 border border-slate-700/60 shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Carbon Chains (C1 - C6)</span>
+                        <h2 id="lab-title" class="text-xl font-extrabold text-slate-100 mt-0.5">Methane</h2>
+                    </div>
+                    <div id="lab-badge" class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-lg shadow-inner">
+                        C₁
+                    </div>
+                </div>
+
+                <!-- Character / Avatar Guide Box -->
+                <div class="bg-slate-900/70 rounded-xl p-3.5 border border-slate-700/50 flex items-center space-x-3 mb-4">
+                    <div class="text-3xl bg-slate-800 p-2.5 rounded-xl border border-slate-700 shadow-sm" id="lab-avatar">👦</div>
+                    <div>
+                        <div class="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                            <span>Molecule Mascot</span>
+                            <i class="fa-solid fa-circle-check text-[10px]"></i>
+                        </div>
+                        <p id="lab-character-dialogue" class="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                            "Hi! I'm Methane. I have just 1 carbon atom bonded with 4 hydrogens!"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Visual Representation of Atoms -->
+                <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/50 flex flex-col items-center justify-center min-h-[150px] relative mb-4">
+                    <div class="absolute top-2.5 left-3 text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-atom text-emerald-400 animate-spin"></i> Visual Atomic Structure
+                    </div>
+                    <div id="atom-canvas-container" class="flex flex-wrap items-center justify-center gap-2.5 mt-4">
+                        <!-- Dynamic rendered atoms will appear here -->
+                    </div>
+                </div>
+
+                <!-- Chemical Formulas Card -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-center">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Molecular Formula</span>
+                        <span id="lab-molecular-formula" class="text-base font-mono font-bold text-emerald-300">CH₄</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-center">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">General Formula (Alkane)</span>
+                        <span class="text-base font-mono font-bold text-teal-300">CₙH₂ₙ₊₂</span>
+                    </div>
+                </div>
+
+                <!-- Selector Pills (1 to 6) -->
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-slate-400 block">Select Carbon Count (n):</label>
+                    <div class="grid grid-cols-6 gap-1.5">
+                        <button onclick="selectCarbon(1)" id="btn-c1" class="py-2.5 rounded-xl font-bold text-xs transition-all bg-emerald-500 text-white shadow-md shadow-emerald-500/20">1</button>
+                        <button onclick="selectCarbon(2)" id="btn-c2" class="py-2.5 rounded-xl font-bold text-xs transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">2</button>
+                        <button onclick="selectCarbon(3)" id="btn-c3" class="py-2.5 rounded-xl font-bold text-xs transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">3</button>
+                        <button onclick="selectCarbon(4)" id="btn-c4" class="py-2.5 rounded-xl font-bold text-xs transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">4</button>
+                        <button onclick="selectCarbon(5)" id="btn-c5" class="py-2.5 rounded-xl font-bold text-xs transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">5</button>
+                        <button onclick="selectCarbon(6)" id="btn-c6" class="py-2.5 rounded-xl font-bold text-xs transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">6</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Study Fact Card -->
+            <div class="bg-slate-800/80 rounded-2xl p-4 border border-slate-700/60 flex items-start space-x-3">
+                <div class="p-2 rounded-xl bg-teal-500/20 text-teal-400 text-lg mt-0.5">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wide">Amardeep Study Tip</h3>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                        Notice how each successive member in the alkane series differs by a <span class="text-emerald-400 font-semibold">-CH₂-</span> group (homologous series)! The suffix for all is <span class="text-emerald-400 font-semibold">'-ane'</span>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-challenge" class="space-y-4 hidden">
+            <div class="bg-gradient-to-br from-slate-800 to-slate-800/80 rounded-2xl p-5 border border-slate-700/60 shadow-xl text-center">
+                <span class="text-xs font-bold uppercase tracking-wider text-teal-400">Memory & Flash Test</span>
+                <h2 class="text-lg font-extrabold text-slate-100 mt-0.5">Flip Card Challenge</h2>
+                <p class="text-xs text-slate-400 mt-1">Tap the card to reveal the formula & structural details!</p>
+
+                <!-- Card Container with 3D Flip Effect -->
+                <div class="my-6 perspective-1000 w-full h-64 cursor-pointer" onclick="flipCard()">
+                    <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-style-3d shadow-2xl rounded-2xl">
+                        <!-- Front of Card -->
+                        <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl border border-slate-600/60 flex flex-col items-center justify-center p-6 backface-hidden">
+                            <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest mb-2">Guess the Alkane</span>
+                            <h3 id="card-front-title" class="text-2xl font-extrabold text-white mb-2">Methane</h3>
+                            <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-3xl mb-4">
+                                🧪
+                            </div>
+                            <span class="text-[11px] text-slate-400 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-700">
+                                <i class="fa-solid fa-hand-pointer mr-1"></i> Tap to flip card
+                            </span>
+                        </div>
+                        <!-- Back of Card -->
+                        <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-emerald-900/90 to-teal-900/90 rounded-2xl border border-emerald-500/50 flex flex-col items-center justify-center p-6 backface-hidden rotate-y-180 text-white">
+                            <span class="text-xs font-semibold text-emerald-300 uppercase tracking-widest mb-1">Answer Revealed</span>
+                            <h3 id="card-back-name" class="text-lg font-bold text-emerald-200 mb-2">Methane (n = 1)</h3>
+                            <div class="bg-black/30 w-full p-3 rounded-xl border border-emerald-500/30 mb-4 space-y-1 text-center">
+                                <p class="text-sm font-mono font-bold text-emerald-300" id="card-back-formula">Molecular: CH₄</p>
+                                <p class="text-xs text-emerald-100" id="card-back-desc">Prefix: Meth- | Suffix: -ane</p>
+                            </div>
+                            <span class="text-[11px] text-emerald-300 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-500/40">
+                                Tap again to flip back
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Controls -->
+                <div class="flex items-center justify-between gap-3">
+                    <button onclick="prevCard()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 py-3 px-4 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2 border border-slate-600/50">
+                        <i class="fa-solid fa-arrow-left"></i> Previous
+                    </button>
+                    <button onclick="nextCard()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-3 px-4 rounded-xl font-semibold text-xs transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2">
+                        Next Card <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-quiz" class="space-y-4 hidden">
+            <div class="bg-gradient-to-br from-slate-800 to-slate-800/80 rounded-2xl p-5 border border-slate-700/60 shadow-xl">
+                
+                <!-- Quiz Header & Scoreboard -->
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700/50">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Knowledge Check</span>
+                        <h2 class="text-base font-extrabold text-slate-100">Nomenclature Quiz</h2>
+                    </div>
+                    <div class="bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-2">
+                        <i class="fa-solid fa-star text-amber-400 text-sm"></i>
+                        <span class="text-xs font-bold text-slate-200">Score: <span id="quiz-score" class="text-amber-400">0</span>/5</span>
+                    </div>
+                </div>
+
+                <!-- Question Box -->
+                <div id="quiz-container">
+                    <div class="mb-4">
+                        <span id="quiz-progress" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Question 1 of 5</span>
+                        <h3 id="quiz-question" class="text-sm font-semibold text-slate-100 leading-snug">
+                            What is the molecular formula of Propane (n = 3)?
+                        </h3>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div id="quiz-options" class="space-y-2.5 mb-4">
+                        <!-- Dynamic Options injected via JS -->
+                    </div>
+
+                    <!-- Feedback Box -->
+                    <div id="quiz-feedback" class="hidden p-3 rounded-xl text-xs font-medium mb-4 flex items-start space-x-2">
+                        <i id="quiz-feedback-icon" class="fa-solid mt-0.5"></i>
+                        <div id="quiz-feedback-text"></div>
+                    </div>
+
+                    <!-- Next Question Button -->
+                    <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-3 rounded-xl font-semibold text-xs transition shadow-lg shadow-emerald-500/20 hidden">
+                        Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Quiz Completion Card -->
+                <div id="quiz-completion" class="hidden text-center py-6 space-y-4">
+                    <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto text-3xl text-emerald-400 shadow-lg">
+                        🏆
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-white">Quiz Completed!</h3>
+                        <p id="quiz-final-message" class="text-xs text-slate-300 mt-1">Fantastic job mastering carbon nomenclature!</p>
+                    </div>
+                    <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700 max-w-xs mx-auto">
+                        <span class="text-xs text-slate-400 block mb-1">Your Final Score</span>
+                        <span id="quiz-final-score" class="text-2xl font-black text-emerald-400">5 / 5</span>
+                    </div>
+                    <button onclick="restartQuiz()" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-6 py-2.5 rounded-xl font-semibold text-xs transition shadow-lg shadow-emerald-500/20">
+                        <i class="fa-solid fa-rotate-right mr-1.5"></i> Try Again
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800/60 border-t border-slate-700/40 py-3 text-center text-[11px] text-slate-400 mt-auto">
+        <p>© 2026 Amardeep School • Class 10 Chemistry Interactive Learning Module</p>
+    </footer>
+
+    <script>
+        // Carbon Data (1 to 6 Alkanes)
+        const carbonData = {
+            1: {
+                name: "Methane",
+                prefix: "Meth",
+                formula: "CH₄",
+                carbons: 1,
+                hydrogens: 4,
+                avatar: "👦",
+                dialogue: "Hi! I'm Methane. I have just 1 carbon atom bonded with 4 hydrogens!",
+                desc: "Primary component of natural gas. Simple tetrahedral geometry."
+            },
+            2: {
+                name: "Ethane",
+                prefix: "Eth",
+                formula: "C₂H₆",
+                carbons: 2,
+                hydrogens: 6,
+                avatar: "👧",
+                dialogue: "Hello! I'm Ethane. I feature 2 carbon atoms connected in a single covalent bond!",
+                desc: "Found in natural gas and used as a petrochemical feedstock."
+            },
+            3: {
+                name: "Propane",
+                prefix: "Prop",
+                formula: "C₃H₈",
+                carbons: 3,
+                hydrogens: 8,
+                avatar: "🧑‍🔬",
+                dialogue: "Greetings! I'm Propane with 3 carbons. Often used as portable cooking fuel!",
+                desc: "Widely used in LPG (Liquefied Petroleum Gas) cylinders."
+            },
+            4: {
+                name: "Butane",
+                prefix: "But",
+                formula: "C₄H₁₀",
+                carbons: 4,
+                hydrogens: 10,
+                avatar: "👨‍🎓",
+                dialogue: "Hey there! I'm Butane with 4 carbons. Common in lighters and camping stoves!",
+                desc: "Easily liquefied gas used in lighters and aerosol propellants."
+            },
+            5: {
+                name: "Pentane",
+                prefix: "Pent",
+                formula: "C₅H₁₂",
+                carbons: 5,
+                hydrogens: 12,
+                avatar: "👩‍🔬",
+                dialogue: "Hi! I'm Pentane with 5 carbon atoms in a straight chain!",
+                desc: "Liquid alkane used as a specialty solvent in laboratories."
+            },
+            6: {
+                name: "Hexane",
+                prefix: "Hex",
+                formula: "C₆H₁₄",
+                carbons: 6,
+                hydrogens: 14,
+                avatar: "🔬",
+                dialogue: "Welcome! I'm Hexane with 6 carbon atoms. Essential organic solvent!",
+                desc: "Widely used in extracting edible oils from seeds like soybeans."
+            }
+        };
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            ['lab', 'challenge', 'quiz'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-${t}`);
+                btn.className = "flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-300 text-slate-400 hover:text-slate-200";
+            });
+
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.className = "flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition-all duration-300 bg-emerald-500 text-white shadow-md shadow-emerald-500/20";
+        }
+
+        // Visual Lab Logic
+        let currentC = 1;
+
+        function selectCarbon(n) {
+            currentC = n;
+            const data = carbonData[n];
+
+            // Update button styles
+            for (let i = 1; i <= 6; i++) {
+                const b = document.getElementById(`btn-c${i}`);
+                if (i === n) {
+                    b.className = "py-2.5 rounded-xl font-bold text-xs transition-all bg-emerald-500 text-white shadow-md shadow-emerald-500/20";
+                } else {
+                    b.className = "py-2.5 rounded-xl font-bold text-xs transition-all bg-slate-700 text-slate-300 hover:bg-slate-600";
+                }
+            }
+
+            // Update UI texts
+            document.getElementById('lab-title').innerText = data.name;
+            document.getElementById('lab-badge').innerText = `C${n === 1 ? '₁' : n === 2 ? '₂' : n === 3 ? '₃' : n === 4 ? '₄' : n === 5 ? '₅' : '₆'}`;
+            document.getElementById('lab-avatar').innerText = data.avatar;
+            document.getElementById('lab-character-dialogue').innerText = `"${data.dialogue}"`;
+            document.getElementById('lab-molecular-formula').innerText = data.formula;
+
+            renderAtomCanvas(data.carbons, data.hydrogens);
+        }
+
+        function renderAtomCanvas(carbons, hydrogens) {
+            const container = document.getElementById('atom-canvas-container');
+            container.innerHTML = '';
+
+            // Render Carbon atoms
+            for (let c = 0; c < carbons; c++) {
+                const cDiv = document.createElement('div');
+                cDiv.className = "flex flex-col items-center bg-slate-800/90 border border-emerald-500/50 p-2.5 rounded-xl shadow-md";
+                cDiv.innerHTML = `
+                    <div class="w-9 h-9 rounded-full bg-slate-900 border-2 border-emerald-400 flex items-center justify-center text-emerald-300 font-bold text-xs shadow-inner">
+                        C
+                    </div>
+                    <span class="text-[9px] text-emerald-400 font-semibold mt-1">Carbon ${c+1}</span>
+                `;
+                container.appendChild(cDiv);
+
+                // Add Hydrogen representations attached or nearby
+                const hBadge = document.createElement('div');
+                hBadge.className = "flex items-center gap-1 bg-slate-900/50 px-2 py-1 rounded-lg border border-slate-700/50 text-[10px] text-slate-300";
+                hBadge.innerHTML = `<i class="fa-solid fa-circle text-[6px] text-teal-400"><span>H bonded</span>`;
+                
+                // Let's create visual hydrogen badges for clarity
+                if (c < carbons) {
+                    const hCount = (c === 0 || c === carbons - 1) ? 3 : 2; // terminal vs internal
+                    const hWrap = document.createElement('div');
+                    hWrap.className = "flex gap-1 items-center";
+                    for (let h = 0; h < hCount; h++) {
+                        const hNode = document.createElement('div');
+                        hNode.className = "w-6 h-6 rounded-full bg-teal-500/20 border border-teal-400/60 flex items-center justify-center text-teal-300 font-bold text-[10px]";
+                        hNode.innerText = "H";
+                        hWrap.appendChild(hNode);
+                    }
+                    container.appendChild(hWrap);
+                }
+            }
+        }
+
+        // FlipCard Challenge Logic
+        let currentCardIdx = 1;
+        let isFlipped = false;
+
+        function updateFlashCard() {
+            const data = carbonData[currentCardIdx];
+            document.getElementById('card-front-title').innerText = `${data.name} (n = ${currentCardIdx})`;
+            document.getElementById('card-back-name').innerText = `${data.name} (Prefix: ${data.prefix}-)`;
+            document.getElementById('card-back-formula').innerText = `Molecular Formula: ${data.formula}`;
+            document.getElementById('card-back-desc').innerText = data.desc;
+
+            // Reset flip state
+            isFlipped = false;
+            document.getElementById('flashcard-inner').style.transform = 'rotateY(0deg)';
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            const inner = document.getElementById('flashcard-inner');
+            if (isFlipped) {
+                inner.style.transform = 'rotateY(180deg)';
+            } else {
+                inner.style.transform = 'rotateY(0deg)';
+            }
+        }
+
+        function nextCard() {
+            currentCardIdx = currentCardIdx < 6 ? currentCardIdx + 1 : 1;
+            updateFlashCard();
+        }
+
+        function prevCard() {
+            currentCardIdx = currentCardIdx > 1 ? currentCardIdx - 1 : 6;
+            updateFlashCard();
+        }
+
+        // Quiz Logic
+        const quizQuestions = [
+            {
+                q: "What is the molecular formula of Propane (n = 3)?",
+                options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"],
+                answer: 2,
+                explanation: "Propane has 3 carbon atoms (n=3). Following CₙH₂ₙ₊₂, H = 2(3)+2 = 8, so C₃H₈."
+            },
+            {
+                q: "Which alkane has the molecular formula C₅H₁₂?",
+                options: ["Butane", "Pentane", "Hexane", "Ethane"],
+                answer: 1,
+                explanation: "Pentane has 5 carbon atoms, giving C₅H₁₂ according to the alkane general formula."
+            },
+            {
+                q: "What is the correct prefix for an alkane chain with 2 carbon atoms?",
+                options: ["Meth-", "Prop-", "Eth-", "But-"],
+                answer: 2,
+                explanation: "'Eth-' is the IUPAC prefix for 2 carbon atoms in carbon nomenclature."
+            },
+            {
+                q: "All straight-chain alkanes discussed in Class 10 end with which suffix?",
+                options: ["-ene", "-yne", "-ane", "-ol"],
+                answer: 2,
+                explanation: "Saturated hydrocarbons (alkanes) with single carbon-carbon bonds use the suffix '-ane'."
+            },
+            {
+                q: "How many hydrogen atoms are present in Hexane (n = 6)?",
+                options: ["12", "14", "16", "10"],
+                answer: 1,
+                explanation: "For Hexane, n=6. Hydrogens = 2(6) + 2 = 14. Formula is C₆H₁₄."
+            }
+        ];
+
+        let currentQuizIdx = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuizQuestion() {
+            answered = false;
+            const qData = quizQuestions[currentQuizIdx];
+            document.getElementById('quiz-progress').innerText = `Question ${currentQuizIdx + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-question').innerText = qData.q;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl bg-slate-900/70 border border-slate-700/70 hover:border-emerald-500/50 text-xs font-semibold text-slate-200 transition flex items-center justify-between group";
+                btn.innerHTML = `
+                    <span><span class="w-5 h-5 inline-flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 text-[10px] mr-2 group-hover:bg-emerald-500 group-hover:text-white transition">${String.fromCharCode(65 + idx)}</span> ${opt}</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-600 group-hover:text-emerald-400"></i>
+                `;
+                btn.onclick = () => selectQuizOption(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectQuizOption(selectedIdx, btnElement) {
+            if (answered) return;
+            answered = true;
+
+            const qData = quizQuestions[currentQuizIdx];
+            const options = document.getElementById('quiz-options').children;
+
+            for (let i = 0; i < options.length; i++) {
+                options[i].style.pointerEvents = 'none';
+                if (i === qData.answer) {
+                    options[i].className = "w-full text-left p-3 rounded-xl bg-emerald-500/20 border border-emerald-500 text-xs font-semibold text-emerald-200 flex items-center justify-between";
+                } else if (i === selectedIdx) {
+                    options[i].className = "w-full text-left p-3 rounded-xl bg-rose-500/20 border border-rose-500 text-xs font-semibold text-rose-200 flex items-center justify-between";
+                }
+            }
+
+            const feedbackBox = document.getElementById('quiz-feedback');
+            const feedbackIcon = document.getElementById('quiz-feedback-icon');
+            const feedbackText = document.getElementById('quiz-feedback-text');
+            feedbackBox.classList.remove('hidden');
+
+            if (selectedIdx === qData.answer) {
+                score++;
+                document.getElementById('quiz-score').innerText = score;
+                feedbackBox.className = "p-3 rounded-xl text-xs font-medium mb-4 flex items-start space-x-2 bg-emerald-500/20 border border-emerald-500/50 text-emerald-200";
+                feedbackIcon.className = "fa-solid fa-circle-check text-emerald-400 text-sm mt-0.5";
+                feedbackText.innerHTML = `<strong>Correct!</strong> ${qData.explanation}`;
+            } else {
+                feedbackBox.className = "p-3 rounded-xl text-xs font-medium mb-4 flex items-start space-x-2 bg-rose-500/20 border border-rose-500/50 text-rose-200";
+                feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-400 text-sm mt-0.5";
+                feedbackText.innerHTML = `<strong>Incorrect.</strong> ${qData.explanation}`;
+            }
+
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIdx++;
+            if (currentQuizIdx < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                // Show completion
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('quiz-completion').classList.remove('hidden');
+                document.getElementById('quiz-final-score').innerText = `${score} / ${quizQuestions.length}`;
+                
+                let msg = "Fantastic job mastering carbon nomenclature!";
+                if (score === quizQuestions.length) msg = "Outstanding! Perfect score! Amardeep School Chemistry Champion!";
+                else if (score >= 3) msg = "Great work! You have a solid grasp of 1-6 carbon alkanes.";
+                else msg = "Good effort! Review the Visual Lab and Flip Cards to sharpen your chemistry skills.";
+                
+                document.getElementById('quiz-final-message').innerText = msg;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuizIdx = 0;
+            score = 0;
+            document.getElementById('quiz-score').innerText = '0';
+            document.getElementById('quiz-completion').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // Initialize App on load
+        window.onload = function() {
+            selectCarbon(1);
+            updateFlashCard();
+            loadQuizQuestion();
+        };
+    </script>
+</body>
+</html>
