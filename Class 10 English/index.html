@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amardeep School - Preposition Visual Lab & Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #eef2f6 100%);
+        }
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        /* Smooth animation for visual lab character */
+        .lab-character {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col items-center">
+
+    <header class="w-full max-w-md bg-indigo-600 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-50 rounded-b-2xl">
+        <div class="flex items-center space-x-2">
+            <div class="bg-white text-indigo-600 p-2 rounded-xl font-bold shadow-sm">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight">Amardeep School</h1>
+                <p class="text-xs text-indigo-200">Class 10 English • Prepositions</p>
+            </div>
+        </div>
+        <div class="bg-indigo-500 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-indigo-400">
+            Visual Lab
+        </div>
+    </header>
+
+    <nav class="w-full max-w-md px-4 mt-4">
+        <div class="flex bg-white p-1 rounded-2xl shadow-sm border border-slate-100">
+            <button onclick="switchTab('lab')" id="btn-lab" class="flex-1 py-2.5 rounded-xl font-medium text-sm transition-all text-indigo-600 bg-indigo-50 shadow-sm flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-shapes"></i>
+                <span>Visual Lab</span>
+            </button>
+            <button onclick="switchTab('cards')" id="btn-cards" class="flex-1 py-2.5 rounded-xl font-medium text-sm transition-all text-slate-500 hover:text-slate-800 flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-clone"></i>
+                <span>FlipCards</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="btn-quiz" class="flex-1 py-2.5 rounded-xl font-medium text-sm transition-all text-slate-500 hover:text-slate-800 flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-circle-question"></i>
+                <span>Quiz</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="w-full max-w-md p-4 flex-1 pb-16">
+
+        <!-- SECTION 1: VISUAL LAB -->
+        <section id="section-lab" class="space-y-4">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+                        <i class="fa-solid fa-vr-cardboard text-indigo-600"></i>
+                        <span>Interactive Preposition Lab</span>
+                    </h2>
+                    <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2.5 py-1 rounded-full">Tap buttons below</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">See how prepositions describe the position of our playful cat relative to objects!</p>
+
+                <!-- Stage / Viewport -->
+                <div id="lab-stage" class="relative w-full h-64 bg-gradient-to-b from-sky-100 to-amber-50 rounded-2xl overflow-hidden border-2 border-indigo-100 flex items-center justify-center shadow-inner">
+                    <!-- Background Environment elements -->
+                    <div class="absolute bottom-4 left-4 text-emerald-600 text-3{-} opacity-80"><i class="fa-solid fa-tree"></i></div>
+                    <div class="absolute bottom-4 right-6 text-emerald-600 text-2xl opacity-80"><i class="fa-solid fa-tree"></i></div>
+                    <div class="absolute top-4 right-8 text-amber-400 text-3xl"><i class="fa-solid fa-sun animate-spin" style="animation-duration: 20s;"></i></div>
+
+                    <!-- Reference Object (Box / Table) -->
+                    <div id="ref-object" class="absolute bottom-10 w-28 h-20 bg-amber-800 rounded-lg shadow-md flex items-center justify-center border-4 border-amber-900 z-10">
+                        <span class="text-amber-200 text-xs font-bold uppercase tracking-wider bg-amber-950 px-2 py-1 rounded">Box / Table</span>
+                    </div>
+
+                    <!-- Second object for 'between' or 'beside' -->
+                    <div id="ref-object-2" class="absolute bottom-10 left-6 w-12 h-16 bg-slate-400 rounded-md shadow-sm hidden z-10 flex items-center justify-center text-[10px] text-white font-bold">Wall</div>
+                    <div id="ref-object-3" class="absolute bottom-10 right-6 w-12 h-16 bg-slate-400 rounded-md shadow-sm hidden z-10 flex items-center justify-center text-[10px] text-white font-bold">Tree</div>
+
+                    <!-- Character (Cat) -->
+                    <div id="lab-character" class="lab-character absolute z-20 flex flex-col items-center bottom-32 left-1/2 -translate-x-1/2">
+                        <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-white text-2xl shadow-md border-2 border-amber-600 relative">
+                            🐱
+                            <!-- Cute ears -->
+                            <div class="absolute -top-1 -left-1 w-3 h-3 bg-amber-600 rotate-45 rounded-sm"></div>
+                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-amber-600 rotate-45 rounded-sm"></div>
+                        </div>
+                        <span class="bg-slate-900 text-white text-[10px] px-1.5 py-0.5 rounded-full mt-1 font-semibold shadow">Max</span>
+                    </div>
+                </div>
+
+                <!-- Sentence Display Box -->
+                <div class="mt-4 p-3.5 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                        <i class="fa-solid fa-book-open text-sm"></i>
+                    </div>
+                    <div>
+                        <div class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Example Sentence</div>
+                        <div id="lab-sentence" class="text-sm font-semibold text-slate-800">The cat is <span class="text-indigo-600 underline decoration-2 underline-offset-2">on</span> the table.</div>
+                    </div>
+                </div>
+
+                <!-- Preposition Controls Grid -->
+                <div class="grid grid-cols-3 gap-2 mt-4">
+                    <button onclick="updateLabState('on')" class="lab-btn py-2.5 px-3 rounded-xl border border-indigo-200 bg-indigo-600 text-white font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5" data-prep="on">
+                        <i class="fa-solid fa-arrow-up"></i><span>On</span>
+                    </button>
+                    <button onclick="updateLabState('in')" class="lab-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5" data-prep="in">
+                        <i class="fa-solid fa-box-open"></i><span>In</span>
+                    </button>
+                    <button onclick="updateLabState('under')" class="lab-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5" data-prep="under">
+                        <i class="fa-solid fa-arrow-down"></i><span>Under</span>
+                    </button>
+                    <button onclick="updateLabState('behind')" class="lab-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5" data-prep="behind">
+                        <i class="fa-solid fa-ghost"></i><span>Behind</span>
+                    </button>
+                    <button onclick="updateLabState('between')" class="lab-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5" data-prep="between">
+                        <i class="fa-solid fa-arrows-split-up-and-left"></i><span>Between</span>
+                    </button>
+                    <button onclick="updateLabState('beside')" class="lab-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5" data-prep="beside">
+                        <i class="fa-solid fa-left-right"></i><span>Beside</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: FLIPCARD CHALLENGE -->
+        <section id="section-cards" class="space-y-4 hidden">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+                        <i class="fa-solid fa-clone text-indigo-600"></i>
+                        <span>Preposition FlipCards</span>
+                    </h2>
+                    <span id="card-counter" class="text-xs bg-indigo-100 text-indigo-700 font-medium px-2.5 py-1 rounded-full">Card 1 of 6</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">Tap the card to reveal Class 10 preposition rules, usage hints, and correct examples!</p>
+
+                <!-- Flip Card Container -->
+                <div class="flip-card w-full h-64 cursor-pointer" onclick="toggleCardFlip(this)">
+                    <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-md">
+                        <!-- Front -->
+                        <div class="flip-card-front absolute w-full h-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white rounded-2xl p-6 flex flex-col justify-between items-center border border-indigo-400">
+                            <div class="text-xs uppercase tracking-widest bg-indigo-700/50 px-3 py-1 rounded-full font-semibold">Question / Prompt</div>
+                            <div class="my-auto">
+                                <div id="card-front-text" class="text-xl font-bold">When do we use 'At' vs 'In' for places?</div>
+                                <div class="text-xs text-indigo-200 mt-2"><i class="fa-solid fa-hand-pointer animate-bounce"></i> Tap card to flip</div>
+                            </div>
+                            <div class="text-xs text-indigo-200">Amardeep School • Grade 10 Grammar</div>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back absolute w-full h-full bg-white text-slate-800 rounded-2xl p-6 flex flex-col justify-between items-start border border-slate-200 text-left">
+                            <div class="w-full flex justify-between items-center">
+                                <span class="text-xs uppercase tracking-widest bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold">Rule & Example</span>
+                                <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                            </div>
+                            <div class="my-auto space-y-2">
+                                <div id="card-back-rule" class="text-sm font-semibold text-slate-900">Rule: 'At' for specific exact points; 'In' for larger enclosed areas/cities.</div>
+                                <div id="card-back-example" class="text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-slate-600">Example: She lives <span class="font-bold text-indigo-600">at</span> 12 MG Road <span class="font-bold text-indigo-600">in</span> Delhi.</div>
+                            </div>
+                            <div class="text-[11px] text-slate-400 w-full text-center">Tap again to go back</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation for Cards -->
+                <div class="flex justify-between items-center mt-4">
+                    <button onclick="prevCard()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs flex items-center space-x-1.5 transition">
+                        <i class="fa-solid fa-arrow-left"></i><span>Previous</span>
+                    </button>
+                    <button onclick="nextCard()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium text-xs flex items-center space-x-1.5 shadow-sm transition">
+                        <span>Next Card</span><i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: QUIZ -->
+        <section id="section-quiz" class="space-y-4 hidden">
+            <div id="quiz-card" class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-3">
+                    <span id="quiz-progress" class="text-xs bg-indigo-100 text-indigo-700 font-semibold px-3 py-1 rounded-full">Question 1 of 5</span>
+                    <span id="quiz-score-badge" class="text-xs bg-emerald-100 text-emerald-700 font-semibold px-3 py-1 rounded-full">Score: 0</span>
+                </div>
+
+                <div id="quiz-question-container">
+                    <h3 id="quiz-question" class="text-base font-bold text-slate-800 mb-4">Choose the correct preposition: "He has been living here ________ 2018."</h3>
+
+                    <div id="quiz-options" class="space-y-2.5">
+                        <!-- Options injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Explanation Box -->
+                <div id="quiz-feedback" class="mt-4 p-3 rounded-2xl hidden text-xs">
+                    <!-- Feedback text -->
+                </div>
+
+                <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="w-full mt-4 py-3 bg-indigo-600 text-white rounded-2xl font-semibold text-sm shadow-md hover:bg-indigo-700 transition hidden">
+                    Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Completion Screen -->
+            <div id="quiz-complete" class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center hidden space-y-4">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-sm">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Quiz Completed!</h3>
+                <p id="quiz-final-score" class="text-sm text-slate-600">You scored 5 out of 5 correctly!</p>
+                <div class="p-3 bg-indigo-50 rounded-2xl text-xs text-indigo-700 font-medium">
+                    Excellent work! You are well-prepared for your Class 10 Preposition board exam questions.
+                </div>
+                <button onclick="restartQuiz()" class="w-full py-3 bg-indigo-600 text-white rounded-2xl font-semibold text-sm shadow-md hover:bg-indigo-700 transition">
+                    Restart Quiz <i class="fa-solid fa-rotate-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full py-3 text-center text-xs text-slate-400 border-t border-slate-100 bg-white/50">
+        Amardeep School • Interactive Learning Module 2026
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            ['lab', 'cards', 'quiz'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`btn-${t}`);
+                btn.className = "flex-1 py-2.5 rounded-xl font-medium text-sm transition-all text-slate-500 hover:text-slate-800 flex items-center justify-center space-x-2";
+            });
+            document.getElementById(`section-${tab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`btn-${tab}`);
+            activeBtn.className = "flex-1 py-2.5 rounded-xl font-medium text-sm transition-all text-indigo-600 bg-indigo-50 shadow-sm flex items-center justify-center space-x-2";
+        }
+
+        function updateLabState(prep) {
+            // Update button styles
+            document.querySelectorAll('.lab-btn').forEach(btn => {
+                if(btn.getAttribute('data-prep') === prep) {
+                    btn.className = "lab-btn py-2.5 px-3 rounded-xl border border-indigo-200 bg-indigo-600 text-white font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5";
+                } else {
+                    btn.className = "lab-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-xs shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5";
+                }
+            });
+
+            const char = document.getElementById('lab-character');
+            const sentence = document.getElementById('lab-sentence');
+            const obj2 = document.getElementById('ref-object-2');
+            const obj3 = document.getElementById('ref-object-3');
+
+            // Hide secondary reference objects by default
+            obj2.classList.add('hidden');
+            obj3.classList.add('hidden');
+
+            switch(prep) {
+                case 'on':
+                    char.style.bottom = "85px";
+                    char.style.left = "50%";
+                    sentence.innerHTML = `The cat is <span class="text-indigo-600 underline decoration-2 underline-offset-2 font-bold">on</span> the table.`;
+                    break;
+                case 'in':
+                    char.style.bottom = "35px";
+                    char.style.left = "50%";
+                    sentence.innerHTML = `The cat is <span class="text-indigo-600 underline decoration-2 underline-offset-2 font-bold">in</span> the box.`;
+                    break;
+                case 'under':
+                    char.style.bottom = "12px";
+                    char.style.left = "50%";
+                    sentence.innerHTML = `The cat is <span class="text-indigo-600 underline decoration-2 underline-offset-2 font-bold">under</span> the table.`;
+                    break;
+                case 'behind':
+                    char.style.bottom = "50px";
+                    char.style.left = "38%";
+                    sentence.innerHTML = `The cat is <span class="text-indigo-600 underline decoration-2 underline-offset-2 font-bold">behind</span> the table.`;
+                    break;
+                case 'between':
+                    obj2.classList.remove('hidden');
+                    obj3.classList.remove('hidden');
+                    char.style.bottom = "40px";
+                    char.style.left = "50%";
+                    sentence.innerHTML = `The cat is <span class="text-indigo-600 underline decoration-2 underline-offset-2 font-bold">between</span> the wall and the tree.`;
+                    break;
+                case 'beside':
+                    char.style.bottom = "40px";
+                    char.style.left = "72%";
+                    sentence.innerHTML = `The cat is <span class="text-indigo-600 underline decoration-2 underline-offset-2 font-bold">beside</span> the table.`;
+                    break;
+            }
+        }
+
+        const flashcards = [
+            {
+                front: "When do we use 'Since' vs 'For' in time prepositions?",
+                rule: "Rule: 'Since' is used for a specific point in time (start point); 'For' is used for a duration or period of time.",
+                example: "Example: He has studied <span class='font-bold text-indigo-600'>since</span> morning <span class='font-bold text-indigo-600'>for</span> 3 hours."
+            },
+            {
+                front: "Difference between 'Between' and 'Among'?",
+                rule: "Rule: 'Between' is used for two people, things, or distinct groups; 'Among' is used for more than two (a group or collective).",
+                example: "Example: Divide the sweets <span class='font-bold text-indigo-600'>between</span> two brothers <span class='font-bold text-indigo-600'>among</span> the students."
+            },
+            {
+                front: "Usage of 'In', 'On', and 'At' for time?",
+                rule: "Rule: 'In' for months, years, centuries, and long periods; 'On' for days and dates; 'At' for precise times and clock hours.",
+                example: "Example: Meeting <span class='font-bold text-indigo-600'>at</span> 5 PM <span class='font-bold text-indigo-600'>on</span> Monday <span class='font-bold text-indigo-600'>in</span> July."
+            },
+            {
+                front: "What is the difference between 'By' and 'With'?",
+                rule: "Rule: 'By' indicates the doer of an action (agent in passive voice); 'With' indicates the instrument or tool used.",
+                example: "Example: The snake was killed <span class='font-bold text-indigo-600'>by</span> him <span class='font-bold text-indigo-600'>with</span> a stick."
+            },
+            {
+                front: "When to use 'Above' vs 'Over'?",
+                rule: "Rule: 'Above' indicates higher than something without touching; 'Over' is used when covering something or movement across.",
+                example: "Example: The plane flew <span class='font-bold text-indigo-600'>over</span> the hills. The clouds are <span class='font-bold text-indigo-600'>above</span> us."
+            },
+            {
+                front: "Difference between 'Across' and 'Through'?",
+                rule: "Rule: 'Across' is used for flat surfaces or from one side to another; 'Through' is used for 3D enclosed spaces (tunnels, forests).",
+                example: "Example: Walk <span class='font-bold text-indigo-600'>across</span> the bridge and walk <span class='font-bold text-indigo-600'>through</span> the tunnel."
+            }
+        ];
+
+        let currentCardIndex = 0;
+
+        function toggleCardFlip(cardElement) {
+            cardElement.classList.toggle('flipped');
+        }
+
+        function updateCardDisplay() {
+            const card = flashcards[currentCardIndex];
+            const cardEl = document.querySelector('.flip-card');
+            cardEl.classList.remove('flipped');
+            
+            document.getElementById('card-front-text').textContent = card.front;
+            document.getElementById('card-back-rule').textContent = card.rule;
+            document.getElementById('card-back-example').innerHTML = card.example;
+            document.getElementById('card-counter').textContent = `Card ${currentCardIndex + 1} of ${flashcards.length}`;
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % flashcards.length;
+            updateCardDisplay();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + flashcards.length) % flashcards.length;
+            updateCardDisplay();
+        }
+
+        const quizQuestions = [
+            {
+                question: "He has been waiting for the bus ________ 8:00 AM.",
+                options: ["for", "since", "at", "from"],
+                answer: 1,
+                explanation: "Correct! 'Since' is used for a specific starting point in time ('8:00 AM')."
+            },
+            {
+                question: "The agreement was signed ________ the two countries after negotiations.",
+                options: ["among", "between", "with", "across"],
+                answer: 1,
+                explanation: "Correct! 'Between' is used when referring to two distinct parties or countries."
+            },
+            {
+                question: "She jumped ________ the swimming pool to save the child.",
+                options: ["in", "into", "on", "through"],
+                answer: 1,
+                explanation: "Correct! 'Into' indicates movement or action with direction toward the inside of a 3D space."
+            },
+            {
+                question: "My birthday falls ________ the 15th of August.",
+                options: ["in", "at", "on", "by"],
+                answer: 2,
+                explanation: "Correct! 'On' is used before specific days and dates."
+            },
+            {
+                question: "The cat climbed ________ the tree to escape the dog.",
+                options: ["up", "over", "above", "across"],
+                answer: 0,
+                explanation: "Correct! 'Up' is the standard preposition for vertical upward movement."
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let answeredCurrent = false;
+
+        function loadQuizQuestion() {
+            answeredCurrent = false;
+            const q = quizQuestions[currentQuizIndex];
+            document.getElementById('quiz-progress').textContent = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-score-badge').textContent = `Score: ${quizScore}`;
+            document.getElementById('quiz-question').textContent = q.question;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 font-medium text-sm transition flex items-center justify-between";
+                btn.innerHTML = `<span>${opt}</span><i class="fa-regular fa-circle text-slate-400"></i>`;
+                btn.onclick = () => selectQuizOption(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+        }
+
+        function selectQuizOption(selectedIndex, btnElement) {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+
+            const q = quizQuestions[currentQuizIndex];
+            const optionsContainer = document.getElementById('quiz-options');
+            const allBtns = optionsContainer.children;
+
+            if (selectedIndex === q.answer) {
+                quizScore++;
+                btnElement.className = "w-full text-left p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold text-sm flex items-center justify-between shadow-sm";
+                btnElement.innerHTML = `<span>${q.options[selectedIndex]}</span><i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+            } else {
+                btnElement.className = "w-full text-left p-3 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 font-semibold text-sm flex items-center justify-between shadow-sm";
+                btnElement.innerHTML = `<span>${q.options[selectedIndex]}</span><i class="fa-solid fa-circle-xmark text-rose-600"></i>`;
+                
+                // Highlight correct answer
+                allBtns[q.answer].className = "w-full text-left p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold text-sm flex items-center justify-between shadow-sm";
+            }
+
+            document.getElementById('quiz-score-badge').textContent = `Score: ${quizScore}`;
+
+            // Show feedback
+            const feedbackBox = document.getElementById('quiz-feedback');
+            feedbackBox.className = selectedIndex === q.answer ? "mt-4 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium" : "mt-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium";
+            feedbackBox.innerHTML = q.explanation;
+            feedbackBox.classList.remove('hidden');
+
+            // Show next button or complete
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                document.getElementById('quiz-card').classList.add('hidden');
+                document.getElementById('quiz-complete').classList.remove('hidden');
+                document.getElementById('quiz-final-score').textContent = `You scored ${quizScore} out of ${quizQuestions.length} correctly!`;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-complete').classList.add('hidden');
+            document.getElementById('quiz-card').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // Initialize quiz on load
+        window.onload = () => {
+            loadQuizQuestion();
+        };
+    </script>
+</body>
+</html>
