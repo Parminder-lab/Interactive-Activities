@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 10 Chemistry - Structural Nomenclature Lab</title>
+    <!-- Tailwind CSS for modern mobile UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Top Header Bar -->
+    <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white px-4 py-3 shadow-md flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-full bg-amber-400 text-indigo-950 font-extrabold flex items-center justify-center shadow text-xs">
+                AS
+            </div>
+            <div>
+                <span class="text-[10px] uppercase tracking-wider text-indigo-300 font-semibold block leading-none">Amardeep School</span>
+                <h1 class="text-xs font-bold leading-tight mt-0.5">Structural Nomenclature Lab</h1>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 bg-indigo-950/60 px-3 py-1.5 rounded-full border border-indigo-700/50">
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <span id="header-score" class="text-xs font-bold text-amber-300">0 pts</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-md w-full mx-auto p-4 flex flex-col pb-20">
+
+        <!-- Navigation Tabs -->
+        <nav class="flex bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200 mb-4">
+            <button onclick="switchTab('lab')" id="tab-lab" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 bg-indigo-600 text-white shadow-sm">
+                <i class="fa-solid fa-flask"></i>
+                <span>Visual Lab</span>
+            </button>
+            <button onclick="switchTab('builder')" id="tab-builder" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 text-slate-600 hover:text-indigo-600">
+                <i class="fa-solid fa-puzzle-piece"></i>
+                <span>Structure Builder</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 text-slate-600 hover:text-indigo-600">
+                <i class="fa-solid fa-brain"></i>
+                <span>Quiz Game</span>
+            </button>
+        </nav>
+
+        <!-- TAB 1: VISUAL LAB WITH CHARACTERS -->
+        <div id="section-lab" class="space-y-4">
+            <!-- Mentor Characters Card -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-indigo-100 rounded-3xl p-4 shadow-sm space-y-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-md shrink-0">
+                        🧑‍🔬
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">Lab Guide: Atom Andy</span>
+                        <h2 class="text-xs font-bold text-slate-800 mt-1">Valency & Structure Inspector</h2>
+                    </div>
+                </div>
+                <div class="bg-white/80 p-2.5 rounded-2xl border border-indigo-100 text-[11px] text-slate-700 flex items-start space-x-2">
+                    <span class="text-base shrink-0">👩‍🔬</span>
+                    <p><strong class="text-indigo-900">Bond Betty says:</strong> "Remember Class 10 chemists! Carbon always forms 4 bonds, Hydrogen 1 bond, Oxygen 2 bonds, and Halogens 1 bond. Let's inspect structural representations with zero molecular formulas!"</p>
+                </div>
+            </div>
+
+            <!-- Functional Group Horizontal Selector -->
+            <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1">
+                <button onclick="selectLabGroup('halogen')" id="btn-lab-halogen" class="lab-group-btn shrink-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-md">
+                    <i class="fa-solid fa-bolt mr-1"></i> Halogens (-Cl, -Br)
+                </button>
+                <button onclick="selectLabGroup('alcohol')" id="btn-lab-alcohol" class="lab-group-btn shrink-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-white text-slate-700 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-wine-glass mr-1"></i> Alcohol (-OH)
+                </button>
+                <button onclick="selectLabGroup('aldehyde')" id="btn-lab-aldehyde" class="lab-group-btn shrink-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-white text-slate-700 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-cube mr-1"></i> Aldehyde (-CHO)
+                </button>
+                <button onclick="selectLabGroup('ketone')" id="btn-lab-ketone" class="lab-group-btn shrink-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-white text-slate-700 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-sliders mr-1"></i> Ketone (>C=O)
+                </button>
+                <button onclick="selectLabGroup('acid')" id="btn-lab-acid" class="lab-group-btn shrink-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-white text-slate-700 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-seedling mr-1"></i> Carboxylic Acid (-COOH)
+                </button>
+            </div>
+
+            <!-- Lab Details Container -->
+            <div id="lab-details-container" class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 space-y-4">
+                <!-- Populated via JavaScript -->
+            </div>
+        </div>
+
+        <!-- TAB 2: STRUCTURE BUILDER & CHALLENGE -->
+        <div id="section-builder" class="hidden space-y-4">
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">Interactive Activity</span>
+                        <h2 class="text-sm font-bold text-slate-800 mt-1">Match Structural Diagram to IUPAC Name</h2>
+                    </div>
+                    <span id="builder-counter" class="text-xs font-bold text-slate-400">Task 1/4</span>
+                </div>
+
+                <div id="builder-content" class="space-y-4">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: QUIZ SECTION -->
+        <div id="section-quiz" class="hidden space-y-4">
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span id="quiz-prog-label" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Question 1 of 5</span>
+                    <span class="text-xs font-semibold text-slate-400">Score: <span id="quiz-score" class="text-indigo-600 font-bold">0</span></span>
+                </div>
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
+                    <div id="quiz-bar" class="bg-indigo-600 h-full w-1/5 transition-all duration-300 rounded-full"></div>
+                </div>
+
+                <div id="quiz-content" class="space-y-4">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Hint Box -->
+            <div id="quiz-hint-box" class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-xs text-amber-900 hidden flex items-start space-x-2">
+                <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5 text-sm shrink-0"></i>
+                <div id="quiz-hint-text" class="flex-1 leading-relaxed"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-2.5 px-4 text-center text-[11px] text-slate-500 fixed bottom-0 left-0 right-0 z-40">
+        <span>Amardeep School Chemistry Dept &bull; NCERT Class 10 Curriculum</span>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        // Meticulously verified structural representations (strictly full structural/condensed bonds, no molecular formulas like CH3OH)
+        const labData = {
+            halogen: {
+                title: "Halogens (Chlorine & Bromine)",
+                prefix: "Chloro- / Bromo-",
+                role: "Substituent attached to the carbon backbone (replaces hydrogen)",
+                rule: "Number the carbon chain from the end nearest to the halogen atom. Halogens act as substituent prefixes in IUPAC naming.",
+                examples: [
+                    {
+                        name: "Chloromethane",
+                        structure: "    H\n    |\nH — C — Cl\n    |\n    H",
+                        desc: "A single carbon atom bonded to three hydrogen atoms and one chlorine atom."
+                    },
+                    {
+                        name: "2-Bromopropane",
+                        structure: "H   H   H\n|   |   |\nH — C — C — C — H\n    |   |\n    Br  H",
+                        desc: "A 3-carbon chain with a bromine atom attached to the central carbon atom (Carbon-2)."
+                    }
+                ],
+                color: "from-blue-500 to-indigo-600",
+                char: "🔬"
+            },
+            alcohol: {
+                title: "Alcohols (—OH Functional Group)",
+                suffix: "-ol",
+                role: "Oxygen-containing functional group with hydroxyl connectivity (—O—H)",
+                rule: "Replace the terminal 'e' of the parent alkane name with '-ol'. Number the carbon chain to give the —OH group the lowest possible number.",
+                examples: [
+                    {
+                        name: "Ethanol",
+                        structure: "H   H\n|   |\nH — C — C — O — H\n|   |\nH   H",
+                        desc: "A 2-carbon chain ending with an oxygen-hydrogen (—O—H) functional group."
+                    },
+                    {
+                        name: "Propan-2-ol",
+                        structure: "H   H   H\n|   |   |\nH — C — C — C — H\n    |   |\n    O   H\n    |\n    H",
+                        desc: "A 3-carbon chain where the hydroxyl group (—OH) is attached to the central carbon atom."
+                    }
+                ],
+                color: "from-purple-500 to-pink-600",
+                char: "🧪"
+            },
+            aldehyde: {
+                title: "Aldehydes (—CHO Functional Group)",
+                suffix: "-al",
+                role: "Terminal carbonyl group (Carbon double-bonded to Oxygen at chain end: —C(=O)—H)",
+                rule: "The carbon of the aldehyde group is always designated as Carbon-1. Replace the 'e' of the alkane with '-al'.",
+                examples: [
+                    {
+                        name: "Methanal (Formaldehyde)",
+                        structure: "    O\n    ||\nH — C — H",
+                        desc: "A single carbon atom double-bonded to an oxygen atom and bonded to two hydrogens."
+                    },
+                    {
+                        name: "Ethanal (Acetaldehyde)",
+                        structure: "    O\n    ||\nH — C — C — H\n        |\n        H",
+                        desc: "A 2-carbon chain where the terminal carbon has a double bond to oxygen and a single bond to hydrogen."
+                    }
+                ],
+                color: "from-amber-500 to-orange-600",
+                char: "⚡"
+            },
+            ketone: {
+                title: "Ketones (>C=O Functional Group)",
+                suffix: "-one",
+                role: "Non-terminal carbonyl group (Carbon double-bonded to Oxygen inside chain)",
+                rule: "The carbonyl carbon must be flanked by carbon atoms on both sides. Replace the 'e' of the parent alkane with '-one'.",
+                examples: [
+                    {
+                        name: "Propanone (Acetone)",
+                        structure: "H   O   H\n|   ||  |\nH — C — C — C — H\n|       |\nH       H",
+                        desc: "A 3-carbon chain where the middle carbon is double-bonded to an oxygen atom."
+                    },
+                    {
+                        name: "Butanone",
+                        structure: "H   O   H   H\n|   ||  |   |\nH — C — C — C — C — H\n|       |   |\nH       H   H",
+                        desc: "A 4-carbon chain featuring a central carbonyl carbon double-bonded to oxygen."
+                    }
+                ],
+                color: "from-emerald-500 to-teal-600",
+                char: "💎"
+            },
+            acid: {
+                title: "Carboxylic Acids (—COOH Functional Group)",
+                suffix: "-oic acid",
+                role: "Carboxyl group combining carbonyl and hydroxyl on terminal carbon",
+                rule: "The carboxyl carbon is always Carbon-1. Replace the 'e' of the parent alkane with '-oic acid'.",
+                examples: [
+                    {
+                        name: "Ethanoic acid (Acetic acid)",
+                        structure: "        O\n        ||\nH — C — C — O — H\n    |\n    H",
+                        desc: "A 2-carbon chain where the terminal carbon is bonded to a carbonyl oxygen and a hydroxyl (—OH) group."
+                    },
+                    {
+                        name: "Methanoic acid (Formic acid)",
+                        structure: "    O\n    ||\nH — C — O — H",
+                        desc: "A single carbon atom bonded to both a carbonyl oxygen double bond and a hydroxyl group."
+                    }
+                ],
+                color: "from-rose-500 to-red-600",
+                char: "🍋"
+            }
+        };
+
+        // Builder Challenge Data with Verified Structures
+        const builderChallenges = [
+            {
+                prompt: "Match this structural diagram to its correct IUPAC name:",
+                structure: "H   H\n|   |\nH — C — C — O — H\n|   |\nH   H",
+                options: ["Chloromethane", "Ethanol", "Ethanal", "Propanone"],
+                correct: 1,
+                explanation: "This full structural representation shows 2 carbons in a chain ending with an —OH hydroxyl group, which names Ethanol."
+            },
+            {
+                prompt: "Identify the correct IUPAC name for this halogenated structural representation:",
+                structure: "    H\n    |\nH — C — Cl\n    |\n    H",
+                options: ["Chloromethane", "Methanol", "Methanal", "Methanoic acid"],
+                correct: 0,
+                explanation: "A 1-carbon atom bonded with three hydrogens and one chlorine atom is Chloromethane."
+            },
+            {
+                prompt: "What is the IUPAC name for this ketone structural representation?",
+                structure: "H   O   H\n|   ||  |\nH — C — C — C — H\n|       |\nH       H",
+                options: ["Propanol", "Ethanal", "Propanone", "Ethanoic acid"],
+                correct: 2,
+                explanation: "A 3-carbon chain with a central >C=O carbonyl group is Propanone (Acetone)."
+            },
+            {
+                prompt: "Identify this terminal carboxylic acid structural representation:",
+                structure: "        O\n        ||\nH — C — C — O — H\n    |\n    H",
+                options: ["Ethanol", "Ethanal", "Ethanoic acid", "Butanone"],
+                correct: 2,
+                explanation: "The combination of a carbonyl oxygen double bond and a hydroxyl group on a 2-carbon chain gives Ethanoic acid."
+            }
+        ];
+
+        // Quiz Questions (Structure and Nomenclature focused)
+        const quizQuestions = [
+            {
+                question: "Which suffix is used in IUPAC nomenclature for organic compounds containing the —OH functional group?",
+                options: ["-al", "-one", "-ol", "-oic acid"],
+                correct: 2,
+                hint: "Think of ethanol or propanol.",
+                explanation: "The hydroxyl group (—OH) designates alcohols, which use the suffix '-ol'."
+            },
+            {
+                question: "In a structural diagram, how is an Aldehyde group (—CHO) positioned?",
+                options: ["Always at the terminal end of the carbon chain", "Strictly in the middle between two carbons", "Attached as a halogen substituent", "Forming a cyclic ring structure"],
+                correct: 0,
+                hint: "Aldehydes contain a terminal carbonyl carbon.",
+                explanation: "Aldehydes are terminal functional groups where the carbonyl carbon is at the end (Carbon-1) of the carbon chain."
+            },
+            {
+                question: "What differentiates a Ketone structure from an Aldehyde structure?",
+                options: ["Ketones have chlorine attached", "Ketone carbonyl group is flanked by two carbons in the chain interior", "Ketones do not contain oxygen", "Ketones are only 1-carbon long"],
+                correct: 1,
+                hint: "Look at whether the >C=O is in the middle or at the end.",
+                explanation: "Ketones feature a carbonyl group (>C=O) located inside the carbon chain, bonded to two other carbon atoms."
+            },
+            {
+                question: "What is the structural characteristic of a Carboxylic Acid functional group (—COOH)?",
+                options: ["Only a halogen atom", "A carbon atom bonded to an oxygen with a double bond and an —OH group", "An oxygen atom bonded between two carbons", "A triple bond between carbons"],
+                correct: 1,
+                hint: "It combines carbonyl and hydroxyl features on the same carbon.",
+                explanation: "Carboxylic acids contain the carboxyl group (—COOH), consisting of a carbonyl double bond (=O) and a hydroxyl single bond (—OH) on the same terminal carbon."
+            },
+            {
+                question: "When naming a carbon chain with a Chlorine or Bromine atom attached, how is it treated in IUPAC nomenclature?",
+                options: ["As a suffix like '-chloro'", "As a prefix (Chloro- or Bromo-)", "Ignored entirely", "As '-oic acid'"],
+                correct: 1,
+                hint: "Halogens are substituents, similar to alkyl branches.",
+                explanation: "Halogens (Chlorine, Bromine) are always treated as substituent prefixes in IUPAC naming."
+            }
+        ];
+
+        let currentTab = 'lab';
+        let currentLabKey = 'halogen';
+        let builderIndex = 0;
+        let builderScore = 0;
+        let quizIndex = 0;
+        let quizScore = 0;
+        let selectedQuizOption = null;
+        let quizAnswered = false;
+
+        window.onload = function() {
+            selectLabGroup('halogen');
+            loadBuilderChallenge();
+            loadQuizQuestion();
+        };
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const labSec = document.getElementById('section-lab');
+            const builderSec = document.getElementById('section-builder');
+            const quizSec = document.getElementById('section-quiz');
+
+            const btnLab = document.getElementById('tab-lab');
+            const btnBuilder = document.getElementById('tab-builder');
+            const btnQuiz = document.getElementById('tab-quiz');
+
+            // Reset all
+            labSec.classList.add('hidden');
+            builderSec.classList.add('hidden');
+            quizSec.classList.add('hidden');
+            btnLab.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 text-slate-600 hover:text-indigo-600 bg-white";
+            btnBuilder.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 text-slate-600 hover:text-indigo-600 bg-white";
+            btnQuiz.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 text-slate-600 hover:text-indigo-600 bg-white";
+
+            if (tab === 'lab') {
+                labSec.classList.remove('hidden');
+                btnLab.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 bg-indigo-600 text-white shadow-sm";
+            } else if (tab === 'builder') {
+                builderSec.classList.remove('hidden');
+                btnBuilder.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 bg-indigo-600 text-white shadow-sm";
+            } else {
+                quizSec.classList.remove('hidden');
+                btnQuiz.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 bg-indigo-600 text-white shadow-sm";
+            }
+        }
+
+        // Lab Selector
+        function selectLabGroup(key) {
+            currentLabKey = key;
+            document.querySelectorAll('.lab-group-btn').forEach(btn => {
+                btn.className = "lab-group-btn shrink-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-white text-slate-700 border border-slate-200 shadow-sm";
+            });
+            document.getElementById(`btn-lab-${key}`).className = "lab-group-btn shrink-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-md";
+
+            const data = labData[key];
+            const container = document.getElementById('lab-details-container');
+
+            let html = `
+                <div class="flex items-center space-x-3 pb-3 border-b border-slate-100">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr ${data.color} flex items-center justify-center text-white text-2xl shadow">
+                        ${data.char}
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Structural Category</span>
+                        <h3 class="text-sm font-bold text-slate-800">${data.title}</h3>
+                    </div>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                        <span class="font-bold text-indigo-700 block mb-0.5"><i class="fa-solid fa-compass mr-1"></i> IUPAC Rule & Identifier:</span>
+                        <p class="text-slate-600 font-medium">${data.role} (${data.prefix || data.suffix})</p>
+                        <p class="text-slate-500 mt-1 leading-relaxed">${data.rule}</p>
+                    </div>
+
+                    <div>
+                        <span class="font-bold text-slate-700 block mb-2"><i class="fa-solid fa-diagram-project mr-1 text-indigo-600"></i> Full Structural Diagrams (No Formulas):</span>
+                        <div class="space-y-2.5">
+            `;
+
+            data.examples.forEach(ex => {
+                html += `
+                    <div class="bg-indigo-50/50 border border-indigo-100 p-3 rounded-2xl space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-indigo-950">${ex.name}</span>
+                        </div>
+                        <div class="bg-slate-900 text-emerald-400 font-mono text-[11px] p-2.5 rounded-xl overflow-x-auto whitespace-pre leading-tight shadow-inner">${ex.structure}</div>
+                        <p class="text-[11px] text-slate-600">${ex.desc}</p>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Builder Challenge Logic
+        function loadBuilderChallenge() {
+            if (builderIndex >= builderChallenges.length) {
+                document.getElementById('builder-content').innerHTML = `
+                    <div class="text-center py-8 space-y-3">
+                        <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow">
+                            🏆
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-800">Structure Builder Complete!</h3>
+                        <p class="text-xs text-slate-500">Fantastic job matching full structural diagrams to IUPAC names.</p>
+                        <button onclick="resetBuilder()" class="bg-indigo-600 text-white font-bold text-xs py-2 px-5 rounded-xl shadow">Restart Builder</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const task = builderChallenges[builderIndex];
+            document.getElementById('builder-counter').innerText = `Task ${builderIndex + 1}/${builderChallenges.length}`;
+
+            let html = `
+                <p class="text-xs font-bold text-slate-700">${task.prompt}</p>
+                <div class="bg-slate-900 text-emerald-400 font-mono text-xs p-3 rounded-2xl overflow-x-auto whitespace-pre leading-tight text-center shadow-inner py-4">${task.structure}</div>
+                <div class="grid grid-cols-2 gap-2 pt-1" id="builder-options">
+            `;
+
+            task.options.forEach((opt, idx) => {
+                html += `
+                    <button onclick="checkBuilderAnswer(${idx})" class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-300 text-xs font-semibold text-slate-700 transition-all text-center">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            html += `</div>`;
+            document.getElementById('builder-content').innerHTML = html;
+        }
+
+        function checkBuilderAnswer(selectedIdx) {
+            const task = builderChallenges[builderIndex];
+            const buttons = document.querySelectorAll('#builder-options button');
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === task.correct) {
+                    btn.className = "p-3 rounded-xl border border-emerald-500 bg-emerald-50 text-xs font-bold text-emerald-900 text-center";
+                } else if (idx === selectedIdx) {
+                    btn.className = "p-3 rounded-xl border border-rose-400 bg-rose-50 text-xs font-semibold text-rose-900 text-center";
+                }
+            });
+
+            if (selectedIdx === task.correct) {
+                builderScore += 25;
+                updateScores();
+                confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+            }
+
+            const container = document.getElementById('builder-content');
+            const nextDiv = document.createElement('div');
+            nextDiv.className = "pt-2 space-y-2";
+            nextDiv.innerHTML = `
+                <div class="bg-indigo-50 p-2.5 rounded-xl text-xs text-indigo-900 border border-indigo-100">
+                    <span class="font-bold block mb-0.5">Explanation:</span>
+                    ${task.explanation}
+                </div>
+                <button onclick="nextBuilderTask()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition-all">
+                    Next Challenge ➔
+                </button>
+            `;
+            container.appendChild(nextDiv);
+        }
+
+        function nextBuilderTask() {
+            builderIndex++;
+            loadBuilderChallenge();
+        }
+
+        function resetBuilder() {
+            builderIndex = 0;
+            builderScore = 0;
+            loadBuilderChallenge();
+        }
+
+        // Quiz Game Logic
+        function loadQuizQuestion() {
+            quizAnswered = false;
+            selectedQuizOption = null;
+            const q = quizQuestions[quizIndex];
+
+            document.getElementById('quiz-prog-label').innerText = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-bar').style.width = `${((quizIndex + 1) / quizQuestions.length) * 100}%`;
+            document.getElementById('quiz-hint-box').classList.add('hidden');
+
+            let html = `
+                <h3 class="text-xs font-bold text-slate-800 leading-snug mb-3">${q.question}</h3>
+                <div class="space-y-2" id="quiz-options-list">
+            `;
+
+            q.options.forEach((opt, idx) => {
+                html += `
+                    <button onclick="selectQuizOption(${idx})" id="q-opt-${idx}" class="w-full text-left p-3 rounded-2xl text-xs font-semibold border border-slate-200 bg-slate-50 hover:bg-indigo-50 transition-all flex items-center justify-between text-slate-700">
+                        <span><span class="w-5 h-5 rounded-full inline-flex items-center justify-center bg-white text-slate-500 font-bold text-[10px] mr-2 border border-slate-200">${String.fromCharCode(65 + idx)}</span> ${opt}</span>
+                        <i class="fa-regular fa-circle text-slate-300" id="q-icon-${idx}"></i>
+                    </button>
+                `;
+            });
+
+            html += `
+                </div>
+                <div class="flex space-x-2 pt-2">
+                    <button onclick="showQuizHint()" class="flex-1 bg-amber-50 text-amber-800 font-bold py-2.5 rounded-xl text-xs border border-amber-200 flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-lightbulb"></i><span>Hint</span>
+                    </button>
+                    <button onclick="submitQuizAnswer()" id="quiz-submit-btn" disabled class="flex-1 bg-slate-200 text-slate-400 font-bold py-2.5 rounded-xl text-xs cursor-not-allowed">
+                        Submit
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('quiz-content').innerHTML = html;
+        }
+
+        function selectQuizOption(idx) {
+            if (quizAnswered) return;
+            selectedQuizOption = idx;
+
+            quizQuestions[quizIndex].options.forEach((_, i) => {
+                const btn = document.getElementById(`q-opt-${i}`);
+                const icon = document.getElementById(`q-icon-${i}`);
+                if (i === idx) {
+                    btn.className = "w-full text-left p-3 rounded-2xl text-xs font-semibold border border-indigo-600 bg-indigo-50 shadow-sm flex items-center justify-between text-indigo-950";
+                    icon.className = "fa-solid fa-circle-check text-indigo-600";
+                } else {
+                    btn.className = "w-full text-left p-3 rounded-2xl text-xs font-semibold border border-slate-200 bg-slate-50 flex items-center justify-between text-slate-700";
+                    icon.className = "fa-regular fa-circle text-slate-300";
+                }
+            });
+
+            const submitBtn = document.getElementById('quiz-submit-btn');
+            submitBtn.disabled = false;
+            submitBtn.className = "flex-1 bg-indigo-600 text-white font-bold py-2.5 rounded-xl text-xs shadow-md cursor-pointer";
+        }
+
+        function showQuizHint() {
+            document.getElementById('quiz-hint-text').innerText = quizQuestions[quizIndex].hint;
+            document.getElementById('quiz-hint-box').classList.remove('hidden');
+        }
+
+        function submitQuizAnswer() {
+            if (selectedQuizOption === null || quizAnswered) return;
+            quizAnswered = true;
+
+            const q = quizQuestions[quizIndex];
+            q.options.forEach((_, i) => { document.getElementById(`q-opt-${i}`).disabled = true; });
+
+            if (selectedQuizOption === q.correct) {
+                quizScore += 20;
+                updateScores();
+                document.getElementById(`q-opt-${q.correct}`).className = "w-full text-left p-3 rounded-2xl text-xs font-semibold border border-emerald-500 bg-emerald-50 flex items-center justify-between text-emerald-950";
+                document.getElementById(`q-icon-${q.correct}`).className = "fa-solid fa-check text-emerald-600";
+                confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+            } else {
+                document.getElementById(`q-opt-${selectedQuizOption}`).className = "w-full text-left p-3 rounded-2xl text-xs font-semibold border border-rose-400 bg-rose-50 flex items-center justify-between text-rose-950";
+                document.getElementById(`q-icon-${selectedQuizOption}`).className = "fa-solid fa-xmark text-rose-600";
+
+                document.getElementById(`q-opt-${q.correct}`).className = "w-full text-left p-3 rounded-2xl text-xs font-semibold border border-emerald-500 bg-emerald-50 flex items-center justify-between text-emerald-950";
+                document.getElementById(`q-icon-${q.correct}`).className = "fa-solid fa-check text-emerald-600";
+            }
+
+            const container = document.getElementById('quiz-content');
+            const expl = document.createElement('div');
+            expl.className = "bg-slate-100 border border-slate-200 rounded-2xl p-3 text-xs text-slate-700 mt-2 space-y-1";
+            expl.innerHTML = `<span class="font-bold text-slate-900 block"><i class="fa-solid fa-circle-info text-indigo-600 mr-1"></i> Explanation:</span>${q.explanation}`;
+            container.appendChild(expl);
+
+            const submitBtn = document.getElementById('quiz-submit-btn');
+            submitBtn.innerText = quizIndex < quizQuestions.length - 1 ? "Next Question ➔" : "Complete Quiz 🎉";
+            submitBtn.onclick = nextQuizQuestion;
+        }
+
+        function nextQuizQuestion() {
+            quizIndex++;
+            if (quizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                document.getElementById('quiz-content').innerHTML = `
+                    <div class="text-center py-8 space-y-3">
+                        <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow">
+                            👑
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-800">Quiz Successfully Completed!</h3>
+                        <p class="text-xs text-slate-500">Amardeep School Chemistry Evaluation Finished.</p>
+                        <div class="bg-indigo-50 p-2.5 rounded-xl inline-block text-indigo-900 font-bold text-xs">
+                            Final Score: ${quizScore + builderScore} Total Points
+                        </div>
+                        <div>
+                            <button onclick="resetQuiz()" class="bg-indigo-600 text-white font-bold text-xs py-2 px-5 rounded-xl shadow">Play Quiz Again</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function resetQuiz() {
+            quizIndex = 0;
+            quizScore = 0;
+            builderScore = 0;
+            updateScores();
+            loadQuizQuestion();
+        }
+
+        function updateScores() {
+            const total = builderScore + quizScore;
+            document.getElementById('header-score').innerText = `${total} pts`;
+            document.getElementById('quiz-score').innerText = quizScore;
+        }
+    </script>
+</body>
+</html>
