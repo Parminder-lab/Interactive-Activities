@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section Formula Lab - Amardeep School</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .draggable { touch-action: none; cursor: grab; }
+        .draggable:active { cursor: grabbing; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-anim { animation: float 3s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-md py-3 px-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-2">
+            <div class="bg-white text-indigo-600 font-bold p-2 rounded-xl shadow-inner text-sm tracking-wider flex items-center justify-center w-10 h-10">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight tracking-wide">Amardeep School</h1>
+                <p class="text-xs text-indigo-200">Class 10 Math Lab</p>
+            </div>
+        </div>
+        <div id="scoreBadge" class="bg-indigo-700/80 border border-indigo-400 text-xs px-3 py-1.5 rounded-full font-semibold flex items-center shadow-sm">
+            <i class="fa-solid fa-star text-amber-400 mr-1.5"></i> Score: <span id="scoreVal" class="ml-1">0</span>/3
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 px-4 py-2 flex justify-around shadow-sm">
+        <button onclick="switchTab('lab')" id="tabLab" class="flex-1 py-2 text-center font-semibold text-sm text-indigo-600 border-b-2 border-indigo-600 transition flex items-center justify-center space-x-1.5">
+            <i class="fa-solid fa-flask-conical"></i>
+            <span>Visual Lab</span>
+        </button>
+        <button onclick="switchTab('challenge')" id="tabChallenge" class="flex-1 py-2 text-center font-medium text-sm text-slate-500 border-b-2 border-transparent hover:text-indigo-600 transition flex items-center justify-center space-x-1.5">
+            <i class="fa-solid fa-puzzle-piece"></i>
+            <span>Drag & Drop Challenge</span>
+        </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-12">
+        
+        <!-- VISUAL LAB TAB -->
+        <section id="sectionLab" class="space-y-6">
+            <!-- Intro Card with Characters -->
+            <div class="bg-gradient-to-br from-indigo-500 to-violet-600 text-white rounded-3xl p-5 shadow-lg relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 opacity-10 text-9xl font-bold">
+                    <i class="fa-solid fa-square-root-variable"></i>
+                </div>
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-xl float-anim">
+                        👨‍🏫
+                    </div>
+                    <div>
+                        <span class="bg-white/20 text-xs px-2.5 py-0.5 rounded-full font-medium">Coordinate Geometry</span>
+                        <h2 class="text-xl font-bold mt-0.5">The Section Formula</h2>
+                    </div>
+                </div>
+                <p class="text-indigo-100 text-sm leading-relaxed">
+                    Meet <strong class="text-white">Prof. Ajay</strong> & student <strong class="text-white">Rhea</strong>! They need your help to divide line segments in a given ratio $m:n$.
+                </p>
+            </div>
+
+            <!-- Interactive Visual Coordinate Line Lab -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-slate-700 text-sm flex items-center">
+                        <i class="fa-solid fa-chart-line text-indigo-500 mr-2"></i> Interactive Segment Divider
+                    </h3>
+                    <span class="text-xs bg-indigo-50 text-indigo-600 font-semibold px-2 py-1 rounded-lg">Ratio m : n</span>
+                </div>
+
+                <!-- Canvas / SVG Visualization -->
+                <div class="bg-slate-900 rounded-2xl p-4 relative overflow-hidden shadow-inner">
+                    <div class="absolute top-2 left-3 text-[10px] text-slate-400 font-mono">A(x₁, y₁)</div>
+                    <div class="absolute top-2 right-3 text-[10px] text-slate-400 font-mono">B(x₂, y₂)</div>
+                    
+                    <svg viewBox="0 0 300 120" class="w-full h-32 overflow-visible">
+                        <!-- Line Segment -->
+                        <line x1="30" y1="60" x2="270" y2="60" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+                        
+                        <!-- Progress / Ratio Fill -->
+                        <id id="ratioLine">
+                            <line id="svgRatioLine" x1="30" y1="60" x2="150" y2="60" stroke="#6366f1" stroke-width="4" stroke-linecap="round" />
+                        </id>
+
+                        <!-- Point A -->
+                        <circle cx="30" cy="60" r="7" fill="#38bdf8" />
+                        <text x="30" y="85" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">A(1, 2)</text>
+
+                        <!-- Point P (Dividing Point) -->
+                        <g id="svgPointP" class="transition-all duration-300">
+                            <circle cx="150" cy="60" r="9" fill="#f43f5e" class="animate-pulse" />
+                            <text x="150" y="42" fill="#f43f5e" font-size="11" font-weight="bold" text-anchor="middle">P(x, y)</text>
+                        </g>
+
+                        <!-- Point B -->
+                        <circle cx="270" cy="60" r="7" fill="#a855f7" />
+                        <text x="270" y="85" fill="#a855f7" font-size="10" font-weight="bold" text-anchor="middle">B(7, 8)</text>
+                    </svg>
+                </div>
+
+                <!-- Ratio Controller Slider -->
+                <div class="space-y-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between text-xs font-semibold text-slate-600">
+                        <span>Ratio m : n</span>
+                        <span id="ratioDisplay" class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded">2 : 2 (1:1)</span>
+                    </div>
+                    <input type="range" id="ratioSlider" min="1" max="9" value="5" class="w-full accent-indigo-600 cursor-pointer" oninput="updateVisualization(this.value)">
+                    <div class="flex justify-between text-[11px] text-slate-400 font-medium">
+                        <span>m = <span id="mVal">5</span></span>
+                        <span>n = <span id="nVal">5</span></span>
+                    </div>
+                </div>
+
+                <!-- Calculated Coordinates Output -->
+                <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 text-center">
+                    <p class="text-xs text-indigo-700 font-medium mb-1">Calculated Point P(x, y) coordinates:</p>
+                    <div id="coordOutput" class="text-lg font-extrabold text-indigo-900 font-mono">
+                        P( 4.0 , 5.0 )
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formula Breakdown Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-3">
+                <h3 class="font-bold text-slate-700 text-sm flex items-center">
+                    <i class="fa-solid fa-book-open text-indigo-500 mr-2"></i> Formula Breakdown
+                </h3>
+                <div class="bg-slate-900 text-slate-100 p-4 rounded-2xl text-center space-y-2 font-mono shadow-inner">
+                    <div class="text-xs text-slate-400">Section Formula for internal division</div>
+                    <div class="text-indigo-400 font-bold text-base">
+                        $x = \frac{mx_2 + nx_1}{m + n}$
+                    </div>
+                    <div class="text-violet-400 font-bold text-base">
+                        $y = \frac{my_2 + ny_1}{m + n}$
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    The coordinates of the point $P(x, y)$ which divides the line segment joining the points $A(x_1, y_1)$ and $B(x_2, y_2)$ internally in the ratio $m : n$.
+                </p>
+            </div>
+
+            <!-- Proceed Button -->
+            <button onclick="switchTab('challenge')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-indigo-200 transition flex items-center justify-center space-x-2">
+                <span>Start Drag & Drop Challenge</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </section>
+
+        <!-- DRAG AND DROP CHALLENGE TAB -->
+        <section id="sectionChallenge" class="hidden space-y-6">
+            <!-- Challenge Header Card -->
+            <div class="bg-gradient-to-br from-violet-600 to-indigo-700 text-white rounded-3xl p-5 shadow-lg">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-lg">
+                        🎯
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold">Challenge Arena</h2>
+                        <p class="text-xs text-violet-200">Drag correct values to solve section problems!</p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-4 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-xl text-xs font-medium">
+                    <span>Question <span id="currentQNum">1</span> of 3</span>
+                    <span id="qStatus" class="text-amber-300 font-semibold">Active</span>
+                </div>
+            </div>
+
+            <!-- Quiz Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-5">
+                <!-- Question Statement -->
+                <div id="questionContainer" class="space-y-3">
+                    <span class="text-xs bg-indigo-50 text-indigo-600 font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Problem Statement</span>
+                    <p id="qText" class="text-sm font-semibold text-slate-800 leading-relaxed">
+                        Find the x-coordinate of the point dividing line segment joining A(1, 2) and B(7, 8) in ratio 2 : 3.
+                    </p>
+                </div>
+
+                <!-- Drop Zone Area -->
+                <div class="bg-slate-50 border-2 border-dashed border-indigo-200 rounded-2xl p-4 text-center space-y-2">
+                    <span class="text-xs text-slate-400 font-medium block">Drop the correct formula component or value below:</span>
+                    <div id="dropZone" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropItem(event)" class="bg-white border-2 border-indigo-300 rounded-xl p-4 min-h-[64px] flex items-center justify-center text-indigo-600 font-bold font-mono transition-all shadow-sm">
+                        <span id="dropPlaceholder" class="text-slate-400 font-normal text-xs italic">Drag answer item here</span>
+                    </div>
+                </div>
+
+                <!-- Draggable Items Pool -->
+                <div class="space-y-2">
+                    <span class="text-xs text-slate-500 font-semibold block">Available Options (Drag or Tap):</span>
+                    <div id="optionsContainer" class="grid grid-cols-2 gap-2.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Feedback & Next Button -->
+                <div id="feedbackBox" class="hidden p-3.5 rounded-2xl text-xs font-semibold text-center transition-all"></div>
+
+                <button id="nextBtn" onclick="nextQuestion()" class="hidden w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition flex items-center justify-center space-x-2">
+                    <span>Next Question</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Completion Modal / View -->
+        <section id="sectionComplete" class="hidden space-y-6 text-center py-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">
+                <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner float-anim">
+                    🏆
+                </div>
+                <div class="space-y-1">
+                    <h2 class="text-xl font-bold text-slate-800">Challenge Completed!</h2>
+                    <p class="text-xs text-slate-500">Amazing work representing Amardeep School mathematics!</p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl">
+                    <span class="text-xs text-indigo-600 font-medium block">Your Final Score</span>
+                    <span id="finalScore" class="text-3xl font-extrabold text-indigo-900 font-mono">3 / 3</span>
+                </div>
+                <button onclick="resetActivity()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition">
+                    Restart Lab & Challenge
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 text-center py-3 text-xs text-slate-400">
+        Amardeep School • Class 10 Interactive Learning
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Tab Switching
+        function switchTab(tab) {
+            const labTab = document.getElementById('tabLab');
+            const chalTab = document.getElementById('tabChallenge');
+            const secLab = document.getElementById('sectionLab');
+            const secChal = document.getElementById('sectionChallenge');
+            const secComplete = document.getElementById('sectionComplete');
+
+            secComplete.classList.add('hidden');
+
+            if (tab === 'lab') {
+                labTab.className = "flex-1 py-2 text-center font-semibold text-sm text-indigo-600 border-b-2 border-indigo-600 transition flex items-center justify-center space-x-1.5";
+                chalTab.className = "flex-1 py-2 text-center font-medium text-sm text-slate-500 border-b-2 border-transparent hover:text-indigo-600 transition flex items-center justify-center space-x-1.5";
+                secLab.classList.remove('hidden');
+                secChal.classList.add('hidden');
+            } else {
+                chalTab.className = "flex-1 py-2 text-center font-semibold text-sm text-indigo-600 border-b-2 border-indigo-600 transition flex items-center justify-center space-x-1.5";
+                labTab.className = "flex-1 py-2 text-center font-medium text-sm text-slate-500 border-b-2 border-transparent hover:text-indigo-600 transition flex items-center justify-center space-x-1.5";
+                secChal.classList.remove('hidden');
+                secLab.classList.add('hidden');
+            }
+        }
+
+        // Visual Lab Ratio Slider logic
+        function updateVisualization(val) {
+            const m = parseInt(val);
+            const n = 10 - m;
+            document.getElementById('mVal').innerText = m;
+            document.getElementById('nVal').innerText = n;
+            document.getElementById('ratioDisplay').innerText = `${m} : ${n}`;
+
+            // Map x position on svg line from x1=30 to x2=270 (total width 240)
+            const xCoord = 30 + (240 * (m / 10));
+            document.getElementById('svgPointP').setAttribute('transform', `translate(${xCoord - 150}, 0)`);
+            document.getElementById('svgRatioLine').setAttribute('x2', xCoord);
+
+            // Calculate formula point for A(1,2) and B(7,8)
+            const x1 = 1, y1 = 2, x2 = 7, y2 = 8;
+            const px = ((m * x2) + (n * x1)) / (m + n);
+            const py = ((m * y2) + (n * y1)) / (m + n);
+
+            document.getElementById('coordOutput').innerText = `P( ${px.toFixed(1)} , ${py.toFixed(1)} )`;
+        }
+
+        // Challenge Questions Data
+        const questions = [
+            {
+                q: "Find the x-coordinate of the point dividing line segment joining A(1, 2) and B(7, 8) in ratio 2 : 3.",
+                options: ["3.4", "4.5", "2.8", "5.1"],
+                answer: "3.4"
+            },
+            {
+                q: "What is the numerator part for calculating x in Section Formula: (mx₂ + nx₁) / (m + n)?",
+                options: ["mx₂ + nx₁", "my₂ + ny₁", "mx₁ + nx₂", "m + n"],
+                answer: "mx₂ + nx₁"
+            },
+            {
+                q: "Find the coordinates of the midpoint (ratio 1:1) of line segment joining A(2, 4) and B(6, 8).",
+                options: "(4, 6)",
+                options: ["(4, 6)", "(3, 5)", "(5, 7)", "(2, 3)"],
+                answer: "(4, 6)"
+            }
+        ];
+
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let droppedValue = null;
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIdx];
+            document.getElementById('currentQNum').innerText = currentQuestionIdx + 1;
+            document.getElementById('qText').innerText = q.q;
+            document.getElementById('dropZone').innerHTML = '<span id="dropPlaceholder" class="text-slate-400 font-normal text-xs italic">Drag answer item here</span>';
+            document.getElementById('feedbackBox').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            droppedValue = null;
+
+            const optContainer = document.getElementById('optionsContainer');
+            optContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = "bg-white border border-slate-200 hover:border-indigo-400 p-3 rounded-xl text-center text-xs font-semibold text-slate-700 shadow-sm draggable cursor-pointer transition active:scale-95";
+                div.draggable = true;
+                div.innerText = opt;
+                div.id = `opt-${idx}`;
+                
+                // Desktop drag events
+                div.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', opt);
+                });
+
+                // Mobile tap-to-select fallback for touch-friendly UX
+                div.addEventListener('click', () => {
+                    selectOption(opt);
+                });
+
+                optContainer.appendChild(div);
+            });
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('border-indigo-600', 'bg-indigo-50/50');
+        }
+
+        function removeDropStyle(e) {
+            e.currentTarget.classList.remove('border-indigo-600', 'bg-indigo-50/50');
+        }
+
+        function dropItem(e) {
+            e.preventDefault();
+            const data = e.dataTransfer.getData('text/plain');
+            selectOption(data);
+        }
+
+        function selectOption(val) {
+            droppedValue = val;
+            const dropZone = document.getElementById('dropZone');
+            dropZone.innerHTML = `<span class="text-indigo-600 font-bold text-sm">${val}</span>`;
+            checkAnswer();
+        }
+
+        function checkAnswer() {
+            const q = questions[currentQuestionIdx];
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.classList.remove('hidden');
+
+            if (droppedValue === q.answer) {
+                score++;
+                document.getElementById('scoreVal').innerText = score;
+                feedbackBox.className = "p-3.5 rounded-2xl text-xs font-semibold text-center bg-emerald-50 text-emerald-700 border border-emerald-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Correct! Excellent job.`;
+                document.getElementById('nextBtn').classList.remove('hidden');
+            } else {
+                feedbackBox.className = "p-3.5 rounded-2xl text-xs font-semibold text-center bg-rose-50 text-rose-700 border border-rose-200";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1 text-rose-500"></i> Incorrect. Try another option or review the Visual Lab!`;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < questions.length) {
+                loadQuestion();
+            } else {
+                showCompletion();
+            }
+        }
+
+        function showCompletion() {
+            document.getElementById('sectionChallenge').classList.add('hidden');
+            document.getElementById('sectionComplete').classList.remove('hidden');
+            document.getElementById('finalScore').innerText = `${score} / ${questions.length}`;
+        }
+
+        function resetActivity() {
+            currentQuestionIdx = 0;
+            score = 0;
+            document.getElementById('scoreVal').innerText = score;
+            document.getElementById('sectionComplete').classList.add('hidden');
+            switchTab('lab');
+            loadQuestion();
+            updateVisualization(5);
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            loadQuestion();
+            updateVisualization(5);
+        };
+    </script>
+</body>
+</html>
