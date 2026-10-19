@@ -42,7 +42,7 @@
       opacity: 0.9;
     }
 
-    /* Main Display Area (One Letter Per Page) */
+    /* Main Display Area */
     .card-container {
       flex: 1;
       display: flex;
@@ -113,13 +113,12 @@
       margin-top: 15px;
     }
     .btn {
-      padding: 12px 20px;
+      padding: 12px 18px;
       border: none;
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.2s;
+      font-size: 0.95rem;
     }
     .btn:active {
       transform: scale(0.96);
@@ -140,7 +139,7 @@
     .nav-btn {
       background-color: #3182ce;
       color: white;
-      padding: 12px 22px;
+      padding: 12px 20px;
       border: none;
       border-radius: 20px;
       font-weight: bold;
@@ -195,9 +194,6 @@
     <button class="nav-btn" id="nextBtn" type="button">ਅਗਲਾ →</button>
   </div>
 
-  <!-- Audio Element for Network Speech Fallback -->
-  <audio id="audioPlayer"></audio>
-
   <script>
     const alphabets = [
       { letter: "ੳ", word: "ੳ - ਊਠ (Camel)" },
@@ -243,31 +239,36 @@
     let isDrawing = false;
     let audioCtx = null;
 
-    // Web Audio API Beep Generator (Works on all mobile devices)
-    function playBeepSound() {
-      try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 note
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } catch (e) {
-        console.log('Audio Context error:', e);
+    // Initialize Audio context on first user touch/interaction
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
     }
 
-    // Dropdown population
+    // Reliable built-in synth audio chime (guaranteed to play locally)
+    function playTone(frequency, duration) {
+      try {
+        initAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    // Populate Dropdown
     const selectEl = document.getElementById('letterSelect');
     alphabets.forEach((item, index) => {
       let opt = document.createElement('option');
@@ -277,6 +278,7 @@
     });
 
     selectEl.addEventListener('change', (e) => {
+      initAudioContext();
       loadLetter(parseInt(e.target.value));
     });
 
@@ -294,12 +296,12 @@
     }
 
     document.getElementById('prevBtn').addEventListener('click', () => {
-      playBeepSound();
+      playTone(440, 0.2); // A4 note
       if (currentIndex > 0) loadLetter(currentIndex - 1);
     });
 
     document.getElementById('nextBtn').addEventListener('click', () => {
-      playBeepSound();
+      playTone(554.37, 0.2); // C#5 note
       if (currentIndex < alphabets.length - 1) loadLetter(currentIndex + 1);
     });
 
@@ -308,11 +310,11 @@
     }
 
     document.getElementById('clearBtn').addEventListener('click', () => {
-      playBeepSound();
+      playTone(330, 0.2);
       clearCanvas();
     });
 
-    // Touch & Mouse Drawing Coordinates
+    // Touch & Mouse Drawing Handlers
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -324,6 +326,7 @@
     }
 
     function startDrawing(e) {
+      initAudioContext();
       isDrawing = true;
       const pos = getPos(e);
       ctx.beginPath();
@@ -354,29 +357,28 @@
     canvas.addEventListener('touchmove', draw, { passive: false });
     canvas.addEventListener('touchend', stopDrawing);
 
-    // Guaranteed Speech Function (Google TTS Online Audio Fallback + Local Speech Engine)
+    // Speak Button (Uses local browser voice, falls back to joyful chime if language package is absent)
     document.getElementById('speakBtn').addEventListener('click', () => {
-      playBeepSound(); // Play feedback chime first
+      initAudioContext();
+      playTone(659.25, 0.3); // E5 note confirmation
 
-      const letterText = alphabets[currentIndex].letter;
-      const audioPlayer = document.getElementById('audioPlayer');
-
-      // 1. Try Google Translate TTS Stream (Most reliable for Punjabi online)
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(letterText)}&tl=pa&client=tw-ob`;
-      
-      audioPlayer.src = ttsUrl;
-      audioPlayer.play().catch(() => {
-        // 2. Fallback to browser local SpeechSynthesis if network audio is blocked
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(letterText);
-          utterance.lang = 'pa-IN';
-          window.speechSynthesis.speak(utterance);
-        }
-      });
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const textToSpeak = alphabets[currentIndex].letter;
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = 'pa-IN';
+        utterance.rate = 0.85;
+        
+        // If the browser fails to speak due to missing language pack, play a secondary high chime
+        utterance.onerror = () => {
+          playTone(880, 0.2);
+        };
+        
+        window.speechSynthesis.speak(utterance);
+      }
     });
 
-    // Load initial letter
+    // Load initial page
     loadLetter(0);
   </script>
 </body>
