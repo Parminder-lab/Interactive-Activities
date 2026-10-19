@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Gurmukhi Alphabet Practice - Amardeep School</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Header & School Branding */
+    header {
+      background-color: #1a365d;
+      color: #ffffff;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+    .school-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #f6ad55;
+    }
+    .activity-title {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    /* Main Display Area (One Letter Per Page) */
+    .card-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+    .letter-card {
+      background: white;
+      width: 100%;
+      max-width: 380px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+    }
+    .word-info {
+      font-size: 1.2rem;
+      color: #2b6cb0;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    /* Canvas Overlay for Touch Tracing */
+    .canvas-wrapper {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border: 2px dashed #cbd5e0;
+      border-radius: 12px;
+      background-color: #faf5ff;
+      touch-action: none;
+    }
+    .letter-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 140px;
+      color: #e2e8f0;
+      font-weight: bold;
+      pointer-events: none;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    /* Controls & Buttons */
+    .tools {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.2s;
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+    .btn-clear { background-color: #e53e3e; color: white; }
+    .btn-speak { background-color: #319795; color: white; }
+
+    /* Bottom Navigation */
+    .nav-bar {
+      background: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2e8f0;
+      z-index: 10;
+    }
+    .nav-btn {
+      background-color: #3182ce;
+      color: white;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .nav-btn:disabled {
+      background-color: #cbd5e0;
+      cursor: not-allowed;
+    }
+    select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e0;
+      font-size: 1rem;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Branding -->
+  <header>
+    <div>
+      <div class="school-title">Amardeep School</div>
+      <div class="activity-title">ਗੁਰਮੁਖੀ ਅੱਖਰ ਅਭਿਆਸ</div>
+    </div>
+    <select id="letterSelect"></select>
+  </header>
+
+  <!-- Single Letter Page -->
+  <div class="card-container">
+    <div class="letter-card">
+      <div class="word-info" id="wordInfo">ੳ - ਊਠ (Camel)</div>
+      
+      <div class="canvas-wrapper">
+        <div class="letter-background" id="letterBg">ੳ</div>
+        <canvas id="paintCanvas" width="280" height="280"></canvas>
+      </div>
+
+      <div class="tools">
+        <button class="btn btn-speak" id="speakBtn" type="button">🔊 ਆਵਾਜ਼ ਸੁਣੋ</button>
+        <button class="btn btn-clear" id="clearBtn" type="button">🗑️ ਸਾਫ਼ ਕਰੋ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <div class="nav-bar">
+    <button class="nav-btn" id="prevBtn" type="button">← ਪਿਛਲਾ</button>
+    <span id="pageIndex" style="font-weight: bold; color: #4a5568;">1 / 35</span>
+    <button class="nav-btn" id="nextBtn" type="button">ਅਗਲਾ →</button>
+  </div>
+
+  <!-- Audio Element for Network Speech Fallback -->
+  <audio id="audioPlayer"></audio>
+
+  <script>
+    const alphabets = [
+      { letter: "ੳ", word: "ੳ - ਊਠ (Camel)" },
+      { letter: "ਅ", word: "ਅ - ਅੱਖ (Eye)" },
+      { letter: "ੲ", word: "ੲ - ਇੰਜਣ (Engine)" },
+      { letter: "ਸ", word: "ਸ - ਸੱਪ" },
+      { letter: "ਹ", word: "ਹ - ਹਾਥੀ (Elephant)" },
+      { letter: "ਕ", word: "ਕ - ਕਬੂਤਰ (Pigeon)" },
+      { letter: "ਖ", word: "ਖ - ਖਰਗੋਸ਼ (Rabbit)" },
+      { letter: "ਗ", word: "ਗ - ਗਾਂ (Cow)" },
+      { letter: "ਘ", word: "ਘ - ਘੋੜਾ (Horse)" },
+      { letter: "ਙ", word: "ਙ" },
+      { letter: "ਚ", word: "ਚ - ਚੂਹਾ (Mouse)" },
+      { letter: "ਛ", word: "ਛ - ਛਤਰੀ (Umbrella)" },
+      { letter: "ਜ", word: "ਜ - ਜਹਾਜ਼ (Airplane)" },
+      { letter: "ਝ", word: "ਝ - ਝੰਡਾ (Flag)" },
+      { letter: "ਞ", word: "ਞ" },
+      { letter: "ਟ", word: "ਟ - ਟਮਾਟਰ (Tomato)" },
+      { letter: "ਠ", word: "ਠ - ਠੇਲਾ (Cart)" },
+      { letter: "ਡ", word: "ਡ - ਡੱਡੂ (Frog)" },
+      { letter: "ਢ", word: "ਢ - ਢੋਲ (Drum)" },
+      { letter: "ਣ", word: "ਣ" },
+      { letter: "ਤ", word: "ਤ - ਤੋਤਾ (Parrot)" },
+      { letter: "ਥ", word: "ਥ - ਥਰਮਸ (Thermos)" },
+      { letter: "ਦ", word: "ਦ - ਦੰਦ (Tooth)" },
+      { letter: "ਧ", word: "ਧ - ਧਨੁਖ (Bow)" },
+      { letter: "ਨ", word: "ਨ - ਨਿੰਬੂ (Lemon)" },
+      { letter: "ਪ", word: "ਪ - ਪਤੰਗ (Kite)" },
+      { letter: "ਫ", word: "ਫ - ਫੁੱਲ (Flower)" },
+      { letter: "ਬ", word: "ਬ - ਬੱਸ (Bus)" },
+      { letter: "ਭ", word: "ਭ - ਭਾਲੂ (Bear)" },
+      { letter: "ਮ", word: "ਮ - ਮੱਛੀ (Fish)" },
+      { letter: "ਯ", word: "ਯ - ਯੱਕਾ" },
+      { letter: "ਰ", word: "ਰ - ਰੇਲ (Train)" },
+      { letter: "ਲ", word: "ਲ - ਲੈਂਪ (Lamp)" },
+      { letter: "ਵ", word: "ਵ - ਵਾਜਾ (Harmonium)" },
+      { letter: "ੜ", word: "ੜ" }
+    ];
+
+    let currentIndex = 0;
+    const canvas = document.getElementById('paintCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let audioCtx = null;
+
+    // Web Audio API Beep Generator (Works on all mobile devices)
+    function playBeepSound() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 note
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } catch (e) {
+        console.log('Audio Context error:', e);
+      }
+    }
+
+    // Dropdown population
+    const selectEl = document.getElementById('letterSelect');
+    alphabets.forEach((item, index) => {
+      let opt = document.createElement('option');
+      opt.value = index;
+      opt.innerText = item.letter;
+      selectEl.appendChild(opt);
+    });
+
+    selectEl.addEventListener('change', (e) => {
+      loadLetter(parseInt(e.target.value));
+    });
+
+    function loadLetter(index) {
+      currentIndex = index;
+      document.getElementById('letterBg').innerText = alphabets[currentIndex].letter;
+      document.getElementById('wordInfo').innerText = alphabets[currentIndex].word;
+      document.getElementById('pageIndex').innerText = `${currentIndex + 1} / ${alphabets.length}`;
+      selectEl.value = currentIndex;
+      
+      document.getElementById('prevBtn').disabled = (currentIndex === 0);
+      document.getElementById('nextBtn').disabled = (currentIndex === alphabets.length - 1);
+
+      clearCanvas();
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      playBeepSound();
+      if (currentIndex > 0) loadLetter(currentIndex - 1);
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      playBeepSound();
+      if (currentIndex < alphabets.length - 1) loadLetter(currentIndex + 1);
+    });
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      playBeepSound();
+      clearCanvas();
+    });
+
+    // Touch & Mouse Drawing Coordinates
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startDrawing(e) {
+      isDrawing = true;
+      const pos = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineWidth = 14;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#3182ce';
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const pos = getPos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    window.addEventListener('mouseup', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing);
+
+    // Guaranteed Speech Function (Google TTS Online Audio Fallback + Local Speech Engine)
+    document.getElementById('speakBtn').addEventListener('click', () => {
+      playBeepSound(); // Play feedback chime first
+
+      const letterText = alphabets[currentIndex].letter;
+      const audioPlayer = document.getElementById('audioPlayer');
+
+      // 1. Try Google Translate TTS Stream (Most reliable for Punjabi online)
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(letterText)}&tl=pa&client=tw-ob`;
+      
+      audioPlayer.src = ttsUrl;
+      audioPlayer.play().catch(() => {
+        // 2. Fallback to browser local SpeechSynthesis if network audio is blocked
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(letterText);
+          utterance.lang = 'pa-IN';
+          window.speechSynthesis.speak(utterance);
+        }
+      });
+    });
+
+    // Load initial letter
+    loadLetter(0);
+  </script>
+</body>
+</html>
