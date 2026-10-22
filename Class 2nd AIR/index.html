@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Air Challenge | Amardeep School</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #eef8ff;
+  color: #17345b;
+}
+header {
+  background: white;
+  padding: 15px 16px;
+  border-bottom: 4px solid #37b9db;
+  font-weight: bold;
+  font-size: 20px;
+  color: #124b86;
+}
+header small {
+  display: block;
+  color: #53718e;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.hero {
+  text-align: center;
+  padding: 24px 15px;
+  background: linear-gradient(140deg, #147bd1, #44d4d0);
+  color: white;
+}
+.hero .emoji { font-size: 52px; }
+h1 { margin: 8px 0; font-size: 30px; }
+.hero p { margin: 8px 0; line-height: 1.5; }
+main { max-width: 650px; margin: auto; padding: 16px; }
+.panel {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 14px #183c5b12;
+}
+h2 { margin-top: 0; color: #1265a6; font-size: 22px; }
+.hint { color: #55718a; line-height: 1.5; font-size: 14px; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.flip-card {
+  height: 150px;
+  perspective: 800px;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  color: white;
+}
+.inner {
+  height: 100%;
+  position: relative;
+  transition: transform .5s;
+  transform-style: preserve-3d;
+}
+.flip-card.flipped .inner { transform: rotateY(180deg); }
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.front { background: #247fc5; }
+.back {
+  background: #168b72;
+  transform: rotateY(180deg);
+  line-height: 1.4;
+}
+.face .big { font-size: 39px; }
+.face strong { font-size: 17px; margin-top: 8px; }
+.face span { font-size: 13px; margin-top: 6px; }
+button { font-family: inherit; }
+.primary, .secondary, .answer {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 15px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  min-height: 46px;
+}
+.primary {
+  color: white;
+  background: #126dc0;
+  width: 100%;
+  margin-top: 12px;
+}
+.secondary { background: #e5f2ff; color: #15558b; }
+button:focus-visible {
+  outline: 3px solid #f5a623;
+  outline-offset: 3px;
+}
+.quiz-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-weight: bold;
+  font-size: 14px;
+}
+.progress {
+  height: 9px;
+  background: #e5edf5;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 12px 0 18px;
+}
+#bar {
+  height: 100%;
+  width: 0%;
+  background: #21b58b;
+  transition: width .3s;
+}
+#question { font-size: 20px; line-height: 1.4; }
+.answers { display: grid; gap: 10px; margin-top: 16px; }
+.answer {
+  background: #f0f7ff;
+  color: #20466d;
+  text-align: left;
+  border: 2px solid #d7e9fa;
+}
+.answer:disabled { cursor: default; opacity: 1; }
+.answer.correct { background: #d8f8e7; border-color: #22a56e; }
+.answer.wrong { background: #ffe6e3; border-color: #e77c72; }
+#feedback {
+  min-height: 28px;
+  margin-top: 14px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+#next { display: none; }
+#result { text-align: center; }
+#result .trophy { font-size: 58px; }
+footer { text-align: center; color: #55718a; padding: 8px 18px 25px; font-size: 13px; }
+@media (max-width: 360px) {
+  main { padding: 10px; }
+  .panel { padding: 13px; }
+  .flip-card { height: 135px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  Amardeep School
+  <small>LEARN • EXPLORE • GROW</small>
+</header>
+
+<section class="hero">
+  <div class="emoji">🌬️ 🌍</div>
+  <h1>Air Challenge!</h1>
+  <p>Class 2 Science Activity</p>
+  <p>Flip, learn and test your knowledge about air!</p>
+</section>
+
+<main>
+  <section class="panel">
+    <h2>🃏 1. Flip & Learn</h2>
+    <p class="hint">Tap each card to discover a fun fact about air.</p>
+
+    <div class="cards">
+      <button class="flip-card" aria-label="Flip the air card"
+        aria-pressed="false" onclick="flip(this)">
+        <div class="inner">
+          <div class="face front">
+            <div class="big">💨</div><strong>What is air?</strong>
+            <span>Tap to flip!</span>
+          </div>
+          <div class="face back">
+            <div class="big">🌬️</div>
+            <strong>Air is all around us.</strong>
+            <span>We cannot usually see it.</span>
+          </div>
+        </div>
+      </button>
+
+      <button class="flip-card" aria-label="Flip the breathing card"
+        aria-pressed="false" onclick="flip(this)">
+        <div class="inner">
+          <div class="face front">
+            <div class="big">🫁</div><strong>Why do we need air?</strong>
+            <span>Tap to flip!</span>
+          </div>
+          <div class="face back">
+            <div class="big">😊</div>
+            <strong>We need air to breathe.</strong>
+            <span>People and animals breathe air.</span>
+          </div>
+        </div>
+      </button>
+
+      <button class="flip-card" aria-label="Flip the wind card"
+        aria-pressed="false" onclick="flip(this)">
+        <div class="inner">
+          <div class="face front">
+            <div class="big">🍃</div><strong>What is wind?</strong>
+            <span>Tap to flip!</span>
+          </div>
+          <div class="face back">
+            <div class="big">🌳</div>
+            <strong>Wind is moving air.</strong>
+            <span>It can move leaves and kites.</span>
+          </div>
+        </div>
+      </button>
+
+      <button class="flip-card" aria-label="Flip the clean air card"
+        aria-pressed="false" onclick="flip(this)">
+        <div class="inner">
+          <div class="face front">
+            <div class="big">🌱</div><strong>How can we keep air clean?</strong>
+            <span>Tap to flip!</span>
+          </div>
+          <div class="face back">
+            <div class="big">🌳</div>
+            <strong>Plant more trees.</strong>
+            <span>Avoid smoke and burning waste.</span>
+          </div>
+        </div>
+      </button>
+    </div>
+    <button class="secondary" style="width:100%;margin-top:14px"
+      onclick="document.querySelectorAll('.flip-card').forEach(c=>{c.classList.toggle('flipped',!c.classList.contains('flipped'));c.setAttribute('aria-pressed',c.classList.contains('flipped'))})">
+      Flip All Cards
+    </button>
+  </section>
+
+  <section class="panel" id="quizPanel">
+    <h2>🧠 2. Air Quiz</h2>
+    <p class="hint">Choose the best answer. Each correct answer earns 1 star!</p>
+
+    <div class="quiz-top">
+      <span id="count">Question 1 of 5</span>
+      <span>⭐ Score: <span id="score">0</span></span>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+
+    <div id="quiz">
+      <p id="question"></p>
+      <div class="answers" id="answers"></div>
+      <div id="feedback" aria-live="polite"></div>
+      <button class="primary" id="next" onclick="nextQuestion()">Next Question ➜</button>
+    </div>
+
+    <div id="result" hidden>
+      <div class="trophy" id="trophy">🏆</div>
+      <h2 id="resultTitle">Well done!</h2>
+      <p id="finalScore"></p>
+      <p id="message"></p>
+      <button class="primary" onclick="restart()">🔄 Play Again</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>🌟 Air Hero Challenge</h2>
+    <p>Can you name two things that move with the wind?</p>
+    <button class="secondary" onclick="showHint()">💡 Get a Hint</button>
+    <p id="hintText" aria-live="polite"></p>
+  </section>
+</main>
+
+<footer>Amardeep School • Class 2 • Keep learning and keep the air clean! 🌍</footer>
+
+<script>
+function flip(card) {
+  card.classList.toggle('flipped');
+  card.setAttribute('aria-pressed', card.classList.contains('flipped'));
+}
+
+const questions = [
+  {
+    q: "1. Which of these do we need to breathe?",
+    options: ["Air", "Sand", "Paper", "Stone"],
+    correct: 0,
+    fact: "We need air to breathe. Great job!"
+  },
+  {
+    q: "2. What is moving air called?",
+    options: ["Rain", "Wind", "Cloud", "Dust"],
+    correct: 1,
+    fact: "Wind is moving air. Well done!"
+  },
+  {
+    q: "3. Can we usually see air?",
+    options: ["Yes, it is blue", "Yes, it is red", "No, it is invisible", "Only at night"],
+    correct: 2,
+    fact: "Air is usually invisible, even though it is all around us."
+  },
+  {
+    q: "4. Which object can fly with the help of wind?",
+    options: ["A rock", "A chair", "A book on a shelf", "A kite"],
+    correct: 3,
+    fact: "Wind can help a kite fly high in the sky!"
+  },
+  {
+    q: "5. Which action helps keep the air clean?",
+    options: ["Burning rubbish", "Planting trees", "Making more smoke", "Burning leaves"],
+    correct: 1,
+    fact: "Trees help keep our environment healthy. Avoid making smoke."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function renderQuestion() {
+  answered = false;
+  const item = questions[current];
+  document.getElementById('count').textContent =
+    `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('bar').style.width =
+    `${current / questions.length * 100}%`;
+  document.getElementById('question').textContent = item.q;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('next').style.display = 'none';
+
+  const list = document.getElementById('answers');
+  list.innerHTML = '';
+
+  item.options.forEach((option, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer';
+    btn.textContent = String.fromCharCode(65 + index) + '. ' + option;
+    btn.onclick = () => chooseAnswer(index);
+    list.appendChild(btn);
+  });
+}
+
+function chooseAnswer(index) {
+  if (answered) return;
+  answered = true;
+
+  const item = questions[current];
+  const buttons = document.querySelectorAll('.answer');
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === item.correct) btn.classList.add('correct');
+    else if (i === index) btn.classList.add('wrong');
+  });
+
+  if (index === item.correct) {
+    score++;
+    document.getElementById('feedback').textContent = '⭐ Correct! ' + item.fact;
+  } else {
+    document.getElementById('feedback').textContent =
+      '😊 Good try! The answer is ' + item.options[item.correct] + '.';
+  }
+
+  document.getElementById('score').textContent = score;
+  const next = document.getElementById('next');
+  next.textContent = current === questions.length - 1
+    ? 'See My Result 🏆' : 'Next Question ➜';
+  next.style.display = 'block';
+}
+
+function nextQuestion() {
+  if (!answered) return;
+  current++;
+  if (current < questions.length) {
+    renderQuestion();
+  } else {
+    document.getElementById('quiz').hidden = true;
+    document.getElementById('result').hidden = false;
+    document.getElementById('bar').style.width = '100%';
+    document.getElementById('finalScore').textContent =
+      `You scored ${score} out of ${questions.length} stars!`;
+    document.getElementById('trophy').textContent =
+      score === 5 ? '🏆' : score >= 3 ? '🌟' : '💪';
+    document.getElementById('resultTitle').textContent =
+      score === 5 ? 'Air Champion!' : score >= 3 ? 'Great Work!' : 'Keep Practising!';
+    document.getElementById('message').textContent =
+      score === 5 ? 'Amazing! You are an Air Expert!' :
+      score >= 3 ? 'Good job! Review the cards and try again.' :
+      'You can do it! Flip the cards and have another go.';
+  }
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  document.getElementById('score').textContent = '0';
+  document.getElementById('quiz').hidden = false;
+  document.getElementById('result').hidden = true;
+  renderQuestion();
+}
+
+function showHint() {
+  document.getElementById('hintText').textContent =
+    'Think of something colourful that flies in the sky and something that spins in the breeze!';
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
