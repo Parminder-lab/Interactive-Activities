@@ -2,42 +2,41 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>हमारे राष्ट्रीय त्योहार - कक्षा 4</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#fff8e9;color:#25344a;font-family:Arial,sans-serif}
-header{background:white;padding:16px;border-bottom:4px solid #ff9933;text-align:left}
+body{margin:0;font-family:Arial,sans-serif;background:#fff8e9;color:#24334a}
+header{background:white;padding:15px;text-align:left;border-bottom:4px solid #ff9933}
 .school{font-size:20px;font-weight:bold;color:#174a80}
 header p{margin:5px 0 0;font-size:13px}
-.hero{text-align:center;background:linear-gradient(130deg,#ff9933,#e95c26);color:white;padding:25px 12px}
-.hero h1{font-size:27px;margin:8px 0}
-.hero p{margin:8px 0}
+.hero{background:linear-gradient(130deg,#ff9933,#e85b25);color:white;text-align:center;padding:24px 12px}
+.hero h1{font-size:26px;margin:10px 0}
 main{max-width:760px;margin:auto;padding:15px}
 h2{font-size:21px;color:#174a80}
-.intro{line-height:1.8;font-size:15px}
+p{line-height:1.7}
 .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .card{height:220px;perspective:900px;cursor:pointer}
 .inner{height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s}
 .card.open .inner{transform:rotateY(180deg)}
-.side{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;border:2px solid #ffca80;background:white;box-shadow:0 3px 10px #0001;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px}
-.back{background:#e7f5e9;transform:rotateY(180deg)}
-.emoji{font-size:45px}
-.side h3{margin:8px 0;font-size:17px}
-.side p{font-size:14px;line-height:1.65;margin:5px 0}
-.small{font-size:12px;color:#a65313;margin-top:8px}
-.panel{background:white;padding:17px;border-radius:16px;margin:18px 0;box-shadow:0 3px 12px #0001}
+.side{position:absolute;inset:0;backface-visibility:hidden;border:2px solid #ffca80;border-radius:16px;background:white;box-shadow:0 3px 10px #0001;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px}
+.back{background:#e6f5e9;transform:rotateY(180deg)}
+.emoji{font-size:43px}
+.side h3{font-size:17px;margin:8px 0}
+.side p{font-size:14px;margin:5px 0}
+.hint{font-size:12px;color:#a65313;margin-top:8px}
+.panel{background:white;border-radius:16px;padding:16px;margin:18px 0;box-shadow:0 3px 12px #0001}
+.track{height:8px;background:#eee;border-radius:8px;overflow:hidden;margin:12px 0 18px}
+#bar{height:100%;width:0;background:#16854b}
 #question{font-size:17px;font-weight:bold;line-height:1.7}
-.option{display:block;width:100%;text-align:left;padding:12px;margin:8px 0;border:2px solid #e0e5ec;background:white;border-radius:10px;font-size:15px;color:#25344a;cursor:pointer}
+.option{display:block;width:100%;text-align:left;padding:12px;margin:8px 0;border:2px solid #e0e5ec;background:white;border-radius:10px;font-size:15px;color:#24334a;cursor:pointer}
 .option.correct{background:#dff5e6;border-color:#168449}
 .option.wrong{background:#ffe5e5;border-color:#d33}
 .option:disabled{opacity:1}
-button.action{background:#174a80;color:white;border:0;border-radius:10px;padding:12px 17px;font-size:15px;cursor:pointer}
-button.action:disabled{opacity:.45}
-#feedback{line-height:1.7;font-size:14px;margin:12px 0}
-.track{height:8px;background:#eee;border-radius:8px;margin:12px 0 18px;overflow:hidden}
-#bar{height:100%;width:0;background:#159052}
-footer{text-align:center;padding:18px;background:#174a80;color:white}
+.action{background:#174a80;color:white;border:0;border-radius:10px;padding:12px 17px;font-size:15px;cursor:pointer}
+.action:disabled{opacity:.45}
+#feedback{font-size:14px;line-height:1.7;margin:12px 0}
+footer{text-align:center;background:#174a80;color:white;padding:18px}
 @media(max-width:350px){.cards{grid-template-columns:1fr}.hero h1{font-size:23px}}
 </style>
 </head>
@@ -45,7 +44,7 @@ footer{text-align:center;padding:18px;background:#174a80;color:white}
 
 <header>
   <div class="school">Amardeep Public School</div>
-  <p>कक्षा ४ | हिंदी गतिविधि</p>
+  <p>कक्षा 4 | हिंदी गतिविधि</p>
 </header>
 
 <section class="hero">
@@ -55,62 +54,62 @@ footer{text-align:center;padding:18px;background:#174a80;color:white}
 </section>
 
 <main>
-  <h2>📚 गतिविधि १: फ्लिप कार्ड</h2>
-  <p class="intro">किसी कार्ड पर टैप करें और त्योहार के बारे में जानें।</p>
+  <h2>📚 गतिविधि 1: फ्लिप कार्ड</h2>
+  <p>किसी भी कार्ड पर टैप करें और त्योहार के बारे में रोचक जानकारी जानें।</p>
 
   <div class="cards">
-    <div class="card" tabindex="0" role="button" aria-label="स्वतंत्रता दिवस कार्ड पलटें" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
+    <div class="card" tabindex="0" role="button" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
       <div class="inner">
         <div class="side">
           <div class="emoji">🇮🇳</div>
           <h3>स्वतंत्रता दिवस</h3>
-          <p>१५ अगस्त</p>
-          <div class="small">जानने के लिए पलटें ↻</div>
+          <p>15 अगस्त</p>
+          <div class="hint">जानने के लिए पलटें ↻</div>
         </div>
         <div class="side back">
           <h3>स्वतंत्रता दिवस</h3>
-          <p>१५ अगस्त १९४७ को भारत स्वतंत्र हुआ। इस दिन प्रधानमंत्री लाल किले पर राष्ट्रीय ध्वज फहराते हैं।</p>
+          <p>15 अगस्त 1947 को भारत स्वतंत्र हुआ। इस दिन प्रधानमंत्री लाल किले पर राष्ट्रीय ध्वज फहराते हैं।</p>
         </div>
       </div>
     </div>
 
-    <div class="card" tabindex="0" role="button" aria-label="गणतंत्र दिवस कार्ड पलटें" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
+    <div class="card" tabindex="0" role="button" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
       <div class="inner">
         <div class="side">
           <div class="emoji">🎖️</div>
           <h3>गणतंत्र दिवस</h3>
-          <p>२६ जनवरी</p>
-          <div class="small">जानने के लिए पलटें ↻</div>
+          <p>26 जनवरी</p>
+          <div class="hint">जानने के लिए पलटें ↻</div>
         </div>
         <div class="side back">
           <h3>गणतंत्र दिवस</h3>
-          <p>२६ जनवरी १९५० को भारत का संविधान लागू हुआ। इस दिन नई दिल्ली में भव्य परेड होती है।</p>
+          <p>26 जनवरी 1950 को भारत का संविधान लागू हुआ। इस दिन नई दिल्ली में भव्य परेड आयोजित होती है।</p>
         </div>
       </div>
     </div>
 
-    <div class="card" tabindex="0" role="button" aria-label="गांधी जयंती कार्ड पलटें" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
+    <div class="card" tabindex="0" role="button" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
       <div class="inner">
         <div class="side">
           <div class="emoji">🕊️</div>
           <h3>गांधी जयंती</h3>
-          <p>२ अक्टूबर</p>
-          <div class="small">जानने के लिए पलटें ↻</div>
+          <p>2 अक्टूबर</p>
+          <div class="hint">जानने के लिए पलटें ↻</div>
         </div>
         <div class="side back">
           <h3>गांधी जयंती</h3>
-          <p>२ अक्टूबर को महात्मा गांधी का जन्मदिन मनाया जाता है। वे सत्य और अहिंसा में विश्वास रखते थे।</p>
+          <p>2 अक्टूबर को महात्मा गांधी का जन्मदिन मनाया जाता है। वे सत्य और अहिंसा में विश्वास रखते थे।</p>
         </div>
       </div>
     </div>
 
-    <div class="card" tabindex="0" role="button" aria-label="हमारा तिरंगा कार्ड पलटें" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
+    <div class="card" tabindex="0" role="button" onclick="flip(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flip(this)}">
       <div class="inner">
         <div class="side">
           <div class="emoji">☸️</div>
           <h3>हमारा तिरंगा</h3>
           <p>राष्ट्रीय ध्वज</p>
-          <div class="small">जानने के लिए पलटें ↻</div>
+          <div class="hint">जानने के लिए पलटें ↻</div>
         </div>
         <div class="side back">
           <h3>राष्ट्रीय ध्वज</h3>
@@ -120,11 +119,11 @@ footer{text-align:center;padding:18px;background:#174a80;color:white}
     </div>
   </div>
 
-  <h2>🧠 गतिविधि २: ज्ञान क्विज़</h2>
-  <p class="intro">सही उत्तर पर टैप करें। अंत में अपना स्कोर देखें।</p>
+  <h2>🧠 गतिविधि 2: ज्ञान क्विज़</h2>
+  <p>सही उत्तर चुनें। सभी 5 प्रश्न पूरे करने पर अपना स्कोर देखें।</p>
 
   <div class="panel" aria-live="polite">
-    <div id="count">प्रश्न १ / ५</div>
+    <div id="count">प्रश्न 1 / 5</div>
     <div class="track"><div id="bar"></div></div>
     <div id="quiz">
       <div id="question"></div>
@@ -137,9 +136,9 @@ footer{text-align:center;padding:18px;background:#174a80;color:white}
 
   <div class="panel">
     <h2>🌟 याद रखें</h2>
-    <p class="intro">🇮🇳 १५ अगस्त — स्वतंत्रता दिवस</p>
-    <p class="intro">🎖️ २६ जनवरी — गणतंत्र दिवस</p>
-    <p class="intro">🕊️ २ अक्टूबर — गांधी जयंती</p>
+    <p>🇮🇳 15 अगस्त — स्वतंत्रता दिवस</p>
+    <p>🎖️ 26 जनवरी — गणतंत्र दिवस</p>
+    <p>🕊️ 2 अक्टूबर — गांधी जयंती</p>
     <p>जय हिंद! अपने देश पर गर्व करें।</p>
   </div>
 </main>
@@ -153,11 +152,11 @@ footer{text-align:center;padding:18px;background:#174a80;color:white}
 function flip(card){card.classList.toggle('open')}
 
 const data=[
- {q:"१. भारत का स्वतंत्रता दिवस कब मनाया जाता है?",a:["२६ जनवरी","१५ अगस्त","२ अक्टूबर","१४ नवंबर"],c:1,why:"१५ अगस्त १९४७ को भारत स्वतंत्र हुआ।"},
- {q:"२. भारत का संविधान कब लागू हुआ?",a:["१५ अगस्त १९४७","२ अक्टूबर १९४८","२६ जनवरी १९५०","१४ नवंबर १९५०"],c:2,why:"२६ जनवरी १९५० को भारत का संविधान लागू हुआ।"},
- {q:"३. गांधी जयंती किसका जन्मदिन है?",a:["जवाहरलाल नेहरू","भगत सिंह","सुभाष चंद्र बोस","महात्मा गांधी"],c:3,why:"महात्मा गांधी का जन्म २ अक्टूबर १८६९ को हुआ था।"},
- {q:"४. हमारे तिरंगे के बीच में क्या है?",a:["लाल तारा","नीला अशोक चक्र","हरा फूल","सफेद चाँद"],c:1,why:"तिरंगे के सफेद भाग में नीले रंग का अशोक चक्र है।"},
- {q:"५. गणतंत्र दिवस पर नई दिल्ली में क्या होता है?",a:["भव्य परेड","दीपावली मेला","होली का उत्सव","पतंग प्रतियोगिता"],c:0,why:"गणतंत्र दिवस पर नई दिल्ली में भव्य परेड आयोजित होती है।"}
+ {q:"1. भारत का स्वतंत्रता दिवस कब मनाया जाता है?",a:["26 जनवरी","15 अगस्त","2 अक्टूबर","14 नवंबर"],c:1,why:"15 अगस्त 1947 को भारत स्वतंत्र हुआ।"},
+ {q:"2. भारत का संविधान कब लागू हुआ?",a:["15 अगस्त 1947","2 अक्टूबर 1948","26 जनवरी 1950","14 नवंबर 1950"],c:2,why:"26 जनवरी 1950 को भारत का संविधान लागू हुआ।"},
+ {q:"3. गांधी जयंती किसका जन्मदिन है?",a:["जवाहरलाल नेहरू","भगत सिंह","सुभाष चंद्र बोस","महात्मा गांधी"],c:3,why:"महात्मा गांधी का जन्म 2 अक्टूबर 1869 को हुआ था।"},
+ {q:"4. हमारे तिरंगे के बीच में क्या है?",a:["लाल तारा","नीला अशोक चक्र","हरा फूल","सफेद चाँद"],c:1,why:"तिरंगे के सफेद भाग में नीले रंग का अशोक चक्र है।"},
+ {q:"5. गणतंत्र दिवस पर नई दिल्ली में क्या आयोजित होता है?",a:["भव्य परेड","दीपावली मेला","होली का उत्सव","पतंग प्रतियोगिता"],c:0,why:"गणतंत्र दिवस पर नई दिल्ली में भव्य परेड आयोजित होती है।"}
 ];
 
 let i=0,score=0,locked=false;
@@ -177,7 +176,7 @@ function showQ(){
  q.a.forEach((label,j)=>{
    const b=document.createElement('button');
    b.className='option';
-   b.textContent=String.fromCharCode(2309+j)+'. '+label;
+   b.textContent=String.fromCharCode(65+j)+'. '+label;
    b.onclick=()=>answer(j);
    box.appendChild(b);
  });
