@@ -1,0 +1,674 @@
+```html
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Punjabi Days of the Week - Amardeep School</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts for Gurmukhi and English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+Gurmukhi:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        gurmukhi: ['"Noto Sans Gurmukhi"', 'sans-serif'],
+                        fredoka: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        school: {
+                            blue: '#1E3A8A',
+                            yellow: '#F59E0B',
+                            pink: '#EC4899',
+                            purple: '#8B5CF6',
+                            green: '#10B981',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', 'Noto Sans Gurmukhi', sans-serif;
+            background-color: #F3F4F6;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 3D Flip Card Effect */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Scrollbar for small areas */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+
+        /* Floating animation for playful elements */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col justify-between select-none overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b-4 border-yellow-400 shadow-md sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold border-2 border-yellow-300 shadow">
+                    🎓
+                </div>
+                <div>
+                    <h1 class="text-lg font-black text-indigo-950 tracking-wide leading-tight">Amardeep School</h1>
+                    <p class="text-xs text-indigo-600 font-bold tracking-wider uppercase">Primary Wing • Class 2</p>
+                </div>
+            </div>
+            <div class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1 border border-amber-300">
+                <span>ੴ</span>
+                <span>ਪੰਜਾਬੀ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-md mx-auto w-full flex-grow px-4 py-4 flex flex-col">
+
+        <!-- Title Banner -->
+        <div class="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-4 text-white shadow-lg mb-4 text-center relative overflow-hidden border-2 border-purple-300">
+            <div class="absolute -right-4 -bottom-4 text-6xl opacity-20">📅</div>
+            <h2 class="text-2xl font-black font-gurmukhi tracking-wide drop-shadow mb-1">ਦਿਨਾਂ ਦੇ ਨਾਂ</h2>
+            <p class="text-sm font-medium text-purple-100">Learn Days of the Week in Punjabi</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex rounded-xl bg-slate-200 p-1 mb-4 shadow-inner">
+            <button id="tab-cards" onclick="switchTab('cards')" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 bg-white text-indigo-700 shadow">
+                <span>🎴</span> Flip Cards
+            </button>
+            <button id="tab-quiz" onclick="switchTab('quiz')" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800">
+                <span>🧩</span> Quiz Challenge
+            </button>
+        </div>
+
+        <!-- SECTION 1: FLIP CARDS ACTIVITY -->
+        <section id="section-cards" class="flex-grow flex flex-col justify-center">
+            
+            <!-- Instructions -->
+            <p class="text-center text-xs font-bold text-slate-500 mb-2 flex items-center justify-center gap-1">
+                <span>👆 Tap card to flip</span> • <span>🔊 Tap speaker to listen</span>
+            </p>
+
+            <!-- Card Carousel Container -->
+            <div class="relative w-full aspect-[4/5] max-h-[380px] my-auto">
+                <div id="card-container" class="w-full h-full perspective-1000">
+                    <div id="flip-card-inner" class="w-full h-full relative transform-style-3d cursor-pointer rounded-3xl shadow-xl transition-all duration-500">
+                        
+                        <!-- Front Side -->
+                        <div id="card-front" class="absolute inset-0 w-full h-full bg-white rounded-3xl border-4 border-slate-200 p-6 flex flex-col items-center justify-between backface-hidden">
+                            <div class="w-full flex justify-between items-center">
+                                <span id="card-order-badge" class="bg-indigo-100 text-indigo-700 font-bold text-xs px-3 py-1 rounded-full">Day 1</span>
+                                <button onclick="speakCurrentDay(event)" class="w-10 h-10 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-700 flex items-center justify-center text-lg shadow transition active:scale-95" title="Listen Pronunciation">
+                                    🔊
+                                </button>
+                            </div>
+
+                            <div class="text-center my-2">
+                                <div id="card-icon" class="text-6xl mb-3 animate-float inline-block">☀️</div>
+                                <h3 id="card-punjabi" class="text-4xl font-extrabold font-gurmukhi text-slate-800 mb-1">ਸੋਮਵਾਰ</h3>
+                                <p id="card-english" class="text-lg font-bold text-indigo-600 tracking-wide">Monday</p>
+                            </div>
+
+                            <div class="text-xs text-slate-400 font-semibold flex items-center gap-1">
+                                🔄 Tap anywhere to see details
+                            </div>
+                        </div>
+
+                        <!-- Back Side -->
+                        <div id="card-back" class="absolute inset-0 w-full h-full bg-indigo-600 text-white rounded-3xl border-4 border-indigo-400 p-6 flex flex-col items-center justify-between backface-hidden rotate-y-180">
+                            <div class="w-full flex justify-between items-center">
+                                <span class="text-indigo-200 text-xs font-bold uppercase tracking-wider">Meaning & Info</span>
+                                <button onclick="speakCurrentDay(event)" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-lg shadow transition active:scale-95" title="Listen Pronunciation">
+                                    🔊
+                                </button>
+                            </div>
+
+                            <div class="text-center my-auto w-full">
+                                <div class="bg-white/10 rounded-2xl p-3 backdrop-blur-sm mb-3">
+                                    <p class="text-xs text-indigo-200 font-bold uppercase mb-1">Pronunciation (ਉਚਾਰਨ)</p>
+                                    <p id="card-pronounce" class="text-xl font-bold font-gurmukhi text-yellow-300">Som-vaar</p>
+                                </div>
+
+                                <div class="bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
+                                    <p class="text-xs text-indigo-200 font-bold uppercase mb-1">Fun Fact / ਖ਼ਾਸ ਗੱਲ</p>
+                                    <p id="card-fact" class="text-sm font-semibold text-white leading-relaxed font-gurmukhi">ਕੰਮ ਵਾਲੇ ਹਫ਼ਤੇ ਦਾ ਪਹਿਲਾ ਦਿਨ (First day of work week)</p>
+                                </div>
+                            </div>
+
+                            <div class="text-xs text-indigo-200 font-semibold flex items-center gap-1">
+                                🔄 Tap to flip back
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls (Prev / Next) -->
+            <div class="flex items-center justify-between mt-4 px-2">
+                <button onclick="prevCard()" class="px-5 py-3 rounded-2xl bg-white border-2 border-slate-200 text-slate-700 font-bold text-sm shadow-md active:scale-95 transition flex items-center gap-1">
+                    ◀ Prev
+                </button>
+                
+                <!-- Dot Indicators -->
+                <div id="dots-container" class="flex gap-1.5">
+                    <!-- Dots added by JS -->
+                </div>
+
+                <button onclick="nextCard()" class="px-5 py-3 rounded-2xl bg-indigo-600 text-white font-bold text-sm shadow-md active:scale-95 transition flex items-center gap-1">
+                    Next ▶
+                </button>
+            </div>
+
+        </section>
+
+
+        <!-- SECTION 2: QUIZ CHALLENGE -->
+        <section id="section-quiz" class="hidden flex-grow flex-col">
+            
+            <!-- Score & Progress Header -->
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 mb-4 flex items-center justify-between">
+                <div>
+                    <span class="text-xs text-slate-400 font-bold block uppercase">Question</span>
+                    <span id="quiz-progress-text" class="text-sm font-bold text-indigo-900">1 of 5</span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-1/3 bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200">
+                    <div id="quiz-progress-bar" class="bg-green-500 h-full rounded-full transition-all duration-300" style="width: 20%;"></div>
+                </div>
+
+                <div class="text-right">
+                    <span class="text-xs text-slate-400 font-bold block uppercase">Score</span>
+                    <span id="quiz-score" class="text-sm font-black text-amber-500">⭐ 0</span>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="quiz-box" class="bg-white rounded-3xl p-5 shadow-lg border-2 border-slate-200 mb-4 flex-grow flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span id="quiz-type-badge" class="bg-purple-100 text-purple-700 text-xs font-bold px-2.5 py-1 rounded-full">Meaning</span>
+                        <button id="quiz-audio-btn" onclick="speakQuizQuestion()" class="text-indigo-600 hover:text-indigo-800 text-lg p-1" title="Read Question">
+                            🔊
+                        </button>
+                    </div>
+
+                    <h3 id="quiz-question" class="text-xl font-bold font-gurmukhi text-slate-800 mb-6 text-center leading-snug">
+                        'Sunday' ਨੂੰ ਪੰਜਾਬੀ ਵਿੱਚ ਕੀ ਕਹਿੰਦੇ ਹਨ?
+                    </h3>
+
+                    <!-- Options Container -->
+                    <div id="quiz-options" class="space-y-3">
+                        <!-- Options injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="quiz-feedback" class="hidden mt-4 p-3 rounded-2xl text-center font-bold text-sm">
+                    <!-- Feedback text -->
+                </div>
+            </div>
+
+            <!-- Next Question Button -->
+            <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition text-center">
+                Next Question ➔
+            </button>
+
+            <!-- Quiz Result Screen (Hidden by default) -->
+            <div id="quiz-result" class="hidden bg-white rounded-3xl p-6 shadow-xl border-4 border-yellow-400 text-center flex-col items-center justify-center my-auto">
+                <div class="text-6xl mb-2 animate-bounce">🏆</div>
+                <h3 class="text-2xl font-black text-slate-800 mb-1">ਸ਼ਾਬਾਸ਼! Great Job!</h3>
+                <p class="text-sm text-slate-600 mb-4">You completed the Days of the Week Quiz!</p>
+
+                <div class="bg-amber-50 rounded-2xl p-4 w-full mb-6 border border-amber-200">
+                    <p class="text-xs text-amber-700 font-bold uppercase">Final Score</p>
+                    <p id="final-score-text" class="text-4xl font-black text-amber-600">5 / 5</p>
+                </div>
+
+                <button onclick="resetQuiz()" class="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-md active:scale-95 transition">
+                    🔄 Play Again / ਦੁਬਾਰਾ ਖੇਡੋ
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-2.5 text-center text-xs text-slate-400 font-medium">
+        <p>© Amardeep School • Punjabi Learning Resource</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- DATA STRUCTURE ---
+        const daysData = [
+            {
+                id: 1,
+                english: "Monday",
+                punjabi: "ਸੋਮਵਾਰ",
+                pronounce: "Som-vaar",
+                fact: "ਹਫ਼ਤੇ ਦਾ ਪਹਿਲਾ ਦਿਨ (First day of the week)",
+                icon: "🌅",
+                bgColor: "from-blue-500 to-indigo-600"
+            },
+            {
+                id: 2,
+                english: "Tuesday",
+                punjabi: "ਮੰਗਲਵਾਰ",
+                pronounce: "Man-gal-vaar",
+                fact: "ਹਫ਼ਤੇ ਦਾ ਦੂਜਾ ਦਿਨ (Second day of the week)",
+                icon: "🔴",
+                bgColor: "from-red-500 to-pink-600"
+            },
+            {
+                id: 3,
+                english: "Wednesday",
+                punjabi: "ਬੁੱਧਵਾਰ",
+                pronounce: "Buddh-vaar",
+                fact: "ਹਫ਼ਤੇ ਦੇ ਵਿਚਕਾਰਲਾ ਦਿਨ (Middle of work week)",
+                icon: "🟢",
+                bgColor: "from-emerald-500 to-teal-600"
+            },
+            {
+                id: 4,
+                english: "Thursday",
+                punjabi: "ਵੀਰਵਾਰ",
+                pronounce: "Veer-vaar",
+                fact: "ਵੀਰ ਪੰਜਾਬੀ 'ਚ ਬਹਾਦਰ ਨੂੰ ਵੀ ਕਹਿੰਦੇ ਹਨ",
+                icon: "🟡",
+                bgColor: "from-amber-500 to-orange-600"
+            },
+            {
+                id: 5,
+                english: "Friday",
+                punjabi: "ਸ਼ੁੱਕਰਵਾਰ",
+                pronounce: "Shuk-kar-vaar",
+                fact: "ਵੀਕਐਂਡ ਤੋਂ ਪਹਿਲਾਂ ਦਾ ਦਿਨ (Day before weekend)",
+                icon: "🟣",
+                bgColor: "from-purple-500 to-violet-600"
+            },
+            {
+                id: 6,
+                english: "Saturday",
+                punjabi: "ਸ਼ਨੀਵਾਰ",
+                pronounce: "Sha-nee-vaar",
+                fact: "ਸ਼ਨੀਚਰਵਾਰ ਵੀ ਕਿਹਾ ਜਾਂਦਾ ਹੈ (Weekend starts)",
+                icon: "🔷",
+                bgColor: "from-cyan-500 to-blue-600"
+            },
+            {
+                id: 7,
+                english: "Sunday",
+                punjabi: "ਐਤਵਾਰ",
+                pronounce: "Ait-vaar",
+                fact: "ਛੁੱਟੀ ਦਾ ਦਿਨ! (Fun Holiday / Funday!)",
+                icon: "🎉",
+                bgColor: "from-pink-500 to-rose-600"
+            }
+        ];
+
+        const quizQuestions = [
+            {
+                type: "Matching",
+                question: "'Sunday' ਨੂੰ ਪੰਜਾਬੀ ਵਿੱਚ ਕੀ ਕਹਿੰਦੇ ਹਨ?",
+                questionEnglish: "What is Sunday in Punjabi?",
+                options: ["ਐਤਵਾਰ", "ਸੋਮਵਾਰ", "ਵੀਰਵਾਰ", "ਸ਼ਨੀਵਾਰ"],
+                correct: 0
+            },
+            {
+                type: "Next Day",
+                question: "ਮੰਗਲਵਾਰ ਤੋਂ ਅਗਲਾ ਦਿਨ ਕਿਹੜਾ ਆਉਂਦਾ ਹੈ?",
+                questionEnglish: "Which day comes after Tuesday?",
+                options: ["ਸੋਮਵਾਰ", "ਬੁੱਧਵਾਰ", "ਸ਼ੁੱਕਰਵਾਰ", "ਐਤਵਾਰ"],
+                correct: 1
+            },
+            {
+                type: "Tomorrow Challenge",
+                question: "ਜੇ ਅੱਜ ਵੀਰਵਾਰ ਹੈ, ਤਾਂ ਕੱਲ੍ਹ ਕਿਹੜਾ ਦਿਨ ਹੋਵੇਗਾ?",
+                questionEnglish: "If today is Thursday, tomorrow is...?",
+                options: ["ਬੁੱਧਵਾਰ", "ਸ਼ਨੀਵਾਰ", "ਸ਼ੁੱਕਰਵਾਰ", "ਸੋਮਵਾਰ"],
+                correct: 2
+            },
+            {
+                type: "Matching",
+                question: "'Wednesday' ਦਾ ਪੰਜਾਬੀ ਵਿੱਚ ਨਾਂ ਦੱਸੋ:",
+                questionEnglish: "Select Punjabi name for Wednesday:",
+                options: ["ਮੰਗਲਵਾਰ", "ਬੁੱਧਵਾਰ", "ਵੀਰਵਾਰ", "ਐਤਵਾਰ"],
+                correct: 1
+            },
+            {
+                type: "Holiday Special",
+                question: "ਸਕੂਲ ਦੀ ਛੁੱਟੀ ਕਿਸ ਦਿਨ ਹੁੰਦੀ ਹੈ?",
+                questionEnglish: "Which day is school holiday?",
+                options: ["ਸੋਮਵਾਰ", "ਬੁੱਧਵਾਰ", "ਐਤਵਾਰ", "ਮੰਗਲਵਾਰ"],
+                correct: 2
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let currentCardIndex = 0;
+        let isCardFlipped = false;
+        
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        // --- WEB AUDIO API (Synthesized Audio Effects) ---
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'flip') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'correct') {
+                    // Happy chime (Two notes: C5 -> G5)
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(783.99, now + 0.12); // G5
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    // Gentle low buzz
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        // --- SPEECH SYNTHESIS (TTS) ---
+        function speakText(text, lang = 'pa-IN') {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop ongoing speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = 0.85; // Slightly slower for kids
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function speakCurrentDay(event) {
+            if (event) event.stopPropagation();
+            const day = daysData[currentCardIndex];
+            speakText(day.punjabi + ", " + day.english);
+        }
+
+        function speakQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            speakText(q.question);
+        }
+
+        // --- NAVIGATION TABS ---
+        function switchTab(tab) {
+            const cardsSec = document.getElementById('section-cards');
+            const quizSec = document.getElementById('section-quiz');
+            const tabCardsBtn = document.getElementById('tab-cards');
+            const tabQuizBtn = document.getElementById('tab-quiz');
+
+            if (tab === 'cards') {
+                cardsSec.classList.remove('hidden');
+                cardsSec.classList.add('flex');
+                quizSec.classList.add('hidden');
+                quizSec.classList.remove('flex');
+
+                tabCardsBtn.className = "flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 bg-white text-indigo-700 shadow";
+                tabQuizBtn.className = "flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800";
+            } else {
+                quizSec.classList.remove('hidden');
+                quizSec.classList.add('flex');
+                cardsSec.classList.add('hidden');
+                cardsSec.classList.remove('flex');
+
+                tabQuizBtn.className = "flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 bg-white text-indigo-700 shadow";
+                tabCardsBtn.className = "flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800";
+            }
+        }
+
+        // --- FLIP CARD FUNCTIONALITY ---
+        function updateCardUI() {
+            const data = daysData[currentCardIndex];
+            
+            // Flip back if currently flipped before updating
+            const cardInner = document.getElementById('flip-card-inner');
+            if (isCardFlipped) {
+                cardInner.classList.remove('rotate-y-180');
+                isCardFlipped = false;
+            }
+
+            // Populate Card Details
+            document.getElementById('card-order-badge').innerText = `Day ${data.id} of 7`;
+            document.getElementById('card-icon').innerText = data.icon;
+            document.getElementById('card-punjabi').innerText = data.punjabi;
+            document.getElementById('card-english').innerText = data.english;
+            
+            document.getElementById('card-pronounce').innerText = data.pronounce;
+            document.getElementById('card-fact').innerText = data.fact;
+
+            // Render Dots
+            renderDots();
+        }
+
+        function renderDots() {
+            const container = document.getElementById('dots-container');
+            container.innerHTML = '';
+            daysData.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentCardIndex ? 'bg-indigo-600 w-5' : 'bg-slate-300'}`;
+                container.appendChild(dot);
+            });
+        }
+
+        function toggleFlipCard() {
+            playSound('flip');
+            const cardInner = document.getElementById('flip-card-inner');
+            isCardFlipped = !isCardFlipped;
+            if (isCardFlipped) {
+                cardInner.classList.add('rotate-y-180');
+            } else {
+                cardInner.classList.remove('rotate-y-180');
+            }
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % daysData.length;
+            updateCardUI();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + daysData.length) % daysData.length;
+            updateCardUI();
+        }
+
+        // --- QUIZ CHALLENGE LOGIC ---
+        function loadQuizQuestion() {
+            quizAnswered = false;
+            const q = quizQuestions[currentQuizIndex];
+
+            document.getElementById('quiz-progress-text').innerText = `${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQuizIndex + 1) / quizQuestions.length) * 100}%`;
+            document.getElementById('quiz-score').innerText = `⭐ ${quizScore}`;
+            document.getElementById('quiz-type-badge').innerText = q.type;
+
+            document.getElementById('quiz-question').innerText = q.question;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((optionText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full py-3 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-800 font-bold font-gurmukhi text-lg hover:border-indigo-400 hover:bg-indigo-50 transition active:scale-98 flex items-center justify-between text-left shadow-sm";
+                btn.innerHTML = `<span>${optionText}</span> <span class="text-xs text-slate-300 font-sans">#${idx + 1}</span>`;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Hide feedback & next button
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+        }
+
+        function checkAnswer(selectedIdx, selectedBtn) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const q = quizQuestions[currentQuizIndex];
+            const feedbackEl = document.getElementById('quiz-feedback');
+            const optionsBtns = document.getElementById('quiz-options').children;
+
+            if (selectedIdx === q.correct) {
+                playSound('correct');
+                quizScore += 1;
+                document.getElementById('quiz-score').innerText = `⭐ ${quizScore}`;
+
+                selectedBtn.className = "w-full py-3 px-4 rounded-xl border-2 border-green-500 bg-green-100 text-green-900 font-bold font-gurmukhi text-lg flex items-center justify-between text-left shadow-md";
+                
+                feedbackEl.className = "mt-4 p-3 rounded-2xl text-center font-bold text-sm bg-green-100 text-green-800 border border-green-300";
+                feedbackEl.innerText = "✨ ਬਹੁਤ ਵਧੀਆ! Correct Answer!";
+            } else {
+                playSound('wrong');
+                selectedBtn.className = "w-full py-3 px-4 rounded-xl border-2 border-red-400 bg-red-100 text-red-900 font-bold font-gurmukhi text-lg flex items-center justify-between text-left shadow-md";
+
+                // Highlight correct one
+                optionsBtns[q.correct].className = "w-full py-3 px-4 rounded-xl border-2 border-green-500 bg-green-50 text-green-900 font-bold font-gurmukhi text-lg flex items-center justify-between text-left";
+
+                feedbackEl.className = "mt-4 p-3 rounded-2xl text-center font-bold text-sm bg-amber-100 text-amber-800 border border-amber-300";
+                feedbackEl.innerText = `💡 ਕੋਈ ਗੱਲ ਨਹੀਂ! Correct answer: ${q.options[q.correct]}`;
+            }
+
+            feedbackEl.classList.remove('hidden');
+
+            // Show Next or Finish Button
+            const nextBtn = document.getElementById('quiz-next-btn');
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                nextBtn.innerText = "Next Question ➔";
+            } else {
+                nextBtn.innerText = "See Final Results 🏆";
+            }
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+            
+            const resultEl = document.getElementById('quiz-result');
+            resultEl.classList.remove('hidden');
+            resultEl.classList.add('flex');
+
+            document.getElementById('final-score-text').innerText = `${quizScore} / ${quizQuestions.length}`;
+
+            // Trigger Confetti Celebration for good scores
+            if (quizScore >= 3 && typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 60,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('flex');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function () {
+            // Bind card tap to flip
+            document.getElementById('card-container').addEventListener('click', toggleFlipCard);
+
+            // Initialize UI elements
+            updateCardUI();
+            loadQuizQuestion();
+        };
+    </script>
+</body>
+</html>
+```
