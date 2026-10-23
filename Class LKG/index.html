@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amardeep School - LKG Count & Write Challenge</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#f4f8ff;font-family:Arial,sans-serif;color:#243047}
+.app{max-width:760px;margin:auto}
+.school{font-size:21px;font-weight:900;color:#173b83;padding:12px 4px;border-bottom:3px solid #f2c94c}
+.hero{background:#eaf5ff;border-radius:18px;padding:18px;text-align:center;margin:14px 0}
+.hero .icons{font-size:34px}
+h1{font-size:25px;color:#173b83;margin:8px 0}
+.hero p{margin:7px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+button{cursor:pointer;touch-action:manipulation;min-height:44px;border-radius:12px;padding:10px 13px;font-size:16px;font-weight:700;border:1px solid #cbd5e1;background:#fff;color:#243047}
+button:focus-visible,input:focus-visible{outline:3px solid #eab308;outline-offset:2px}
+.tab{flex:1;background:#e8edf5}
+.tab.active,.primary{background:#2456b3;color:white;border-color:#2456b3}
+.panel{border:1px solid #dbe4f0;border-radius:16px;padding:16px;background:white;margin-bottom:14px}
+.hidden{display:none!important}
+.muted{color:#64748b;font-size:14px;line-height:1.45}
+h2{font-size:21px;margin:0 0 8px}
+.flipgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.flip{background:#fff5d6;border:2px solid #f0c75e;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:25px;color:#173b83;padding:8px}
+.flip small{font-size:12px;color:#64748b}
+.flip.revealed{background:#e3f8e8;border-color:#7ccf91}
+.countrow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px;font-size:30px;padding:14px 0;min-height:75px;line-height:1.5}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.choice{background:#f8fafc;font-size:20px}
+.feedback{min-height:28px;margin-top:10px;font-weight:700;line-height:1.4}
+.answerbox{font-size:20px;padding:12px;width:100%;border:2px solid #cbd5e1;border-radius:10px;margin:8px 0 12px}
+.progress{height:9px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0}
+.bar{height:100%;width:0;background:#22a06b;transition:width .2s}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.footer{text-align:center;font-size:14px;color:#64748b;padding:8px}
+@media(max-width:360px){body{padding:8px}.flipgrid{gap:6px}.flip{font-size:21px;min-height:100px;padding:5px}.tab{font-size:14px;padding:9px 6px}.countrow{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="school">🏫 Amardeep School</header>
+  <section class="hero">
+    <div class="icons">🔢 🌟 ✏️</div>
+    <h1>Count &amp; Write Challenge</h1>
+    <p><strong>Class: LKG</strong> · Count the pictures and learn numbers!</p>
+    <p>👀 Look carefully · 🔢 Count · ✏️ Write · 🎉 Have fun!</p>
+  </section>
+
+  <nav class="tabs" aria-label="Activity sections">
+    <button type="button" class="tab active" data-tab="cards" aria-selected="true">🃏 Flipcards</button>
+    <button type="button" class="tab" data-tab="write" aria-selected="false">✏️ Count &amp; Write</button>
+    <button type="button" class="tab" data-tab="quiz" aria-selected="false">🏆 Quiz</button>
+  </nav>
+
+  <section class="panel" id="cards">
+    <h2>🃏 Number Flipcards</h2>
+    <p class="muted">Tap a card to reveal the number. Can you count the objects first?</p>
+    <div class="flipgrid" id="flipgrid"></div>
+    <p class="muted">Tip: Say the number aloud when you flip each card!</p>
+    <button type="button" class="primary" id="resetcards">🔄 Hide all cards</button>
+  </section>
+
+  <section class="panel hidden" id="write">
+    <h2>✏️ Count and Write</h2>
+    <p class="muted">Count the objects and type the correct number.</p>
+    <div id="writeq"></div>
+    <label for="answer"><strong>My answer:</strong></label>
+    <input class="answerbox" id="answer" type="number" min="0" max="10" inputmode="numeric" placeholder="Type a number">
+    <div class="row">
+      <button type="button" class="primary" id="checkwrite">Check Answer</button>
+      <button type="button" id="nextwrite">Next Question ➜</button>
+    </div>
+    <div class="feedback" id="writefeedback" aria-live="polite"></div>
+    <p class="muted" id="writescore">Correct answers: 0</p>
+  </section>
+
+  <section class="panel hidden" id="quiz">
+    <h2>🏆 Mini Maths Quiz</h2>
+    <p class="muted">Choose the right answer for each question.</p>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <p class="muted" id="qcount">Question 1 of 5</p>
+    <h3 id="question" style="font-size:21px;margin:12px 0"></h3>
+    <div class="countrow" id="quizobjects" aria-label="Objects to count"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+    <div class="row">
+      <button type="button" class="primary" id="nextquiz" disabled>Next ➜</button>
+      <button type="button" id="restartquiz" class="hidden">Play Again 🔄</button>
+    </div>
+    <div id="final" class="hidden" style="margin-top:12px;text-align:center">
+      <div style="font-size:28px">🌟 🎉 🌟</div>
+      <h2>Quiz Complete!</h2>
+      <p id="finalscore"></p>
+    </div>
+  </section>
+  <footer class="footer">🌈 Keep practising, little star! 🌈</footer>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const objects = (n, emoji) => Array.from({length:n}, () => emoji).join(' ');
+  const cards = [
+    {n:1,e:'🍎'},{n:2,e:'⭐'},{n:3,e:'🦋'},
+    {n:4,e:'🌼'},{n:5,e:'🐠'},{n:6,e:'🍓'}
+  ];
+
+  // Flipcards
+  const flipgrid = $('flipgrid');
+  cards.forEach(item => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'flip';
+    btn.setAttribute('aria-label', 'Flip card with ' + item.n + ' objects');
+    function render(open) {
+      btn.classList.toggle('revealed', open);
+      btn.innerHTML = open
+        ? '<span style="font-size:34px">' + item.n + '</span><small>' + objects(item.n,item.e) + '</small>'
+        : '<span>' + objects(item.n,item.e) + '</span><small>Tap to flip!</small>';
+      btn.setAttribute('aria-label', open
+        ? 'Number ' + item.n + ', ' + item.n + ' objects'
+        : 'Flip card with ' + item.n + ' objects');
+    }
+    render(false);
+    btn.addEventListener('click', () => render(!btn.classList.contains('revealed')));
+    flipgrid.appendChild(btn);
+  });
+  $('resetcards').addEventListener('click', () => {
+    Array.from(flipgrid.children).forEach((btn,i) => {
+      btn.classList.remove('revealed');
+      btn.innerHTML = '<span>' + objects(cards[i].n,cards[i].e) + '</span><small>Tap to flip!</small>';
+      btn.setAttribute('aria-label','Flip card with ' + cards[i].n + ' objects');
+    });
+  });
+
+  // Section navigation
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-tab]').forEach(tab => {
+        const active = tab === btn;
+        tab.classList.toggle('active',active);
+        tab.setAttribute('aria-selected',String(active));
+      });
+      ['cards','write','quiz'].forEach(id => $(id).classList.toggle('hidden',id !== btn.dataset.tab));
+    });
+  });
+
+  // Count and write
+  const writeQs = [
+    {n:3,e:'🍌'},{n:5,e:'⭐'},{n:2,e:'🐸'},
+    {n:4,e:'🍎'},{n:6,e:'🌸'},{n:1,e:'🦋'}
+  ];
+  let wi = 0, ws = 0, checked = false;
+  function showWrite() {
+    const q = writeQs[wi];
+    $('writeq').innerHTML =
+      '<div class="countrow" aria-label="Count ' + q.n + ' objects">' + objects(q.n,q.e) + '</div>' +
+      '<p style="text-align:center;font-weight:700">How many do you see?</p>' +
+      '<p class="muted" style="text-align:center">Question ' + (wi+1) + ' of ' + writeQs.length + '</p>';
+    $('answer').value = '';
+    $('writefeedback').textContent = '';
+    checked = false;
+  }
+  showWrite();
+  $('checkwrite').addEventListener('click', () => {
+    if (checked) { $('writefeedback').textContent = 'Tap Next Question to continue.'; return; }
+    const value = $('answer').value;
+    if (value === '') { $('writefeedback').textContent = 'Please type a number first.'; return; }
+    if (Number(value) === writeQs[wi].n) {
+      ws++;
+      checked = true;
+      $('writefeedback').textContent = '🌟 Great counting! That is correct!';
+    } else {
+      $('writefeedback').textContent = '😊 Try again. Count each object slowly.';
+    }
+    $('writescore').textContent = 'Correct answers: ' + ws;
+  });
+  $('answer').addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('checkwrite').click();
+  });
+  $('nextwrite').addEventListener('click', () => {
+    wi = (wi + 1) % writeQs.length;
+    showWrite();
+  });
+
+  // Quiz
+  const qs = [
+    {n:2,e:'🐥',text:'How many chicks?',opts:[1,2,3,4]},
+    {n:4,e:'🍎',text:'Count the apples.',opts:[3,4,5,2]},
+    {n:1,e:'⚽',text:'How many balls?',opts:[2,1,3,4]},
+    {n:5,e:'⭐',text:'Count the stars.',opts:[4,6,5,3]},
+    {n:3,e:'🦋',text:'How many butterflies?',opts:[1,3,2,4]}
+  ];
+  let qi = 0, score = 0, answered = false;
+  function showQuiz() {
+    answered = false;
+    const q = qs[qi];
+    $('qcount').textContent = 'Question ' + (qi+1) + ' of ' + qs.length;
+    $('bar').style.width = (qi / qs.length * 100) + '%';
+    $('question').textContent = q.text;
+    $('quizobjects').textContent = objects(q.n,q.e);
+    $('choices').replaceChildren();
+    q.opts.forEach(n => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'choice';
+      btn.textContent = n;
+      btn.addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+        if (n === q.n) {
+          score++;
+          $('feedback').textContent = '🎉 Excellent! You counted correctly.';
+        } else {
+          $('feedback').textContent = '💛 Good try! The correct number is ' + q.n + '.';
+        }
+        Array.from($('choices').children).forEach(choice => {
+          choice.disabled = true;
+          if (Number(choice.textContent) === q.n) {
+            choice.style.background = '#dcfce7';
+            choice.style.borderColor = '#16a34a';
+          }
+        });
+        $('nextquiz').disabled = false;
+      });
+      $('choices').appendChild(btn);
+    });
+    $('feedback').textContent = '';
+    $('nextquiz').disabled = true;
+    $('nextquiz').classList.remove('hidden');
+    $('restartquiz').classList.add('hidden');
+    $('final').classList.add('hidden');
+  }
+  $('nextquiz').addEventListener('click', () => {
+    if (qi < qs.length - 1) {
+      qi++;
+      showQuiz();
+    } else {
+      $('bar').style.width = '100%';
+      $('qcount').textContent = '5 questions completed';
+      $('question').textContent = '';
+      $('quizobjects').textContent = '';
+      $('choices').replaceChildren();
+      $('feedback').textContent = '';
+      $('nextquiz').classList.add('hidden');
+      $('final').classList.remove('hidden');
+      $('finalscore').textContent = 'You scored ' + score + ' out of ' + qs.length + '! ' +
+        (score === qs.length ? 'Amazing work!' : 'Keep practising—you are getting better!');
+      $('restartquiz').classList.remove('hidden');
+    }
+  });
+  $('restartquiz').addEventListener('click', () => {
+    qi = 0; score = 0; showQuiz();
+  });
+  showQuiz();
+})();
+</script>
+</body>
+</html>
