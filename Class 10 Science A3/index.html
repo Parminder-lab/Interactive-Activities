@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amardeep School - Carbon & Its Compounds Interactive Module</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        amberCustom: '#f59e0b',
+                        emeraldCustom: '#10b981',
+                        violetCustom: '#8b5cf6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Flip Card Styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Smooth tab scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Drag & Drop Visual Hints */
+        .drag-over {
+            border-color: #0284c7 !important;
+            background-color: #e0f2fe !important;
+            scale: 1.02;
+        }
+
+        /* Pulse Animation for Active Interactive elements */
+        @keyframes subtlePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(0.98); }
+        }
+        .pulse-subtle {
+            animation: subtlePulse 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+
+    <!-- HEADER / BANNER -->
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3 text-center md:text-left">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/30 ring-2 ring-sky-400/30">
+                    <i class="fa-solid font-bold text-2xl text-white">C</i>
+                </div>
+                <div>
+                    <div class="flex items-center justify-center md:justify-start gap-2">
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-sky-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">
+                            AMARDEEP SCHOOL
+                        </h1>
+                        <span class="px-2 py-0.5 text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-full">NCERT Class 10</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 font-medium">Science Chapter 4: Carbon and Its Compounds</p>
+                </div>
+            </div>
+
+            <!-- Global Score Tracker -->
+            <div class="flex items-center gap-4 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700/60 shadow-inner">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-400 text-lg"></i>
+                    <div class="text-left">
+                        <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Total Points</div>
+                        <div id="globalScore" class="text-lg font-bold text-emerald-400 leading-none">0 / 100</div>
+                    </div>
+                </div>
+                <button onclick="resetAllProgress()" class="text-slate-400 hover:text-slate-200 text-xs flex items-center gap-1 bg-slate-700/50 hover:bg-slate-700 px-2 py-1 rounded transition">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="bg-slate-950/60 border-t border-slate-800/80 overflow-x-auto no-scrollbar">
+            <div class="max-w-7xl mx-auto px-4 flex space-x-1 sm:space-x-2 py-2 min-w-max text-xs sm:text-sm">
+                <button onclick="switchTab('cards')" id="tab-cards" class="tab-btn active-tab flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition duration-200 text-sky-400 bg-sky-950/60 border border-sky-500/40">
+                    <i class="fa-solid fa-clone"></i> Revision Cards
+                </button>
+                <button onclick="switchTab('drag')" id="tab-drag" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                    <i class="fa-solid fa-puzzle-piece"></i> Nomenclature Matching
+                </button>
+                <button onclick="switchTab('micelle')" id="tab-micelle" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                    <i class="fa-solid fa-soap"></i> Micelle Visualizer
+                </button>
+                <button onclick="switchTab('reactions')" id="tab-reactions" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                    <i class="fa-solid fa-flask-vial"></i> Reactions Builder Quiz
+                </button>
+                <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                    <i class="fa-solid fa-table-list"></i> Formulas & Summary
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- SECTION 1: FLIP CARDS -->
+        <section id="sec-cards" class="tab-section space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-sky-400"></i> Concept Flash Cards
+                    </h2>
+                    <p class="text-slate-400 text-sm">Tap or click on any card to flip and review core NCERT key concepts.</p>
+                </div>
+                <div class="text-xs text-sky-400/90 bg-sky-950/40 border border-sky-800/40 px-3 py-1.5 rounded-lg flex items-center gap-2 self-start sm:self-auto">
+                    <i class="fa-solid fa-hand-pointer"></i> Interactive Deck
+                </div>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="flashcardsGrid">
+                <!-- Cards injected via JS dynamically -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: DRAG & DROP NOMENCLATURE & FUNCTIONAL GROUPS -->
+        <section id="sec-drag" class="tab-section hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-emerald-400"></i> Nomenclature & Functional Group Match
+                    </h2>
+                    <p class="text-slate-400 text-sm">Drag each compound or functional group term to its correct chemical formula/description target slot.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="dragScore" class="text-sm font-semibold bg-emerald-950/60 text-emerald-400 px-3 py-1.5 rounded-lg border border-emerald-800/40">
+                        Matched: 0/6
+                    </span>
+                    <button onclick="initDragGame()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg transition border border-slate-700">
+                        <i class="fa-solid fa-rotate-left"></i> Shuffle
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Container -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Draggable Items Container -->
+                <div class="lg:col-span-4 bg-slate-800/50 border border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-lg">
+                    <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-grip-vertical text-sky-400"></i> Draggable Terms
+                    </h3>
+                    <div id="dragItems" class="space-y-3 min-h-[300px]">
+                        <!-- Items rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Drop Targets Container -->
+                <div class="lg:col-span-8 bg-slate-800/30 border border-slate-800 rounded-2xl p-4 sm:p-5">
+                    <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-emerald-400"></i> Target Descriptions & Structures
+                    </h3>
+                    <div id="dropTargets" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Targets rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: MICELLE VISUALIZER -->
+        <section id="sec-micelle" class="tab-section hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-bubbles text-amber-400"></i> Interactive Soap Micelle Explorer
+                    </h2>
+                    <p class="text-slate-400 text-sm">Visualize how soap molecules structure into micelles to trap dirt and grease in water.</p>
+                </div>
+            </div>
+
+            <!-- Micelle Interactive Sandbox -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Controls & Explanation -->
+                <div class="space-y-4 lg:col-span-1">
+                    <div class="bg-slate-800/70 border border-slate-700/60 rounded-2xl p-5 space-y-4">
+                        <h3 class="font-bold text-lg text-slate-200 border-b border-slate-700 pb-2">Structure of Soap</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            A soap molecule (e.g. Sodium Stearate C<sub>17</sub>H<sub>35</sub>COONa) consists of two contrasting ends:
+                        </p>
+                        
+                        <!-- Toggle Buttons -->
+                        <div class="space-y-2">
+                            <button onclick="highlightMicellePart('hydrophobic')" id="btn-hydrophobic" class="w-full text-left p-3 rounded-xl border border-slate-700 bg-slate-800 hover:border-amber-500/50 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-4 h-4 rounded-full bg-amber-400 shadow-md shadow-amber-400/50"></div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-100">Hydrophobic Tail</div>
+                                        <div class="text-[11px] text-slate-400">Water-fearing, Oil-loving (C<sub>n</sub>H<sub>2n+1</sub>)</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+                            </button>
+
+                            <button onclick="highlightMicellePart('hydrophilic')" id="btn-hydrophilic" class="w-full text-left p-3 rounded-xl border border-slate-700 bg-slate-800 hover:border-sky-500/50 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-4 h-4 rounded-full bg-sky-400 shadow-md shadow-sky-400/50"></div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-100">Hydrophilic Ionic Head</div>
+                                        <div class="text-[11px] text-slate-400">Water-loving, Dissolves in water (−COO<sup>−</sup>Na<sup>+</sup>)</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+                            </button>
+
+                            <button onclick="highlightMicellePart('all')" id="btn-all" class="w-full text-left p-3 rounded-xl border border-sky-500/40 bg-sky-950/30 transition flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-4 h-4 rounded-full bg-emerald-400"></div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-sky-200">Full Micelle Formation</div>
+                                        <div class="text-[11px] text-slate-400">Spherical cluster trapping dirt in center</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-rotate text-sky-400 text-xs"></i>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Explanation Box -->
+                        <div id="micelleInfoBox" class="p-3.5 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">
+                            Click on any component above to highlight its behavior and structure in water!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas Visualizer -->
+                <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center relative min-h-[380px] shadow-2xl overflow-hidden">
+                    <div class="absolute top-4 left-4 bg-slate-800/80 px-3 py-1 rounded-full text-xs font-medium text-slate-300 border border-slate-700">
+                        <i class="fa-solid fa-eye text-sky-400 mr-1"></i> Interactive Micelle Model
+                    </div>
+
+                    <div class="w-full max-w-md h-80 relative flex items-center justify-center" id="micelleGraphicContainer">
+                        <!-- Micelle SVG Diagram -->
+                        <svg id="micelleSvg" class="w-full h-full" viewBox="0 0 400 400">
+                            <!-- Background Water molecules indicator -->
+                            <g opacity="0.25">
+                                <text x="30" y="50" fill="#38bdf8" font-size="12">H₂O</text>
+                                <text x="350" y="80" fill="#38bdf8" font-size="12">H₂O</text>
+                                <text x="40" y="350" fill="#38bdf8" font-size="12">H₂O</text>
+                                <text x="340" y="340" fill="#38bdf8" font-size="12">H₂O</text>
+                                <text x="200" y="30" fill="#38bdf8" font-size="12">H₂O</text>
+                            </g>
+
+                            <!-- Central Dirt / Oil Drop -->
+                            <circle id="micelleDirt" cx="200" cy="200" r="48" fill="#78350f" stroke="#d97706" stroke-width="3" class="transition-all duration-300" />
+                            <text x="200" y="204" text-anchor="middle" fill="#fef3c7" font-weight="bold" font-size="14">OILY DIRT</text>
+
+                            <!-- Soap Molecules Array -->
+                            <g id="soapMoleculesGroup">
+                                <!-- Generated by JS for precise radial geometry -->
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Legend footer -->
+                    <div class="flex flex-wrap items-center justify-center gap-4 text-xs mt-2 pt-2 border-t border-slate-800/80 w-full text-slate-400">
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> Hydrophobic Tail (Oil-soluble)</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-sky-400 inline-block"></span> Hydrophilic Head (Water-soluble)</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-800 inline-block"></span> Dirt Particle</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: CHEMICAL REACTIONS QUIZ / STEP BUILDER -->
+        <section id="sec-reactions" class="tab-section hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-vial-circle-check text-violet-400"></i> Reaction Builder & Quick Quiz
+                    </h2>
+                    <p class="text-slate-400 text-sm">Test your knowledge of Ethanol, Ethanoic Acid, Saponification, and Hydrocarbon reactions!</p>
+                </div>
+                <div id="quizProgress" class="text-xs bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-violet-300 font-semibold">
+                    Question 1 of 5
+                </div>
+            </div>
+
+            <!-- Quiz Card -->
+            <div class="max-w-3xl mx-auto bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-8 shadow-xl">
+                <div id="quizContainer">
+                    <!-- Dynamic Question Content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: SUMMARY CHEATSHEET & FORMULAS TABLE -->
+        <section id="sec-cheatsheet" class="tab-section hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-sky-400"></i> Summary Cheatsheet & Hydrocarbon Table
+                    </h2>
+                    <p class="text-slate-400 text-sm">NCERT Quick Reference Guide for Alkanes, Alkenes, Alkynes (C<sub>1</sub> to C<sub>6</sub>) and Functional Groups.</p>
+                </div>
+                <button onclick="window.print()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 self-start sm:self-auto">
+                    <i class="fa-solid fa-print"></i> Print Notes
+                </button>
+            </div>
+
+            <!-- Table 1: Hydrocarbons -->
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl overflow-hidden shadow-lg">
+                <div class="bg-slate-800/80 px-5 py-3 border-b border-slate-700 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-200 text-sm sm:text-base flex items-center gap-2">
+                        <i class="fa-solid fa-atom text-sky-400"></i> First 6 Hydrocarbons Series
+                    </h3>
+                    <span class="text-xs text-slate-400">General Formulas: Alkane (C<sub>n</sub>H<sub>2n+2</sub>), Alkene (C<sub>n</sub>H<sub>2n</sub>), Alkyne (C<sub>n</sub>H<sub>2n-2</sub>)</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm text-slate-300">
+                        <thead class="bg-slate-900/80 text-sky-300 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-700">
+                            <tr>
+                                <th class="px-4 py-3">No. of C (n)</th>
+                                <th class="px-4 py-3">Root Word</th>
+                                <th class="px-4 py-3">Alkane (Single Bond)</th>
+                                <th class="px-4 py-3">Alkene (Double Bond)</th>
+                                <th class="px-4 py-3">Alkyne (Triple Bond)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-2.5 font-bold text-sky-400">1</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-200">Meth-</td>
+                                <td class="px-4 py-2.5">Methane (CH<sub>4</sub>)</td>
+                                <td class="px-4 py-2.5 text-slate-500 italic">Does not exist</td>
+                                <td class="px-4 py-2.5 text-slate-500 italic">Does not exist</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-2.5 font-bold text-sky-400">2</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-200">Eth-</td>
+                                <td class="px-4 py-2.5">Ethane (C<sub>2</sub>H<sub>6</sub>)</td>
+                                <td class="px-4 py-2.5">Ethene (C<sub>2</sub>H<sub>4</sub>)</td>
+                                <td class="px-4 py-2.5">Ethyne (C<sub>2</sub>H<sub>2</sub>)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-2.5 font-bold text-sky-400">3</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-200">Prop-</td>
+                                <td class="px-4 py-2.5">Propane (C<sub>3</sub>H<sub>8</sub>)</td>
+                                <td class="px-4 py-2.5">Propene (C<sub>3</sub>H<sub>6</sub>)</td>
+                                <td class="px-4 py-2.5">Propyne (C<sub>3</sub>H<sub>4</sub>)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-2.5 font-bold text-sky-400">4</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-200">But-</td>
+                                <td class="px-4 py-2.5">Butane (C<sub>4</sub>H<sub>10</sub>)</td>
+                                <td class="px-4 py-2.5">Butene (C<sub>4</sub>H<sub>8</sub>)</td>
+                                <td class="px-4 py-2.5">Butyne (C<sub>4</sub>H<sub>6</sub>)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-2.5 font-bold text-sky-400">5</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-200">Pent-</td>
+                                <td class="px-4 py-2.5">Pentane (C<sub>5</sub>H<sub>12</sub>)</td>
+                                <td class="px-4 py-2.5">Pentene (C<sub>5</sub>H<sub>10</sub>)</td>
+                                <td class="px-4 py-2.5">Pentyne (C<sub>5</sub>H<sub>8</sub>)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-2.5 font-bold text-sky-400">6</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-200">Hex-</td>
+                                <td class="px-4 py-2.5">Hexane (C<sub>6</sub>H<sub>14</sub>)</td>
+                                <td class="px-4 py-2.5">Hexene (C<sub>6</sub>H<sub>12</sub>)</td>
+                                <td class="px-4 py-2.5">Hexyne (C<sub>6</sub>H<sub>10</sub>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table 2: Functional Groups Summary -->
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl overflow-hidden shadow-lg">
+                <div class="bg-slate-800/80 px-5 py-3 border-b border-slate-700">
+                    <h3 class="font-bold text-slate-200 text-sm sm:text-base flex items-center gap-2">
+                        <i class="fa-solid fa-shapes text-emerald-400"></i> Functional Groups Overview
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm text-slate-300">
+                        <thead class="bg-slate-900/80 text-emerald-400 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-700">
+                            <tr>
+                                <th class="px-4 py-3">Functional Group</th>
+                                <th class="px-4 py-3">Heteroatom</th>
+                                <th class="px-4 py-3">Prefix / Suffix</th>
+                                <th class="px-4 py-3">Structural Formula</th>
+                                <th class="px-4 py-3">Example Compound</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-3 font-semibold text-slate-200">Halo (Chloro / Bromo)</td>
+                                <td class="px-4 py-3 text-slate-400">Chlorine / Bromine</td>
+                                <td class="px-4 py-3"><span class="text-amber-400 font-mono">Prefix:</span> Chloro- / Bromo-</td>
+                                <td class="px-4 py-3 font-mono text-sky-300">−Cl, −Br</td>
+                                <td class="px-4 py-3 font-mono">Chloroethane (CH<sub>3</sub>CH<sub>2</sub>Cl)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-3 font-semibold text-slate-200">Alcohol</td>
+                                <td class="px-4 py-3 text-slate-400">Oxygen</td>
+                                <td class="px-4 py-3"><span class="text-emerald-400 font-mono">Suffix:</span> -ol</td>
+                                <td class="px-4 py-3 font-mono text-sky-300">−OH</td>
+                                <td class="px-4 py-3 font-mono">Ethanol (CH<sub>3</sub>CH<sub>2</sub>OH)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-3 font-semibold text-slate-200">Aldehyde</td>
+                                <td class="px-4 py-3 text-slate-400">Oxygen</td>
+                                <td class="px-4 py-3"><span class="text-emerald-400 font-mono">Suffix:</span> -al</td>
+                                <td class="px-4 py-3 font-mono text-sky-300">−CHO</td>
+                                <td class="px-4 py-3 font-mono">Propanal (CH<sub>3</sub>CH<sub>2</sub>CHO)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-3 font-semibold text-slate-200">Ketone</td>
+                                <td class="px-4 py-3 text-slate-400">Oxygen</td>
+                                <td class="px-4 py-3"><span class="text-emerald-400 font-mono">Suffix:</span> -one</td>
+                                <td class="px-4 py-3 font-mono text-sky-300">−C(=O)−</td>
+                                <td class="px-4 py-3 font-mono">Propanone (CH<sub>3</sub>COCH<sub>3</sub>)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-4 py-3 font-semibold text-slate-200">Carboxylic Acid</td>
+                                <td class="px-4 py-3 text-slate-400">Oxygen</td>
+                                <td class="px-4 py-3"><span class="text-emerald-400 font-mono">Suffix:</span> -oic acid</td>
+                                <td class="px-4 py-3 font-mono text-sky-300">−COOH</td>
+                                <td class="px-4 py-3 font-mono">Ethanoic Acid (CH<sub>3</sub>COOH)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>© 2026 <span class="font-semibold text-slate-300">Amardeep School</span> — Class 10 Science Interactive Revision Module.</p>
+            <p class="text-slate-600">Designed aligned with NCERT Science Curriculum.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        /* ==========================================================================
+           GLOBAL STATE & SCORES
+           ========================================================================== */
+        let state = {
+            score: 0,
+            dragMatched: 0,
+            quizCompleted: false,
+            quizIndex: 0,
+            userAnswers: {}
+        };
+
+        function updateGlobalScore(addPoints) {
+            state.score = Math.min(100, Math.max(0, state.score + addPoints));
+            document.getElementById('globalScore').textContent = `${state.score} / 100`;
+        }
+
+        function resetAllProgress() {
+            state.score = 0;
+            state.dragMatched = 0;
+            state.quizCompleted = false;
+            state.quizIndex = 0;
+            state.userAnswers = {};
+            document.getElementById('globalScore').textContent = `0 / 100`;
+            
+            initFlashcards();
+            initDragGame();
+            initQuiz();
+            highlightMicellePart('all');
+        }
+
+        /* ==========================================================================
+           NAVIGATION TABS
+           ========================================================================== */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-sky-400', 'bg-sky-950/60', 'border', 'border-sky-500/40');
+                btn.classList.add('text-slate-400');
+            });
+
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('text-slate-400');
+            activeBtn.classList.add('text-sky-400', 'bg-sky-950/60', 'border', 'border-sky-500/40');
+        }
+
+        /* ==========================================================================
+           SECTION 1: FLASHCARDS
+           ========================================================================== */
+        const flashcardsData = [
+            {
+                title: "1. What is a Covalent Bond?",
+                frontSub: "Click to see definition & why carbon forms covalent bonds.",
+                backText: "A covalent bond is formed by sharing of electron pairs between atoms. Carbon has 4 valence electrons (2,4). It cannot gain 4 e⁻ (hard for 6 protons to hold 10 e⁻) or lose 4 e⁻ (requires high energy). Thus, it shares electrons!"
+            },
+            {
+                title: "2. Versatile Nature of Carbon",
+                frontSub: "Why does carbon form millions of compounds?",
+                backText: "1) Catenation: Ability to form long straight, branched, or cyclic chains with other carbon atoms.\n2) Tetravalency: Can bond with 4 mono-valent atoms or heteroatoms (O, N, Cl).\n3) Small size: Forms exceptionally strong, stable bonds."
+            },
+            {
+                title: "3. Homologous Series",
+                frontSub: "What is a Homologous Series?",
+                backText: "A series of organic compounds having the same functional group and similar chemical properties, where successive members differ by a -CH₂- group and a molecular mass difference of 14 u."
+            },
+            {
+                title: "4. Soaps & Micelles",
+                frontSub: "How does soap clean dirty clothes?",
+                backText: "Soap molecules have two ends:\n• Hydrophobic Tail (hydrocarbon end) attaches to oily dirt.\n• Hydrophilic Head (ionic end -COONa) remains in water.\nThey form spherical clusters called Micelles that encapsulate dirt and wash away."
+            },
+            {
+                title: "5. Combustion & Oxidation",
+                frontSub: "Reactions of Carbon Compounds",
+                backText: "• Combustion: Carbon burns in O₂ giving CO₂ + H₂O + Heat.\n  CH₄ + 2O₂ → CO₂ + 2H₂O + Heat\n• Oxidation: Ethanol is oxidized to Ethanoic Acid using Alkaline KMnO₄ or Acidified K₂Cr₂O₇ with heat."
+            },
+            {
+                title: "6. Esterification & Saponification",
+                frontSub: "Key Organic Reactions",
+                backText: "• Esterification: CH₃COOH + C₂H₅OH (acid) → CH₃COOC₂H₅ (Ester, sweet smell) + H₂O.\n• Saponification: Reaction of an ester with NaOH to give back alcohol and sodium salt of carboxylic acid (soap)."
+            }
+        ];
+
+        function initFlashcards() {
+            const container = document.getElementById('flashcardsGrid');
+            container.innerHTML = '';
+
+            flashcardsData.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = "perspective-1000 h-64 cursor-pointer group";
+                cardEl.onclick = () => {
+                    const inner = cardEl.querySelector('.card-inner');
+                    inner.classList.toggle('rotate-y-180');
+                };
+
+                cardEl.innerHTML = `
+                    <div class="card-inner relative w-full h-full transform-style-3d shadow-xl rounded-2xl">
+                        <!-- Front -->
+                        <div class="absolute inset-0 w-full h-full bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 flex flex-col justify-between backface-hidden group-hover:border-sky-500/50 transition">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-sky-400 bg-sky-950/60 border border-sky-800/50 px-2.5 py-1 rounded-md">Card ${index + 1}</span>
+                                <i class="fa-solid fa-arrow-rotate-right text-slate-500 group-hover:text-sky-400 transition"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-bold text-slate-100">${card.title}</h3>
+                                <p class="text-xs text-slate-400">${card.frontSub}</p>
+                            </div>
+                            <div class="text-[11px] font-medium text-sky-400/80 flex items-center gap-1">
+                                <i class="fa-solid fa-hand-pointer text-xs"></i> Tap to flip card
+                            </div>
+                        </div>
+
+                        <!-- Back -->
+                        <div class="absolute inset-0 w-full h-full bg-slate-900 border border-sky-500/40 rounded-2xl p-6 flex flex-col justify-between backface-hidden rotate-y-180 overflow-y-auto">
+                            <div>
+                                <h4 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-2 border-b border-slate-800 pb-1">${card.title}</h4>
+                                <p class="text-xs sm:text-sm text-slate-200 whitespace-pre-line leading-relaxed">${card.backText}</p>
+                            </div>
+                            <div class="text-[10px] text-slate-500 text-right pt-2">Tap to flip back</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(cardEl);
+            });
+        }
+
+        /* ==========================================================================
+           SECTION 2: DRAG AND DROP MATCHING GAME
+           ========================================================================== */
+        const dragPairs = [
+            { id: "p1", term: "Alcohol (-OH)", target: "Propanol (CH₃-CH₂-CH₂-OH)" },
+            { id: "p2", term: "Aldehyde (-CHO)", target: "Propanal (CH₃-CH₂-CHO)" },
+            { id: "p3", term: "Ketone (-C=O-)", target: "Propanone (CH₃-CO-CH₃)" },
+            { id: "p4", term: "Carboxylic Acid", target: "Ethanoic Acid (CH₃COOH)" },
+            { id: "p5", term: "Alkene (Double Bond)", target: "Ethene (C₂H₄)" },
+            { id: "p6", term: "Alkyne (Triple Bond)", target: "Ethyne (C₂H₂)" }
+        ];
+
+        function initDragGame() {
+            state.dragMatched = 0;
+            document.getElementById('dragScore').textContent = `Matched: 0/${dragPairs.length}`;
+
+            const dragContainer = document.getElementById('dragItems');
+            const dropContainer = document.getElementById('dropTargets');
+
+            dragContainer.innerHTML = '';
+            dropContainer.innerHTML = '';
+
+            // Shuffle Terms & Targets
+            const shuffledTerms = [...dragPairs].sort(() => Math.random() - 0.5);
+            const shuffledTargets = [...dragPairs].sort(() => Math.random() - 0.5);
+
+            shuffledTerms.forEach(item => {
+                const el = document.createElement('div');
+                el.className = "drag-item bg-slate-700/80 hover:bg-slate-700 border border-slate-600 rounded-xl p-3 text-xs sm:text-sm font-semibold text-slate-100 cursor-grab active:cursor-grabbing shadow-md flex items-center justify-between transition";
+                el.draggable = true;
+                el.id = `drag-${item.id}`;
+                el.dataset.id = item.id;
+                el.innerHTML = `
+                    <span>${item.term}</span>
+                    <i class="fa-solid fa-grip-lines text-slate-400 text-xs"></i>
+                `;
+
+                // Drag Events
+                el.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', item.id);
+                    el.classList.add('opacity-50');
+                });
+                el.addEventListener('dragend', () => {
+                    el.classList.remove('opacity-50');
+                });
+
+                dragContainer.appendChild(el);
+            });
+
+            shuffledTargets.forEach(target => {
+                const targetEl = document.createElement('div');
+                targetEl.className = "drop-target bg-slate-800/70 border-2 border-dashed border-slate-700 rounded-xl p-3.5 text-center flex flex-col justify-center items-center min-h-[90px] transition";
+                targetEl.dataset.id = target.id;
+                targetEl.innerHTML = `
+                    <div class="text-xs font-semibold text-slate-300 mb-1">${target.target}</div>
+                    <div class="drop-placeholder text-[11px] text-slate-500 italic">Drop matching functional group here</div>
+                `;
+
+                // Drop Events
+                targetEl.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    targetEl.classList.add('drag-over');
+                });
+                targetEl.addEventListener('dragleave', () => {
+                    targetEl.classList.remove('drag-over');
+                });
+                targetEl.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    targetEl.classList.remove('drag-over');
+                    const draggedId = e.dataTransfer.getData('text/plain');
+
+                    if (draggedId === target.id) {
+                        // Success Match
+                        const draggedEl = document.getElementById(`drag-${draggedId}`);
+                        targetEl.innerHTML = `
+                            <div class="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> Correct Match
+                            </div>
+                            <div class="text-xs font-semibold text-slate-200 mt-1">${draggedEl.textContent.trim()}</div>
+                            <div class="text-[11px] text-slate-400 font-mono mt-0.5">${target.target}</div>
+                        `;
+                        targetEl.className = "bg-emerald-950/40 border-2 border-emerald-500/60 rounded-xl p-3.5 text-center shadow-lg";
+                        draggedEl.remove();
+
+                        state.dragMatched++;
+                        document.getElementById('dragScore').textContent = `Matched: ${state.dragMatched}/${dragPairs.length}`;
+                        updateGlobalScore(5);
+
+                        if (state.dragMatched === dragPairs.length) {
+                            setTimeout(() => {
+                                alert("🎉 Excellent Job! You matched all Functional Groups & Hydrocarbons correctly!");
+                            }, 200);
+                        }
+                    } else {
+                        // Incorrect
+                        targetEl.classList.add('border-rose-500/80');
+                        setTimeout(() => {
+                            targetEl.classList.remove('border-rose-500/80');
+                        }, 800);
+                    }
+                });
+
+                dropContainer.appendChild(targetEl);
+            });
+        }
+
+        /* ==========================================================================
+           SECTION 3: MICELLE VISUALIZER SVG GENERATOR
+           ========================================================================== */
+        function renderMicelleSVG() {
+            const group = document.getElementById('soapMoleculesGroup');
+            group.innerHTML = '';
+
+            const count = 12; // Number of soap molecules arranged radially
+            const cx = 200;
+            const cy = 200;
+            const innerR = 48; // Dirt radius
+            const tailLen = 75; // Length of hydrophobic hydrocarbon zigzag
+            const headR = 10; // Radius of hydrophilic ionic head
+
+            for (let i = 0; i < count; i++) {
+                const angle = (i * 360 / count) * (Math.PI / 180);
+                const startX = cx + Math.cos(angle) * innerR;
+                const startY = cy + Math.sin(angle) * innerR;
+                
+                const endX = cx + Math.cos(angle) * (innerR + tailLen);
+                const endY = cy + Math.sin(angle) * (innerR + tailLen);
+
+                // Create Zig-Zag Hydrophobic tail path
+                const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                
+                // Calculate zig zag points along the vector
+                const perpX = -Math.sin(angle) * 5;
+                const perpY = Math.cos(angle) * 5;
+
+                const mid1X = cx + Math.cos(angle) * (innerR + tailLen * 0.33) + perpX;
+                const mid1Y = cy + Math.sin(angle) * (innerR + tailLen * 0.33) + perpY;
+
+                const mid2X = cx + Math.cos(angle) * (innerR + tailLen * 0.66) - perpX;
+                const mid2Y = cy + Math.sin(angle) * (innerR + tailLen * 0.66) - perpY;
+
+                const d = `M ${startX} ${startY} L ${mid1X} ${mid1Y} L ${mid2X} ${mid2Y} L ${endX} ${endY}`;
+                pathEl.setAttribute('d', d);
+                pathEl.setAttribute('stroke', '#f59e0b');
+                pathEl.setAttribute('stroke-width', '3');
+                pathEl.setAttribute('fill', 'none');
+                pathEl.setAttribute('class', 'micelle-tail transition-all duration-300');
+
+                // Hydrophilic Head Circle
+                const headEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                headEl.setAttribute('cx', endX);
+                headEl.setAttribute('cy', endY);
+                headEl.setAttribute('r', headR);
+                headEl.setAttribute('fill', '#38bdf8');
+                headEl.setAttribute('stroke', '#0284c7');
+                headEl.setAttribute('stroke-width', '2');
+                headEl.setAttribute('class', 'micelle-head transition-all duration-300');
+
+                group.appendChild(pathEl);
+                group.appendChild(headEl);
+            }
+        }
+
+        function highlightMicellePart(part) {
+            const tails = document.querySelectorAll('.micelle-tail');
+            const heads = document.querySelectorAll('.micelle-head');
+            const dirt = document.getElementById('micelleDirt');
+            const info = document.getElementById('micelleInfoBox');
+
+            if (part === 'hydrophobic') {
+                tails.forEach(t => { t.setAttribute('stroke-width', '6'); t.setAttribute('stroke', '#fbbf24'); });
+                heads.forEach(h => { h.setAttribute('opacity', '0.3'); });
+                dirt.setAttribute('stroke-width', '5');
+                info.innerHTML = `
+                    <strong class="text-amber-400">Hydrophobic Tail:</strong> Made of long carbon chain (C<sub>n</sub>H<sub>2n+1</sub>). It is water-fearing and oil-loving, so it points inward and attaches directly to the oily dirt drop.
+                `;
+            } else if (part === 'hydrophilic') {
+                tails.forEach(t => { t.setAttribute('opacity', '0.2'); });
+                heads.forEach(h => { 
+                    h.setAttribute('opacity', '1'); 
+                    h.setAttribute('r', '13'); 
+                    h.setAttribute('fill', '#0284c7');
+                });
+                dirt.setAttribute('stroke-width', '2');
+                info.innerHTML = `
+                    <strong class="text-sky-400">Hydrophilic Head:</strong> Ionic end (−COO<sup>−</sup>Na<sup>+</sup>). It is water-loving and remains interactively facing outward towards the water molecules surrounding the micelle.
+                `;
+            } else {
+                tails.forEach(t => { t.setAttribute('stroke-width', '3'); t.setAttribute('stroke', '#f59e0b'); t.setAttribute('opacity', '1'); });
+                heads.forEach(h => { h.setAttribute('opacity', '1'); h.setAttribute('r', '10'); h.setAttribute('fill', '#38bdf8'); });
+                dirt.setAttribute('stroke-width', '3');
+                info.innerHTML = `
+                    <strong class="text-emerald-400">Full Micelle Structure:</strong> When soap dissolves in water, the hydrophobic tails cluster inside trapping oily dirt at the center, while hydrophilic heads point outwards into water.
+                `;
+            }
+        }
+
+        /* ==========================================================================
+           SECTION 4: REACTION BUILDER & QUIZ DATA
+           ========================================================================== */
+        const quizData = [
+            {
+                question: "1. What is produced when Ethanol reacts with Sodium metal?",
+                options: [
+                    "Sodium Ethoxide + Hydrogen gas",
+                    "Sodium Acetate + Water",
+                    "Ethene + Water",
+                    "Ethanol does not react with sodium"
+                ],
+                correct: 0,
+                explanation: "2Na + 2C₂H₅OH → 2C₂H₅ONa (Sodium Ethoxide) + H₂ ↑ (Hydrogen gas evolves with effervescence)."
+            },
+            {
+                question: "2. Heating Ethanol at 443 K with excess concentrated H₂SO₄ converts it into:",
+                options: [
+                    "Ethanoic Acid",
+                    "Ethene (C₂H₄)",
+                    "Ethyne (C₂H₂)",
+                    "Diethyl Ether"
+                ],
+                correct: 1,
+                explanation: "Conc. H₂SO₄ acts as a dehydrating agent removing water molecule from ethanol: CH₃CH₂OH → CH₂=CH₂ + H₂O."
+            },
+            {
+                question: "3. What is Esterification?",
+                options: [
+                    "Reaction of Soap with hard water",
+                    "Reaction of Ethanoic Acid with Ethanol in presence of an acid catalyst to form a sweet-smelling Ester",
+                    "Addition of Hydrogen to vegetable oil",
+                    "Combustion of methane in oxygen"
+                ],
+                correct: 1,
+                explanation: "Ethanoic acid + Ethanol → Ethyl Ethanoate (Ester) + Water. Esters are used in perfumes & flavorings."
+            },
+            {
+                question: "4. What happens when Ethanoic Acid reacts with Sodium Bicarbonate (NaHCO₃)?",
+                options: [
+                    "Brisk effervescence due to Carbon Dioxide (CO₂) gas evolution",
+                    "Formation of Chlorine gas",
+                    "Precipitate of Sodium hydroxide",
+                    "No reaction takes place"
+                ],
+                correct: 0,
+                explanation: "CH₃COOH + NaHCO₃ → CH₃COONa + H₂O + CO₂ ↑ (CO₂ turns lime water milky)."
+            },
+            {
+                question: "5. Unsaturated hydrocarbons undergo which reaction in presence of Nickel catalyst to form saturated hydrocarbons?",
+                options: [
+                    "Substitution Reaction",
+                    "Addition / Hydrogenation Reaction",
+                    "Dehydration Reaction",
+                    "Saponification Reaction"
+                ],
+                correct: 1,
+                explanation: "Addition Reaction (Hydrogenation): R₂C=CR₂ + H₂ (Ni catalyst) → R₂CH-CHR₂. Used to convert vegetable oils into ghee."
+            }
+        ];
+
+        function initQuiz() {
+            state.quizIndex = 0;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const container = document.getElementById('quizContainer');
+            const q = quizData[state.quizIndex];
+
+            document.getElementById('quizProgress').textContent = `Question ${state.quizIndex + 1} of ${quizData.length}`;
+
+            let optionsHtml = q.options.map((opt, idx) => `
+                <button onclick="handleAnswer(${idx})" class="quiz-opt-btn w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 hover:border-sky-500/50 transition font-medium text-xs sm:text-sm text-slate-200 flex items-center justify-between">
+                    <span>${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-500 text-sm"></i>
+                </button>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-100">${q.question}</h3>
+                    <div class="space-y-3" id="optionsGroup">
+                        ${optionsHtml}
+                    </div>
+                    <div id="quizFeedback" class="hidden p-4 rounded-xl text-xs sm:text-sm font-medium leading-relaxed"></div>
+                    <div class="flex justify-end pt-2">
+                        <button id="nextBtn" onclick="nextQuestion()" class="hidden px-5 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-sky-600/30">
+                            Next Question <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleAnswer(selectedIndex) {
+            const q = quizData[state.quizIndex];
+            const btns = document.querySelectorAll('.quiz-opt-btn');
+            const feedback = document.getElementById('quizFeedback');
+            const nextBtn = document.getElementById('nextBtn');
+
+            // Disable all buttons
+            btns.forEach(b => b.onclick = null);
+
+            if (selectedIndex === q.correct) {
+                btns[selectedIndex].classList.remove('bg-slate-800/80', 'border-slate-700');
+                btns[selectedIndex].classList.add('bg-emerald-950/60', 'border-emerald-500/80', 'text-emerald-200');
+                btns[selectedIndex].querySelector('i').className = "fa-solid fa-circle-check text-emerald-400 text-sm";
+
+                feedback.className = "p-4 rounded-xl text-xs sm:text-sm font-medium leading-relaxed bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 block";
+                feedback.innerHTML = `<strong>Correct!</strong> ${q.explanation}`;
+                updateGlobalScore(10);
+            } else {
+                btns[selectedIndex].classList.remove('bg-slate-800/80', 'border-slate-700');
+                btns[selectedIndex].classList.add('bg-rose-950/60', 'border-rose-500/80', 'text-rose-200');
+                btns[selectedIndex].querySelector('i').className = "fa-solid fa-circle-xmark text-rose-400 text-sm";
+
+                btns[q.correct].classList.remove('bg-slate-800/80', 'border-slate-700');
+                btns[q.correct].classList.add('bg-emerald-950/40', 'border-emerald-500/60');
+
+                feedback.className = "p-4 rounded-xl text-xs sm:text-sm font-medium leading-relaxed bg-rose-950/40 border border-rose-800/50 text-rose-300 block";
+                feedback.innerHTML = `<strong>Incorrect!</strong> ${q.explanation}`;
+            }
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (state.quizIndex < quizData.length - 1) {
+                state.quizIndex++;
+                renderQuizQuestion();
+            } else {
+                // Quiz Completed
+                const container = document.getElementById('quizContainer');
+                container.innerHTML = `
+                    <div class="text-center py-8 space-y-4">
+                        <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto border border-emerald-500/40">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-100">Quiz Completed!</h3>
+                        <p class="text-slate-300 text-sm max-w-md mx-auto">
+                            Great effort reviewing Carbon and its Compounds! You can reset your score or revisit flashcards to master the module.
+                        </p>
+                        <button onclick="initQuiz()" class="px-6 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Retake Reaction Quiz
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        /* ==========================================================================
+           INITIALIZATION ON PAGE LOAD
+           ========================================================================== */
+        window.onload = function() {
+            initFlashcards();
+            initDragGame();
+            renderMicelleSVG();
+            highlightMicellePart('all');
+            initQuiz();
+        };
+    </script>
+</body>
+</html>
