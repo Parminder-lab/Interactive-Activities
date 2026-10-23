@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dukh Ka Adhikar Challenge</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;
+background:#f3f4ff;color:#24234a}
+header{background:#35236b;color:white;padding:16px;
+text-align:left;font-weight:bold;font-size:19px}
+header small{display:block;font-size:12px;font-weight:normal;margin-top:4px}
+.hero{background:linear-gradient(135deg,#6137b5,#a44bd5);
+color:white;text-align:center;padding:24px 15px}
+.hero h1{font-size:27px;margin:5px 0}
+.hero p{line-height:1.6}
+.wrap{max-width:650px;margin:auto;padding:14px}
+.card,.panel{background:white;border-radius:16px;padding:17px;
+margin:14px 0;box-shadow:0 4px 14px #29205b12}
+h2{font-size:20px;margin:5px 0 14px;color:#512d91}
+.sub{color:#666;font-size:14px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.flip{height:135px;border:0;background:#eee8ff;border-radius:13px;
+color:#402374;font-size:16px;font-weight:bold;padding:10px;
+cursor:pointer;width:100%;line-height:1.5}
+.flip .hint{display:block;font-size:12px;font-weight:normal;margin-top:9px}
+.flip.done{background:#d8f7e5;color:#155b37}
+.q{font-weight:bold;line-height:1.7;margin-bottom:12px}
+.option{display:block;width:100%;text-align:left;padding:12px;
+border:1px solid #ddd7ee;border-radius:10px;background:white;
+margin:8px 0;font-size:15px;color:#292344;cursor:pointer}
+.option:disabled{cursor:default}
+.option.correct{background:#d8f7e5;border-color:#31a36b}
+.option.wrong{background:#ffe3e3;border-color:#e36a6a}
+button.primary{background:#6236b3;color:white;border:0;border-radius:10px;
+padding:13px 16px;font-weight:bold;font-size:15px;cursor:pointer;width:100%;margin-top:8px}
+button.secondary{background:#eee8ff;color:#512d91;border:0;
+border-radius:10px;padding:12px;font-weight:bold;cursor:pointer;width:100%;margin-top:8px}
+.progress{height:8px;background:#e9e4f6;border-radius:10px;overflow:hidden}
+.bar{height:100%;background:#8b50d6;width:0%;transition:.3s}
+.badge{display:inline-block;background:#fff0bf;color:#694600;
+border-radius:20px;padding:6px 12px;font-size:13px}
+#result{text-align:center;padding:15px;line-height:1.8}
+footer{text-align:center;padding:20px;color:#666;font-size:12px}
+@media(max-width:350px){.grid{grid-template-columns:1fr}.hero h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+  Amardeep School
+  <small>हिंदी विभाग | कक्षा 6</small>
+</header>
+
+<section class="hero">
+  <div class="badge">📚 Hindi Learning Challenge</div>
+  <h1>दुःख का अधिकार</h1>
+  <p>पाठ पढ़ो • कार्ड पलटो • क्विज़ खेलो</p>
+  <b>क्या आप बनेंगे हिंदी चैंपियन? 🏆</b>
+</section>
+
+<main class="wrap">
+<section class="card">
+<h2>🎯 आपका मिशन</h2>
+<p class="sub">इस गतिविधि में पाठ के पात्रों, घटनाओं और संदेश को समझिए। सभी प्रश्नों के उत्तर दीजिए और अपना स्कोर प्राप्त कीजिए।</p>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p class="sub" id="progressText">0 / 8 गतिविधियाँ पूरी</p>
+</section>
+
+<section class="panel">
+<h2>🃏 मिशन 1: Flip Cards</h2>
+<p class="sub">उत्तर देखने के लिए किसी भी कार्ड पर टैप करें।</p>
+<div class="grid" id="cards"></div>
+</section>
+
+<section class="panel" id="quiz">
+<h2>⚡ मिशन 2: Quiz Challenge</h2>
+<p class="sub">हर प्रश्न के लिए एक सही उत्तर चुनिए।</p>
+<div id="questions"></div>
+<div id="result" hidden></div>
+<button class="primary" id="submit" onclick="finish()">🏆 मेरा स्कोर देखें</button>
+<button class="secondary" onclick="resetAll()">🔄 फिर से खेलें</button>
+</section>
+
+<section class="card">
+<h2>💡 सोचिए और बताइए</h2>
+<p class="sub"><b>प्रश्न:</b> क्या किसी गरीब व्यक्ति को अपने दुःख के कारण काम रोक देने का अवसर हमेशा मिल पाता है? पाठ के आधार पर अपने विचार लिखिए।</p>
+<textarea id="reflection" rows="4" placeholder="अपने विचार यहाँ लिखें..." style="width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font:inherit"></textarea>
+<button class="secondary" onclick="saveThought()">मेरे विचार सहेजें</button>
+<p class="sub" id="thoughtMsg"></p>
+</section>
+</main>
+<footer>Amardeep School • सीखें, सोचें और आगे बढ़ें 🌟</footer>
+
+<script>
+const flashcards=[
+ {front:"लेखक कौन हैं?",back:"यशपाल"},
+ {front:"बुढ़िया क्या बेचती थी?",back:"खरबूजे"},
+ {front:"बुढ़िया के बेटे की मृत्यु कैसे हुई?",back:"साँप के काटने से"},
+ {front:"बुढ़िया काम क्यों कर रही थी?",back:"परिवार की रोज़ी-रोटी के लिए"},
+ {front:"पाठ की प्रमुख समस्या?",back:"गरीबी और सामाजिक संवेदनहीनता"},
+ {front:"पाठ का संदेश?",back:"दूसरों के दुःख को समझना और सहानुभूति रखना"}
+];
+
+const qs=[
+ {q:"1. ‘दुःख का अधिकार’ के लेखक कौन हैं?",o:["प्रेमचंद","यशपाल","रामधारी सिंह दिनकर","हरिवंश राय बच्चन"],a:1},
+ {q:"2. बुढ़िया क्या बेच रही थी?",o:["खरबूजे","आम","मूँगफली","अमरूद"],a:0},
+ {q:"3. बुढ़िया के बेटे की मृत्यु किस कारण हुई?",o:["बीमारी","दुर्घटना","साँप के काटने से","बुखार"],a:2},
+ {q:"4. बुढ़िया के लिए काम करना क्यों ज़रूरी था?",o:["उसे घूमना था","उसे पुरस्कार चाहिए था","वह उत्सव मना रही थी","परिवार का पेट पालना था"],a:3},
+ {q:"5. पाठ में किस सामाजिक समस्या को दिखाया गया है?",o:["खेलों की कमी","गरीबी और असमानता","यात्रा की कठिनाई","शिक्षा की परीक्षा"],a:1},
+ {q:"6. हमें दुःखी व्यक्ति के प्रति कैसा व्यवहार करना चाहिए?",o:["मज़ाक उड़ाना चाहिए","उपेक्षा करनी चाहिए","सहानुभूति रखनी चाहिए","उसे दोष देना चाहिए"],a:2},
+ {q:"7. पाठ में बुढ़िया की स्थिति किस बात को उजागर करती है?",o:["गरीबी में रोज़ी-रोटी की मजबूरी","धन की अधिकता","मनोरंजन की इच्छा","यात्रा का शौक"],a:0},
+ {q:"8. ‘दुःख का अधिकार’ शीर्षक का मुख्य भाव क्या है?",o:["दुःख केवल अमीरों को होता है","गरीबों को दुःख नहीं होता","दुःख छिपाना अनिवार्य है","हर व्यक्ति को दुःख मनाने का अधिकार है"],a:3}
+];
+
+let cardDone=new Set(),answers={},submitted=false;
+
+function renderCards(){
+ document.getElementById("cards").innerHTML=flashcards.map((c,i)=>`
+ <button class="flip" id="fc${i}" onclick="flip(${i})">
+ <span id="ft${i}">${c.front}</span>
+ <span class="hint" id="fh${i}">टैप करके पलटें ↻</span>
+ </button>`).join("");
+}
+function flip(i){
+ const el=document.getElementById("fc"+i);
+ const isBack=el.dataset.back==="yes";
+ document.getElementById("ft"+i).textContent=isBack?flashcards[i].front:flashcards[i].back;
+ document.getElementById("fh"+i).textContent=isBack?"टैप करके पलटें ↻":"उत्तर देखें ✓";
+ el.dataset.back=isBack?"no":"yes";
+ if(!isBack){cardDone.add(i);el.classList.add("done");}
+ updateProgress();
+}
+function renderQuiz(){
+ document.getElementById("questions").innerHTML=qs.map((q,i)=>`
+ <div class="card" id="q${i}">
+ <div class="q">${q.q}</div>
+ ${q.o.map((o,j)=>`<button class="option" id="o${i}_${j}" onclick="choose(${i},${j})">${["A","B","C","D"][j]}. ${o}</button>`).join("")}
+ <p class="sub" id="fb${i}"></p></div>`).join("");
+}
+function choose(i,j){
+ if(submitted)return;
+ answers[i]=j;
+ for(let k=0;k<4;k++){
+ const b=document.getElementById(`o${i}_${k}`);
+ b.style.borderColor=k===j?"#7950bd":"#ddd7ee";
+ b.style.background=k===j?"#eee8ff":"white";
+ }
+ document.getElementById("fb"+i).textContent="उत्तर चुना गया।";
+ updateProgress();
+}
+function updateProgress(){
+ const total=cardDone.size+Object.keys(answers).length;
+ document.getElementById("bar").style.width=(total/14*100)+"%";
+ document.getElementById("progressText").textContent=
+ `${cardDone.size} / 6 कार्ड देखे • ${Object.keys(answers).length} / 8 प्रश्नों के उत्तर`;
+}
+function finish(){
+ if(submitted)return;
+ const unanswered=qs.map((q,i)=>i).filter(i=>answers[i]===undefined);
+ if(unanswered.length){
+ document.getElementById("result").hidden=false;
+ document.getElementById("result").innerHTML=
+ `पहले सभी प्रश्नों के उत्तर चुनिए।<br>${unanswered.length} प्रश्न बाकी हैं।`;
+ document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"});
+ return;
+ }
+ submitted=true;
+ let score=0;
+ qs.forEach((q,i)=>{
+ q.o.forEach((o,j)=>{
+ const b=document.getElementById(`o${i}_${j}`);
+ b.disabled=true;
+ if(j===q.a)b.classList.add("correct");
+ else if(j===answers[i])b.classList.add("wrong");
+ });
+ const ok=answers[i]===q.a;
+ if(ok)score++;
+ document.getElementById("fb"+i).textContent=ok?"✅ बहुत बढ़िया! सही उत्तर।":"📘 सही उत्तर: "+q.o[q.a];
+ });
+ const msg=score>=7?"शानदार! आप हिंदी चैंपियन हैं! 🏆":
+ score>=5?"बहुत अच्छा! थोड़ा अभ्यास और करें. 🌟":
+ "अच्छी कोशिश! फ्लिप कार्ड फिर पढ़कर दोबारा प्रयास करें. 💪";
+ document.getElementById("result").hidden=false;
+ document.getElementById("result").innerHTML=
+ `<h2>आपका परिणाम</h2><div style="font-size:35px;font-weight:bold;color:#6236b3">${score} / ${qs.length}</div>${msg}`;
+ document.getElementById("submit").textContent="क्विज़ पूरा हुआ ✓";
+ document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"});
+ updateProgress();
+}
+function resetAll(){
+ cardDone=new Set();answers={};submitted=false;
+ renderCards();renderQuiz();
+ document.getElementById("result").hidden=true;
+ document.getElementById("submit").textContent="🏆 मेरा स्कोर देखें";
+ document.getElementById("reflection").value="";
+ document.getElementById("thoughtMsg").textContent="";
+ updateProgress();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function saveThought(){
+ const val=document.getElementById("reflection").value.trim();
+ document.getElementById("thoughtMsg").textContent=val?
+ "आपके विचार इस गतिविधि में लिखे गए हैं।":"कृपया पहले अपने विचार लिखें।";
+}
+renderCards();renderQuiz();updateProgress();
+</script>
+</body>
+</html>
