@@ -1,0 +1,499 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Amardeep School - LKG English Vowel 'a'</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Kid-Friendly Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            background-color: #f3f4f6;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Phone Screen Frame Styling */
+        .phone-container {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #fef9c3 0%, #e0f2fe 100%);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Bounce Animations */
+        @keyframes gentle-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-gentle {
+            animation: gentle-bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-grow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-grow {
+            animation: pulse-grow 1.5s infinite;
+        }
+
+        /* Custom Scrollbar for Phone view */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* Card Tap Effect */
+        .interactive-card {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .interactive-card:active {
+            transform: scale(0.92);
+        }
+
+        /* Highlight Vowel */
+        .vowel-highlight {
+            color: #ef4444;
+            font-weight: 800;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-slate-800 p-0 sm:p-4">
+
+    <!-- Mobile Screen Frame Container -->
+    <div class="phone-container pb-20 border-x-0 sm:border-x-8 border-amber-400 sm:rounded-[36px]">
+        
+        <!-- Header & School Metadata Section -->
+        <header class="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 p-4 text-white shadow-lg rounded-b-3xl relative z-10">
+            <div class="flex justify-between items-start">
+                <div>
+                    <!-- School Name -->
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid font-bold fa-school text-yellow-200 text-lg"></i>
+                        <h1 class="text-xl font-bold tracking-wide uppercase text-amber-950 drop-shadow-sm">Amardeep School</h1>
+                    </div>
+                    
+                    <!-- Class & Subject Info -->
+                    <div class="mt-1 flex flex-wrap gap-2 text-xs font-bold text-amber-900">
+                        <span class="bg-yellow-200/90 px-2.5 py-0.5 rounded-full shadow-sm">
+                            <i class="fa-solid fa-child"></i> Class: LKG
+                        </span>
+                        <span class="bg-rose-200/90 px-2.5 py-0.5 rounded-full shadow-sm">
+                            <i class="fa-solid fa-book-open"></i> English
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Topic Badge -->
+                <div class="bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/40 text-center">
+                    <span class="block text-[10px] uppercase tracking-wider text-amber-950 font-semibold">Topic</span>
+                    <span class="text-lg font-black text-white drop-shadow">Vowel 'a'</span>
+                </div>
+            </div>
+
+            <!-- Date & Day Row -->
+            <div class="mt-3 pt-2 border-t border-amber-300/50 flex justify-between items-center text-xs text-amber-950 font-semibold">
+                <span id="current-day" class="flex items-center gap-1">
+                    <i class="fa-regular fa-calendar-check"></i> Loading...
+                </span>
+                <span id="current-date" class="bg-amber-100/70 px-2 py-0.5 rounded-md">
+                    Loading...
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-4 space-y-6 overflow-y-auto">
+            
+            <!-- SECTION 1: VISUAL LAB -->
+            <section id="visual-lab" class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-indigo-500 text-white p-2 rounded-xl text-xs shadow-md">
+                            <i class="fa-solid fa-flask-vial"></i>
+                        </span>
+                        <h2 class="text-lg font-bold text-indigo-950">Visual Lab</h2>
+                    </div>
+                    <span class="text-xs text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full font-semibold border border-indigo-200">
+                        Tap cards to listen 🔊
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-600">Explore words containing the magic sound <strong class="text-red-500 text-sm">/æ/</strong> (Short 'a')!</p>
+
+                <!-- Cards Grid -->
+                <div class="grid grid-cols-2 gap-3" id="words-grid">
+                    <!-- Cards dynamically loaded via JS -->
+                </div>
+            </section>
+
+
+            <!-- SECTION 2: CHALLENGE POLL ACTIVITY -->
+            <section id="poll-challenge" class="bg-white rounded-3xl p-4 shadow-md border-2 border-orange-200 space-y-4">
+                <div class="flex items-center gap-2">
+                    <span class="bg-orange-500 text-white p-2 rounded-xl text-xs shadow-md">
+                        <i class="fa-solid fa-poll"></i>
+                    </span>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-800">Challenge Poll</h2>
+                        <p class="text-xs text-slate-500">Tap to vote for the correct picture!</p>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-center">
+                    <p class="text-sm font-bold text-amber-900" id="poll-question">
+                        Which picture has the vowel 'a' sound?
+                    </p>
+                </div>
+
+                <!-- Poll Options -->
+                <div class="space-y-2.5" id="poll-options">
+                    <!-- Poll buttons populated by JS -->
+                </div>
+
+                <div id="poll-feedback" class="hidden text-center p-3 rounded-2xl text-xs font-bold transition-all">
+                    <!-- Feedback text inserted here -->
+                </div>
+            </section>
+
+
+            <!-- SECTION 3: INTERACTIVE MINI-QUIZ -->
+            <section id="mini-quiz" class="bg-white rounded-3xl p-4 shadow-md border-2 border-emerald-200 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-emerald-500 text-white p-2 rounded-xl text-xs shadow-md">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </span>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-800">Mini Quiz</h2>
+                            <p class="text-xs text-slate-500">Fill in the missing vowel 'a'!</p>
+                        </div>
+                    </div>
+                    <!-- Quiz Score/Progress -->
+                    <div class="flex items-center gap-1 bg-yellow-100 px-3 py-1 rounded-full border border-yellow-300">
+                        <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
+                        <span id="quiz-score" class="text-xs font-bold text-amber-900">0 / 3</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Card -->
+                <div id="quiz-container" class="bg-gradient-to-b from-emerald-50 to-teal-50 p-4 rounded-2xl border border-emerald-200 text-center space-y-4">
+                    <div class="text-5xl my-2 animate-bounce-gentle" id="quiz-emoji">🐱</div>
+                    
+                    <div class="flex justify-center items-center gap-2 text-2xl font-black tracking-widest text-slate-800" id="quiz-word-display">
+                        <span>C</span>
+                        <span class="w-8 h-10 border-b-4 border-emerald-500 bg-white rounded flex items-center justify-center text-emerald-600 shadow-inner">_</span>
+                        <span>T</span>
+                    </div>
+
+                    <p class="text-xs text-slate-500 font-semibold">Select the right vowel letter:</p>
+
+                    <!-- Letter Options -->
+                    <div class="flex justify-center gap-3" id="quiz-options">
+                        <!-- Option buttons inserted by JS -->
+                    </div>
+                </div>
+
+                <!-- Completion Badge Modal (Hidden initially) -->
+                <div id="completion-badge" class="hidden bg-gradient-to-br from-amber-400 to-yellow-300 p-4 rounded-2xl text-center text-amber-950 space-y-2 shadow-lg animate-pulse-grow">
+                    <div class="text-4xl">🏆🌟</div>
+                    <h3 class="text-lg font-black uppercase">Super Star!</h3>
+                    <p class="text-xs font-bold">You completed the Vowel 'a' Quiz!</p>
+                    <button onclick="resetQuiz()" class="mt-2 bg-amber-950 text-yellow-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-black transition-all">
+                        Play Again <i class="fa-solid fa-rotate-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Fixed Bottom Navigation / Quick Helper bar -->
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white/90 backdrop-blur-md border-t border-slate-200 p-2.5 flex justify-around items-center rounded-t-2xl shadow-2xl z-20">
+            <button onclick="scrollToSection('visual-lab')" class="flex flex-col items-center text-indigo-600 font-bold text-[10px]">
+                <i class="fa-solid fa-flask-vial text-base"></i>
+                <span>Visual Lab</span>
+            </button>
+            <button onclick="scrollToSection('poll-challenge')" class="flex flex-col items-center text-orange-500 font-bold text-[10px]">
+                <i class="fa-solid fa-poll text-base"></i>
+                <span>Poll</span>
+            </button>
+            <button onclick="scrollToSection('mini-quiz')" class="flex flex-col items-center text-emerald-600 font-bold text-[10px]">
+                <i class="fa-solid fa-gamepad text-base"></i>
+                <span>Quiz</span>
+            </button>
+            <button onclick="speakText('Welcome to Amardeep School Class LKG Vowel A Activity')" class="flex flex-col items-center text-rose-500 font-bold text-[10px]">
+                <i class="fa-solid fa-volume-high text-base"></i>
+                <span>Help</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        /* ----------------------------------------------------
+           1. Dynamic Date & Day Display
+        ---------------------------------------------------- */
+        function initDate() {
+            const now = new Date();
+            const optionsDate = { month: 'long', day: 'numeric', year: 'numeric' };
+            const optionsDay = { weekday: 'long' };
+
+            document.getElementById('current-date').innerText = now.toLocaleDateString('en-US', optionsDate);
+            document.getElementById('current-day').innerHTML = `<i class="fa-regular fa-calendar-check"></i> ${now.toLocaleDateString('en-US', optionsDay)}`;
+        }
+
+        /* ----------------------------------------------------
+           2. Audio Synthesis & Web Audio API Effects
+        ---------------------------------------------------- */
+        // Text-to-Speech Synthesis
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop ongoing speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.85; // Slightly slower speed for kids
+                utterance.pitch = 1.1; // Friendly pitch
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Web Audio API Sound Effects (Cheer / Incorrect Sound)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSoundEffect(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                // Happy high ding sound
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                // Soft low retry sound
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            }
+        }
+
+        /* ----------------------------------------------------
+           3. Visual Lab Words Data & Rendering
+        ---------------------------------------------------- */
+        const vowelAWords = [
+            { word: "Cat", formatted: "c<span class='vowel-highlight'>a</span>t", emoji: "🐱", bg: "bg-rose-50 border-rose-200" },
+            { word: "Apple", formatted: "<span class='vowel-highlight'>a</span>pple", emoji: "🍎", bg: "bg-red-50 border-red-200" },
+            { word: "Bat", formatted: "b<span class='vowel-highlight'>a</span>t", emoji: "🦇", bg: "bg-purple-50 border-purple-200" },
+            { word: "Fan", formatted: "f<span class='vowel-highlight'>a</span>n", emoji: "🌀", bg: "bg-sky-50 border-sky-200" },
+            { word: "Hat", formatted: "h<span class='vowel-highlight'>a</span>t", emoji: "🎩", bg: "bg-amber-50 border-amber-200" },
+            { word: "Pan", formatted: "p<span class='vowel-highlight'>a</span>n", emoji: "🍳", bg: "bg-orange-50 border-orange-200" },
+            { word: "Bag", formatted: "b<span class='vowel-highlight'>a</span>g", emoji: "🎒", bg: "bg-emerald-50 border-emerald-200" },
+            { word: "Mat", formatted: "m<span class='vowel-highlight'>a</span>t", emoji: "🛋️", bg: "bg-indigo-50 border-indigo-200" }
+        ];
+
+        function renderVisualLab() {
+            const grid = document.getElementById('words-grid');
+            grid.innerHTML = '';
+
+            vowelAWords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `${item.bg} border-2 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer interactive-card shadow-sm hover:shadow-md text-center`;
+                card.onclick = () => {
+                    speakText(item.word);
+                };
+
+                card.innerHTML = `
+                    <div class="text-4xl mb-1">${item.emoji}</div>
+                    <div class="text-xl font-black text-slate-800 tracking-wider">${item.formatted}</div>
+                    <span class="text-[10px] text-slate-500 font-bold mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-volume-low text-indigo-500"></i> Tap
+                    </span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /* ----------------------------------------------------
+           4. Challenge Poll Activity Logic
+        ---------------------------------------------------- */
+        const pollOptionsData = [
+            { id: 1, text: "Dog 🐶", hasVowelA: false, percentage: "15%" },
+            { id: 2, text: "Cap 🧢", hasVowelA: true, percentage: "80%" },
+            { id: 3, text: "Pig 🐷", hasVowelA: false, percentage: "5%" }
+        ];
+
+        let pollVoted = false;
+
+        function renderPoll() {
+            const container = document.getElementById('poll-options');
+            container.innerHTML = '';
+
+            pollOptionsData.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3 rounded-2xl border-2 border-slate-200 font-bold text-slate-700 flex justify-between items-center transition-all bg-slate-50 hover:bg-orange-50 active:scale-98`;
+                btn.id = `poll-btn-${option.id}`;
+                btn.onclick = () => handlePollVote(option);
+
+                btn.innerHTML = `
+                    <span class="text-sm">${option.text}</span>
+                    <span class="poll-percent hidden text-xs bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full font-extrabold">${option.percentage}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function handlePollVote(selected) {
+            const feedback = document.getElementById('poll-feedback');
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+            // Show percentages on all options
+            document.querySelectorAll('.poll-percent').forEach(el => el.classList.remove('hidden'));
+
+            if (selected.hasVowelA) {
+                playSoundEffect('correct');
+                speakText("Awesome! Cap has the short 'a' sound!");
+                feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Correct! <strong>Cap (C-A-P)</strong> has the 'a' sound! 🎉`;
+            } else {
+                playSoundEffect('wrong');
+                speakText("Try again! Look for the 'a' sound like Cap!");
+                feedback.classList.add('bg-rose-100', 'text-rose-800');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> Oops! Try again! Find the word with 'a'.`;
+            }
+        }
+
+        /* ----------------------------------------------------
+           5. Interactive Mini-Quiz Logic
+        ---------------------------------------------------- */
+        const quizQuestions = [
+            { emoji: "🐱", prefix: "C", suffix: "T", correct: "A", full: "CAT", options: ["A", "E", "O"] },
+            { emoji: "🎒", prefix: "B", suffix: "G", correct: "A", full: "BAG", options: ["I", "A", "U"] },
+            { emoji: "🎩", prefix: "H", suffix: "T", correct: "A", full: "HAT", options: ["E", "O", "A"] }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        function renderQuizQuestion() {
+            if (currentQuizIndex >= quizQuestions.length) {
+                // Quiz completed
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('completion-badge').classList.remove('hidden');
+                
+                // Trigger celebratory confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                speakText("Congratulations! You earned a star badge for completing the Vowel A quiz!");
+                return;
+            }
+
+            const q = quizQuestions[currentQuizIndex];
+            document.getElementById('quiz-emoji').innerText = q.emoji;
+            document.getElementById('quiz-score').innerText = `${quizScore} / ${quizQuestions.length}`;
+
+            // Update word display
+            const display = document.getElementById('quiz-word-display');
+            display.innerHTML = `
+                <span>${q.prefix}</span>
+                <span class="w-9 h-11 border-b-4 border-emerald-500 bg-white rounded flex items-center justify-center text-emerald-600 shadow-inner font-black text-3xl">_</span>
+                <span>${q.suffix}</span>
+            `;
+
+            // Options
+            const optsContainer = document.getElementById('quiz-options');
+            optsContainer.innerHTML = '';
+
+            q.options.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = `w-12 h-12 rounded-2xl bg-white border-2 border-emerald-300 font-black text-xl text-emerald-800 shadow-sm hover:bg-emerald-50 active:scale-90 transition-all flex items-center justify-center`;
+                btn.innerText = letter;
+                btn.onclick = () => handleQuizAnswer(letter, q);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(selectedLetter, question) {
+            if (selectedLetter === question.correct) {
+                playSoundEffect('correct');
+                speakText(`Great job! ${question.full}`);
+                quizScore++;
+                
+                // Update display to full word briefly
+                document.getElementById('quiz-word-display').innerHTML = `
+                    <span class="text-emerald-600 font-black text-3xl animate-bounce-gentle">${question.full}</span>
+                `;
+
+                setTimeout(() => {
+                    currentQuizIndex++;
+                    renderQuizQuestion();
+                }, 1200);
+
+            } else {
+                playSoundEffect('wrong');
+                speakText(`Oops! Letter ${selectedLetter} is incorrect. Try again!`);
+            }
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('completion-badge').classList.add('hidden');
+            renderQuizQuestion();
+        }
+
+        /* ----------------------------------------------------
+           6. Utility Helpers
+        ---------------------------------------------------- */
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize App on Load
+        window.onload = function() {
+            initDate();
+            renderVisualLab();
+            renderPoll();
+            renderQuizQuestion();
+        };
+    </script>
+</body>
+</html>
+```
