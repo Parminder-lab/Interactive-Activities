@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amardeep Public Sen. Sec. School - Cube Roots Lab</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Three.js for 3D Cube Visualization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Canvas Confetti for Celebration Effects -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+            emerald: {
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .perspective-grid {
+      background-size: 30px 30px;
+      background-image: 
+        linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.3);
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.6);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header Navigation & School Branding Banner -->
+  <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-indigo-500/20 shadow-xl">
+    <!-- Top School Banner Bar -->
+    <div class="bg-gradient-to-r from-indigo-950 via-indigo-900 to-slate-900 border-b border-indigo-500/10 py-1.5 px-4">
+      <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-indigo-200">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap text-amber-400"></i>
+          <span class="font-medium tracking-wide">Excellence in Learning & Innovation</span>
+        </div>
+        <div class="hidden sm:flex items-center gap-4 text-indigo-300/80">
+          <span><i class="fa-solid fa-book-bookmark text-indigo-400 mr-1"></i> Interactive Mathematics Lab</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Bar with School Branding -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- School Logo & Title -->
+        <div class="flex items-center gap-3.5">
+          <div class="relative w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 via-indigo-600 to-violet-600 p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center group">
+            <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
+              <span class="font-extrabold text-amber-400 text-xl tracking-tighter">APS</span>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <h1 class="font-black text-lg sm:text-xl tracking-tight text-white leading-tight flex items-center gap-2">
+              <span>Amardeep Public Sen. Sec. School</span>
+            </h1>
+            <p class="text-xs font-semibold text-indigo-400 tracking-wide flex items-center gap-1.5">
+              <span>Cube Roots Lab</span>
+              <span class="text-slate-600">•</span>
+              <span class="text-slate-400 font-normal">Interactive Learning Portal</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="hidden lg:flex space-x-1 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/50">
+          <button onclick="switchTab('concept')" id="tab-btn-concept" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-indigo-600 text-white shadow">
+            <i class="fa-solid fa-book-open mr-2"></i>1. Concepts
+          </button>
+          <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all duration-200">
+            <i class="fa-solid fa-cube mr-2"></i>2. 3D Simulator
+          </button>
+          <button onclick="switchTab('game')" id="tab-btn-game" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all duration-200">
+            <i class="fa-solid fa-gamepad mr-2"></i>3. Cube Miner
+          </button>
+          <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all duration-200">
+            <i class="fa-solid fa-graduation-cap mr-2"></i>4. Challenge Quiz
+          </button>
+        </nav>
+
+        <!-- Stats / Quick Score -->
+        <div class="flex items-center gap-4">
+          <div class="bg-slate-800/90 border border-slate-700/80 rounded-xl px-3.5 py-1.5 flex items-center gap-2.5 shadow-inner">
+            <i class="fa-solid fa-trophy text-amber-400"></i>
+            <div class="flex flex-col text-left leading-none">
+              <span class="text-[10px] uppercase font-bold text-slate-400">XP Points</span>
+              <span id="global-xp" class="font-extrabold text-amber-400 text-sm">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="lg:hidden flex justify-around bg-slate-800/90 border-t border-slate-700 py-2 px-1">
+      <button onclick="switchTab('concept')" id="mob-btn-concept" class="mob-tab-btn flex flex-col items-center text-xs text-indigo-400 font-semibold">
+        <i class="fa-solid fa-book-open text-base mb-1"></i>Concepts
+      </button>
+      <button onclick="switchTab('simulator')" id="mob-btn-simulator" class="mob-tab-btn flex flex-col items-center text-xs text-slate-400">
+        <i class="fa-solid fa-cube text-base mb-1"></i>3D Lab
+      </button>
+      <button onclick="switchTab('game')" id="mob-btn-game" class="mob-tab-btn flex flex-col items-center text-xs text-slate-400">
+        <i class="fa-solid fa-gamepad text-base mb-1"></i>Miner Game
+      </button>
+      <button onclick="switchTab('quiz')" id="mob-btn-quiz" class="mob-tab-btn flex flex-col items-center text-xs text-slate-400">
+        <i class="fa-solid fa-graduation-cap text-base mb-1"></i>Quiz
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- SECTION 1: CONCEPTS & VISUAL MODELS -->
+    <section id="section-concept" class="tab-content block space-y-8">
+      <!-- Hero Banner with School Welcome Tagline -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900/80 via-purple-900/50 to-slate-900 border border-indigo-500/30 p-8 lg:p-12 shadow-2xl">
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-4">
+            <i class="fa-solid fa-school text-amber-400"></i> Amardeep Public Sen. Sec. School Student Module
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+            Unlocking <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">Cube Roots</span>
+          </h1>
+          <p class="text-slate-300 text-lg leading-relaxed mb-6">
+            Cubing a number means multiplying it by itself three times. A <strong class="text-white">Cube Root</strong> does the exact opposite: it asks, <em>"What number, multiplied by itself three times, yields this volume?"</em>
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <button onclick="switchTab('simulator')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center gap-2">
+              Explore 3D Simulator <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+          </div>
+        </div>
+        <div class="absolute right-[-40px] bottom-[-40px] opacity-20 lg:opacity-40 pointer-events-none">
+          <div class="text-[200px] leading-none text-indigo-400 font-black">∛</div>
+        </div>
+      </div>
+
+      <!-- Conceptual Explanation Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Visual Building Blocks -->
+        <div class="bg-slate-800/60 backdrop-blur border border-slate-700/60 rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <i class="fa-solid fa-cubes text-xl"></i>
+              </div>
+              <h2 class="text-xl font-bold text-white">What is a Perfect Cube?</h2>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              When you stack unit blocks into a solid 3D cube where length = width = height = <span class="font-mono text-indigo-300">n</span>, the total number of unit cubes is <span class="font-mono text-indigo-300">n³</span>.
+            </p>
+            <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-700/50 space-y-3 font-mono text-sm">
+              <div class="flex justify-between items-center text-indigo-300 border-b border-slate-800 pb-2">
+                <span>1 × 1 × 1</span>
+                <span>= 1³</span>
+                <span class="text-emerald-400 font-bold">= 1</span>
+              </div>
+              <div class="flex justify-between items-center text-indigo-300 border-b border-slate-800 pb-2">
+                <span>2 × 2 × 2</span>
+                <span>= 2³</span>
+                <span class="text-emerald-400 font-bold">= 8</span>
+              </div>
+              <div class="flex justify-between items-center text-indigo-300">
+                <span>3 × 3 × 3</span>
+                <span>= 3³</span>
+                <span class="text-emerald-400 font-bold">= 27</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Inverse Relationship -->
+        <div class="bg-slate-800/60 backdrop-blur border border-slate-700/60 rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i class="fa-solid fa-arrows-rotate text-xl"></i>
+              </div>
+              <h2 class="text-xl font-bold text-white">The Inverse Operation</h2>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              If cubing takes edge length <span class="font-mono text-indigo-300 font-bold">n</span> to Volume <span class="font-mono text-emerald-400 font-bold">V</span>, taking the cube root takes Volume <span class="font-mono text-emerald-400 font-bold">V</span> back to edge length <span class="font-mono text-indigo-300 font-bold">n</span>!
+            </p>
+            <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-700/50 text-center space-y-3">
+              <div class="flex items-center justify-center gap-3 text-lg font-mono">
+                <span class="bg-indigo-900/50 text-indigo-300 px-3 py-1 rounded-lg border border-indigo-700/50">4³ = 64</span>
+                <i class="fa-solid fa-right-left text-slate-500 text-xs"></i>
+                <span class="bg-emerald-900/50 text-emerald-300 px-3 py-1 rounded-lg border border-emerald-700/50">∛64 = 4</span>
+              </div>
+              <p class="text-xs text-slate-400 italic">
+                Symbol breakdown: <strong class="text-white">∛</strong> is the radical sign for cube root with index 3.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Mini Models Showcase -->
+      <div class="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-layer-group text-indigo-400"></i> Visual Block Progression
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <!-- 1^3 -->
+          <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4 text-center hover:border-indigo-500/50 transition">
+            <div class="h-32 flex items-center justify-center">
+              <div class="w-12 h-12 bg-indigo-500/80 border-2 border-indigo-300 rounded shadow-lg transform rotate-x-12 rotate-y-12 flex items-center justify-center font-bold text-white">1</div>
+            </div>
+            <div class="mt-2 font-mono text-sm text-slate-300">1 × 1 × 1 = <span class="text-indigo-400 font-bold">1</span></div>
+            <div class="text-xs text-slate-400">∛1 = 1</div>
+          </div>
+
+          <!-- 2^3 -->
+          <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4 text-center hover:border-indigo-500/50 transition">
+            <div class="h-32 flex items-center justify-center">
+              <!-- 2x2 grid preview representation -->
+              <div class="grid grid-cols-2 gap-1 w-20 h-20 p-1 bg-indigo-900/40 border border-indigo-500/30 rounded">
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+              </div>
+            </div>
+            <div class="mt-2 font-mono text-sm text-slate-300">2 × 2 × 2 = <span class="text-indigo-400 font-bold">8</span></div>
+            <div class="text-xs text-slate-400">∛8 = 2</div>
+          </div>
+
+          <!-- 3^3 -->
+          <div class="bg-slate-900/60 border border-slate-700/40 rounded-xl p-4 text-center hover:border-indigo-500/50 transition">
+            <div class="h-32 flex items-center justify-center">
+              <div class="grid grid-cols-3 gap-1 w-24 h-24 p-1 bg-indigo-900/40 border border-indigo-500/30 rounded">
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+                <div class="bg-indigo-500/80 rounded border border-indigo-300"></div>
+              </div>
+            </div>
+            <div class="mt-2 font-mono text-sm text-slate-300">3 × 3 × 3 = <span class="text-indigo-400 font-bold">27</span></div>
+            <div class="text-xs text-slate-400">∛27 = 3</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: 3D SIMULATOR -->
+    <section id="section-simulator" class="tab-content hidden space-y-6">
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-6 mb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+              <i class="fa-solid fa-cube text-indigo-400"></i> Interactive 3D Cubing Simulator
+            </h2>
+            <p class="text-slate-400 text-sm mt-1">
+              Drag left click to rotate camera, scroll to zoom. Move the slider to build larger 3D cubes block-by-block!
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="btn-toggle-explode" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl text-sm font-semibold transition border border-slate-600 flex items-center gap-2">
+              <i class="fa-solid fa-layer-group"></i> <span id="explode-text">Explode View</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <!-- Controls & Math Breakdown -->
+          <div class="space-y-6">
+            <!-- Controls Card -->
+            <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-5 space-y-4">
+              <label for="cube-slider" class="flex justify-between items-center text-sm font-semibold text-slate-200">
+                <span>Side Length (<span class="font-mono text-indigo-400">n</span>):</span>
+                <span id="slider-val-display" class="text-xl font-bold text-indigo-400 font-mono">3</span>
+              </label>
+              <input type="range" id="cube-slider" min="1" max="6" value="3" class="w-full accent-indigo-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+              
+              <div class="flex justify-between text-xs text-slate-400 font-mono">
+                <span>n = 1</span>
+                <span>n = 3</span>
+                <span>n = 6</span>
+              </div>
+            </div>
+
+            <!-- Mathematical Breakdown Panel -->
+            <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-5 space-y-4">
+              <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider">Live Metrics</h3>
+              
+              <div class="grid grid-cols-2 gap-3 font-mono">
+                <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                  <div class="text-xs text-slate-400">Dimensions</div>
+                  <div id="sim-dim" class="text-base font-bold text-slate-200">3 × 3 × 3</div>
+                </div>
+                <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                  <div class="text-xs text-slate-400">Total Volume</div>
+                  <div id="sim-vol" class="text-base font-bold text-emerald-400">27 units³</div>
+                </div>
+              </div>
+
+              <div class="bg-indigo-950/40 border border-indigo-800/40 rounded-lg p-4 space-y-2 font-mono">
+                <div class="text-xs text-indigo-300 font-sans">Formula Verification:</div>
+                <div class="text-sm text-slate-200">
+                  <span class="text-indigo-400 font-bold" id="sim-n-val">3</span>³ = <span id="sim-calc-expanded" class="text-slate-400">3 × 3 × 3</span> = <span id="sim-total-result" class="text-emerald-400 font-bold">27</span>
+                </div>
+                <div class="text-sm text-slate-200 pt-1 border-t border-indigo-900/60">
+                  ∛<span id="sim-root-vol" class="text-emerald-400 font-bold">27</span> = <span id="sim-root-res" class="text-indigo-400 font-bold">3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3D Viewport Canvas Container -->
+          <div class="lg:col-span-2 relative bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden h-[420px] shadow-inner flex items-center justify-center">
+            <div id="three-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+            <!-- Interactive Canvas Hint overlay -->
+            <div class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700/60 text-xs text-slate-400 pointer-events-none flex items-center gap-2">
+              <i class="fa-solid fa-hand-pointer text-indigo-400"></i> Click & Drag to Rotate
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: CUBE MINER GAME -->
+    <section id="section-game" class="tab-content hidden space-y-6">
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6">
+        <!-- Game Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-slate-700/60 pb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+              <i class="fa-solid fa-hammer text-amber-400"></i> Cube Miner Arcade
+            </h2>
+            <p class="text-slate-400 text-sm">
+              Smash the block that matches the requested Cube Root or Perfect Cube to clear the mine!
+            </p>
+          </div>
+          <!-- Game Stats HUD -->
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-700 font-mono text-center">
+              <div class="text-[10px] uppercase text-slate-400">Score</div>
+              <div id="game-score" class="text-lg font-bold text-amber-400">0</div>
+            </div>
+            <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-700 font-mono text-center">
+              <div class="text-[10px] uppercase text-slate-400">Streak</div>
+              <div id="game-streak" class="text-lg font-bold text-emerald-400">0🔥</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Active Area -->
+        <div id="game-container" class="relative bg-slate-950 border border-slate-800 rounded-2xl p-8 min-h-[360px] flex flex-col items-center justify-center overflow-hidden">
+          
+          <!-- Start / Game Over Overlay Screen -->
+          <div id="game-start-screen" class="absolute inset-0 z-20 bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center space-y-4">
+            <div class="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-3xl mb-2">
+              <i class="fa-solid fa-cubes-stacked"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-white">Ready to Mine Cubes?</h3>
+            <p class="text-slate-400 max-w-md text-sm">
+              Test your speed and cube root calculation skills. Choose your game mode below:
+            </p>
+            <div class="flex gap-4">
+              <button onclick="startGame('normal')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-indigo-600/30">
+                Standard Mode
+              </button>
+              <button onclick="startGame('speed')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-amber-600/30">
+                Speed Challenge ⚡
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Question Target Prompt -->
+          <div class="text-center mb-8 space-y-2">
+            <span id="game-mode-badge" class="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-semibold rounded-full">
+              Target Question
+            </span>
+            <div id="game-target-prompt" class="text-3xl sm:text-4xl font-extrabold text-white font-mono mt-2">
+              Find ∛<span id="game-target-val" class="text-indigo-400">64</span>
+            </div>
+          </div>
+
+          <!-- Mine Blocks Options Grid -->
+          <div id="game-blocks-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-2xl">
+            <!-- Dynamic option blocks injected via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: PRACTICE QUIZ -->
+    <section id="section-quiz" class="tab-content hidden space-y-6">
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-slate-700/60 pb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+              <i class="fa-solid fa-graduation-cap text-indigo-400"></i> Mastery Evaluation Quiz
+            </h2>
+            <p class="text-slate-400 text-sm">
+              Test your understanding with multiple-choice and numeric entry questions.
+            </p>
+          </div>
+          <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-700 text-sm font-semibold text-slate-300">
+            Progress: <span id="quiz-progress-num" class="text-indigo-400 font-bold">1</span> / <span id="quiz-total-num">5</span>
+          </div>
+        </div>
+
+        <!-- Quiz Body Card -->
+        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div id="quiz-card-content">
+            <!-- Dynamic Quiz Questions Injected Here -->
+          </div>
+
+          <!-- Quiz Explanation & Feedback Box -->
+          <div id="quiz-feedback-box" class="hidden p-4 rounded-xl border text-sm font-medium leading-relaxed"></div>
+
+          <!-- Quiz Footer Buttons -->
+          <div class="flex justify-end pt-4 border-t border-slate-800">
+            <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30">
+              Next Question <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Global App State
+    const state = {
+      xp: 0,
+      currentTab: 'concept',
+      simSize: 3,
+      simExploded: false,
+      gameScore: 0,
+      gameStreak: 0,
+      gameActive: false,
+      gameTargetRoot: 0,
+      quizIdx: 0,
+      quizScore: 0,
+    };
+
+    // Quiz Questions Data
+    const quizQuestions = [
+      {
+        type: 'mcq',
+        question: "What is the cube root of 27 (∛27)?",
+        options: ["3", "9", "6", "81"],
+        answer: "3",
+        explanation: "Since 3 × 3 × 3 = 27, the cube root of 27 is 3."
+      },
+      {
+        type: 'numeric',
+        question: "If a wooden block cube has a volume of 125 cm³, what is the length of one side in cm?",
+        answer: 5,
+        explanation: "Volume = side³. Therefore, side length = ∛125 = 5 cm because 5 × 5 × 5 = 125."
+      },
+      {
+        type: 'mcq',
+        question: "Which of the following numbers is a PERFECT CUBE?",
+        options: ["16", "27", "32", "50"],
+        answer: "27",
+        explanation: "27 is 3³ (3 × 3 × 3). Numbers like 16 are perfect squares (4²), but not perfect cubes."
+      },
+      {
+        type: 'numeric',
+        question: "Calculate the value of ∛64 + 2³.",
+        answer: 12,
+        explanation: "∛64 = 4 (since 4³ = 64). 2³ = 8. Adding them together: 4 + 8 = 12."
+      },
+      {
+        type: 'mcq',
+        question: "What happens to the volume of a cube if you double its side length from 2 to 4?",
+        options: ["It doubles (2x)", "It quadruples (4x)", "It increases by 8x", "It stays the same"],
+        answer: "It increases by 8x",
+        explanation: "Original volume = 2³ = 8. New volume = 4³ = 64. Since 64 / 8 = 8, the volume increases 8-fold (2³ = 8 factor)!"
+      }
+    ];
+
+    // --- Tab Switching Logic ---
+    function switchTab(tabId) {
+      state.currentTab = tabId;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`section-${tabId}`).classList.remove('hidden');
+
+      // Update Header Tab styling
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all duration-200';
+      });
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) activeBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white shadow';
+
+      // Mobile styling
+      document.querySelectorAll('.mob-tab-btn').forEach(btn => {
+        btn.className = 'mob-tab-btn flex flex-col items-center text-xs text-slate-400';
+      });
+      const activeMob = document.getElementById(`mob-btn-${tabId}`);
+      if (activeMob) activeMob.className = 'mob-tab-btn flex flex-col items-center text-xs text-indigo-400 font-semibold';
+
+      // Resize 3D renderer canvas if switching to simulator tab
+      if (tabId === 'simulator' && renderer && camera) {
+        setTimeout(() => {
+          const container = document.getElementById('three-container');
+          camera.aspect = container.clientWidth / container.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(container.clientWidth, container.clientHeight);
+        }, 50);
+      }
+    }
+
+    // --- Three.js 3D Simulator Implementation ---
+    let scene, camera, renderer, cubeGroup;
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+
+    function initThreeJS() {
+      const container = document.getElementById('three-container');
+      scene = new THREE.Scene();
+      
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(7, 7, 10);
+      camera.lookAt(0, 0, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      // Ambient & Directional Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(10, 20, 15);
+      scene.add(dirLight);
+
+      cubeGroup = new THREE.Group();
+      scene.add(cubeGroup);
+
+      // Mouse Orbit Controls (Manual implementation to keep standalone)
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      container.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - previousMousePosition.x;
+        const deltaY = e.clientY - previousMousePosition.y;
+
+        cubeGroup.rotation.y += deltaX * 0.01;
+        cubeGroup.rotation.x += deltaY * 0.01;
+
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+      
+      // Touch support
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      });
+      container.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const deltaX = e.touches[0].clientX - previousMousePosition.x;
+        const deltaY = e.touches[0].clientY - previousMousePosition.y;
+        cubeGroup.rotation.y += deltaX * 0.01;
+        cubeGroup.rotation.x += deltaY * 0.01;
+        previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      });
+      container.addEventListener('touchend', () => { isDragging = false; });
+
+      updateCubeVisualization(state.simSize);
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!isDragging) {
+        cubeGroup.rotation.y += 0.003; // Subtle auto-rotation when idle
+      }
+      renderer.render(scene, camera);
+    }
+
+    function updateCubeVisualization(n) {
+      // Clear previous cubes
+      while(cubeGroup.children.length > 0){ 
+        const obj = cubeGroup.children[0];
+        if (obj.geometry) obj.geometry.dispose();
+        cubeGroup.remove(obj); 
+      }
+
+      const spacing = state.simExploded ? 1.25 : 1.02;
+      const offset = ((n - 1) * spacing) / 2;
+
+      const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
+
+      for (let x = 0; x < n; x++) {
+        for (let y = 0; y < n; y++) {
+          for (let z = 0; z < n; z++) {
+            // Gradient color scheme depending on layer
+            const hue = 0.65 + (x + y + z) * 0.03;
+            const material = new THREE.MeshPhongMaterial({
+              color: new THREE.Color().setHSL(hue, 0.75, 0.55),
+              shininess: 60
+            });
+            const cubeMesh = new THREE.Mesh(geometry, material);
+            
+            cubeMesh.position.set(
+              x * spacing - offset,
+              y * spacing - offset,
+              z * spacing - offset
+            );
+            cubeGroup.add(cubeMesh);
+          }
+        }
+      }
+
+      // Update Math Text Displays
+      const vol = n * n * n;
+      document.getElementById('sim-dim').textContent = `${n} × ${n} × ${n}`;
+      document.getElementById('sim-vol').textContent = `${vol} units³`;
+      document.getElementById('sim-n-val').textContent = n;
+      document.getElementById('sim-calc-expanded').textContent = `${n} × ${n} × ${n}`;
+      document.getElementById('sim-total-result').textContent = vol;
+      document.getElementById('sim-root-vol').textContent = vol;
+      document.getElementById('sim-root-res').textContent = n;
+    }
+
+    // --- Cube Miner Arcade Game Logic ---
+    function startGame(mode) {
+      state.gameActive = true;
+      state.gameScore = 0;
+      state.gameStreak = 0;
+      updateGameHUD();
+      document.getElementById('game-start-screen').classList.add('hidden');
+      generateGameRound();
+    }
+
+    function generateGameRound() {
+      const targetRoot = Math.floor(Math.random() * 6) + 1; // 1 to 6
+      state.gameTargetRoot = targetRoot;
+      const targetVolume = Math.pow(targetRoot, 3);
+
+      const isFindRoot = Math.random() > 0.4; // 60% ask root, 40% ask cube volume
+      
+      const promptEl = document.getElementById('game-target-prompt');
+      if (isFindRoot) {
+        promptEl.innerHTML = `Find ∛<span class="text-indigo-400">${targetVolume}</span>`;
+      } else {
+        promptEl.innerHTML = `Find <span class="text-indigo-400">${targetRoot}³</span>`;
+      }
+
+      // Generate Options
+      const correctAnswer = isFindRoot ? targetRoot : targetVolume;
+      let options = [correctAnswer];
+
+      while (options.length < 4) {
+        let dummyRoot = Math.floor(Math.random() * 7) + 1;
+        let dummyVal = isFindRoot ? dummyRoot : Math.pow(dummyRoot, 3);
+        if (!options.includes(dummyVal)) {
+          options.push(dummyVal);
+        }
+      }
+
+      // Shuffle options
+      options.sort(() => Math.random() - 0.5);
+
+      const gridEl = document.getElementById('game-blocks-grid');
+      gridEl.innerHTML = '';
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "bg-slate-800 hover:bg-indigo-600/80 border-2 border-slate-700 hover:border-indigo-400 text-white font-mono text-xl py-6 rounded-2xl transition-all duration-150 transform hover:-translate-y-1 shadow-lg active:scale-95 flex flex-col items-center justify-center gap-1 group";
+        btn.innerHTML = `
+          <i class="fa-solid fa-cube text-slate-500 group-hover:text-white text-sm transition"></i>
+          <span>${opt}</span>
+        `;
+        btn.onclick = () => handleGameChoice(opt, correctAnswer, btn);
+        gridEl.appendChild(btn);
+      });
+    }
+
+    function handleGameChoice(selected, correct, element) {
+      if (selected === correct) {
+        element.className = "bg-emerald-600 border-2 border-emerald-300 text-white font-mono text-xl py-6 rounded-2xl animate-bounce shadow-lg flex flex-col items-center justify-center gap-1";
+        state.gameScore += 10 + state.gameStreak * 2;
+        state.gameStreak += 1;
+        addXP(15);
+
+        confetti({
+          particleCount: 25,
+          spread: 60,
+          origin: { y: 0.7 }
+        });
+
+        setTimeout(() => {
+          generateGameRound();
+        }, 600);
+      } else {
+        element.className = "bg-red-600/80 border-2 border-red-400 text-white font-mono text-xl py-6 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-1";
+        state.gameStreak = 0;
+        setTimeout(() => {
+          element.className = "bg-slate-800 border-2 border-slate-700 text-slate-500 font-mono text-xl py-6 rounded-2xl opacity-50 cursor-not-allowed";
+        }, 400);
+      }
+      updateGameHUD();
+    }
+
+    function updateGameHUD() {
+      document.getElementById('game-score').textContent = state.gameScore;
+      document.getElementById('game-streak').textContent = `${state.gameStreak}🔥`;
+    }
+
+    // --- Quiz Logic ---
+    function renderQuizQuestion() {
+      const q = quizQuestions[state.quizIdx];
+      document.getElementById('quiz-progress-num').textContent = state.quizIdx + 1;
+      document.getElementById('quiz-total-num').textContent = quizQuestions.length;
+
+      const card = document.getElementById('quiz-card-content');
+      const feedback = document.getElementById('quiz-feedback-box');
+      const nextBtn = document.getElementById('quiz-next-btn');
+
+      feedback.className = "hidden p-4 rounded-xl border text-sm font-medium leading-relaxed";
+      nextBtn.classList.add('hidden');
+
+      let html = `
+        <div class="space-y-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Question ${state.quizIdx + 1}</span>
+          <h3 class="text-xl font-bold text-white">${q.question}</h3>
+      `;
+
+      if (q.type === 'mcq') {
+        html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">`;
+        q.options.forEach(opt => {
+          html += `
+            <button onclick="checkQuizMCQ('${opt}')" class="quiz-opt-btn text-left p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium transition flex items-center justify-between">
+              <span>${opt}</span>
+              <i class="fa-regular fa-circle text-slate-500"></i>
+            </button>
+          `;
+        });
+        html += `</div>`;
+      } else if (q.type === 'numeric') {
+        html += `
+          <div class="pt-2 flex gap-3">
+            <input type="number" id="quiz-num-input" placeholder="Type your answer..." class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white font-mono focus:outline-none focus:border-indigo-500 flex-grow">
+            <button onclick="checkQuizNumeric()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl transition">
+              Submit
+            </button>
+          </div>
+        `;
+      }
+
+      html += `</div>`;
+      card.innerHTML = html;
+    }
+
+    function checkQuizMCQ(selected) {
+      const q = quizQuestions[state.quizIdx];
+      const isCorrect = selected === q.answer;
+      showQuizFeedback(isCorrect, q.explanation);
+    }
+
+    function checkQuizNumeric() {
+      const input = document.getElementById('quiz-num-input');
+      if (!input || input.value === '') return;
+      const q = quizQuestions[state.quizIdx];
+      const isCorrect = parseInt(input.value, 10) === q.answer;
+      showQuizFeedback(isCorrect, q.explanation);
+    }
+
+    function showQuizFeedback(isCorrect, explanation) {
+      const feedback = document.getElementById('quiz-feedback-box');
+      const nextBtn = document.getElementById('quiz-next-btn');
+
+      feedback.classList.remove('hidden');
+      if (isCorrect) {
+        feedback.className = "p-4 rounded-xl border text-sm font-medium leading-relaxed bg-emerald-950/60 border-emerald-500/40 text-emerald-200";
+        feedback.innerHTML = `<div class="font-bold flex items-center gap-2 mb-1"><i class="fa-solid fa-circle-check"></i> Correct!</div>${explanation}`;
+        addXP(20);
+      } else {
+        feedback.className = "p-4 rounded-xl border text-sm font-medium leading-relaxed bg-red-950/60 border-red-500/40 text-red-200";
+        feedback.innerHTML = `<div class="font-bold flex items-center gap-2 mb-1"><i class="fa-solid fa-circle-xmark"></i> Not quite right.</div>${explanation}`;
+      }
+
+      // Disable option buttons after selection
+      document.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.onclick = null);
+
+      nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuizQuestion() {
+      if (state.quizIdx < quizQuestions.length - 1) {
+        state.quizIdx++;
+        renderQuizQuestion();
+      } else {
+        showQuizCompletion();
+      }
+    }
+
+    function showQuizCompletion() {
+      const card = document.getElementById('quiz-card-content');
+      document.getElementById('quiz-feedback-box').classList.add('hidden');
+      document.getElementById('quiz-next-btn').classList.add('hidden');
+
+      card.innerHTML = `
+        <div class="text-center py-8 space-y-4">
+          <div class="w-20 h-20 mx-auto rounded-full bg-indigo-500/20 border-2 border-indigo-400 flex items-center justify-center text-indigo-400 text-4xl">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <h3 class="text-2xl font-extrabold text-white">Quiz Completed!</h3>
+          <p class="text-slate-300 max-w-md mx-auto text-sm">
+            Awesome effort! You've mastered the concepts of 3D unit blocks, cubing operations, and cube roots!
+          </p>
+          <button onclick="state.quizIdx = 0; renderQuizQuestion();" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-indigo-600/30">
+            Retake Quiz
+          </button>
+        </div>
+      `;
+
+      confetti({
+        particleCount: 80,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function addXP(amount) {
+      state.xp += amount;
+      document.getElementById('global-xp').textContent = state.xp;
+    }
+
+    // --- DOM Event Listeners Initialization ---
+    window.addEventListener('load', () => {
+      initThreeJS();
+      renderQuizQuestion();
+
+      // Simulator Slider Listener
+      const slider = document.getElementById('cube-slider');
+      slider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        state.simSize = val;
+        document.getElementById('slider-val-display').textContent = val;
+        updateCubeVisualization(val);
+      });
+
+      // Explode Toggle
+      document.getElementById('btn-toggle-explode').addEventListener('click', () => {
+        state.simExploded = !state.simExploded;
+        document.getElementById('explode-text').textContent = state.simExploded ? "Collapse View" : "Explode View";
+        updateCubeVisualization(state.simSize);
+      });
+    });
+
+    // Window Resize Handler for Three.js
+    window.addEventListener('resize', () => {
+      if (renderer && camera) {
+        const container = document.getElementById('three-container');
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      }
+    });
+  </script>
+</body>
+</html>
