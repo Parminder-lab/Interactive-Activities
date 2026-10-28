@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Amardeep School - Science Lab: Friction</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    colors: {
+                        school: {
+                            navy: '#0F2C59',
+                            gold: '#FFC436',
+                            blue: '#00A9FF',
+                            bg: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            touch-action: manipulation;
+        }
+        .heading-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Touch prevent scroll for canvas interactive zones */
+        .touch-canvas {
+            touch-action: none;
+        }
+        /* Custom scrollbar for mobile tabs */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes pulse-light {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.02); opacity: 1; }
+        }
+        .pulse-btn {
+            animation: pulse-light 2s infinite;
+        }
+        /* Touch active states */
+        .touch-btn:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- TOP HEADER / BRANDING -->
+    <header class="bg-gradient-to-r from-school-navy via-slate-900 to-school-navy text-white shadow-md border-b-4 border-school-gold sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-3 py-2.5 sm:px-6 lg:px-8 flex flex-row items-center justify-between gap-2">
+            
+            <!-- School Crest & Title -->
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-school-gold to-amber-500 flex items-center justify-center text-school-navy text-lg sm:text-2xl font-black shadow-md shrink-0">
+                    <i class="fa-solid fa-school"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-base sm:text-2xl font-bold tracking-tight text-white heading-font leading-none">
+                            AMARDEEP SCHOOL
+                        </h1>
+                        <span class="bg-school-gold text-slate-900 font-extrabold text-[9px] sm:text-xs px-2 py-0.5 rounded-full uppercase tracking-wider hidden xs:inline-block">
+                            PHYSICS LAB
+                        </span>
+                    </div>
+                    <p class="text-slate-300 text-[10px] sm:text-xs font-medium flex items-center gap-1 mt-0.5">
+                        <i class="fa-solid fa-atom text-school-gold"></i> Class 8 &bull; <span class="text-school-gold font-semibold">Friction Science Unit</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Global Controls & Score Bar -->
+            <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                <button id="soundToggleBtn" onclick="toggleSound()" class="h-9 px-2.5 sm:px-3 bg-slate-800/90 hover:bg-slate-700 active:bg-slate-900 text-slate-200 rounded-xl border border-slate-700 transition flex items-center gap-1.5 text-xs font-semibold touch-btn">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-emerald-400"></i>
+                    <span id="soundText" class="hidden sm:inline">Sound ON</span>
+                </button>
+
+                <div class="bg-slate-800/90 h-9 px-3 rounded-xl border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-star text-school-gold text-sm sm:text-base"></i>
+                    <div>
+                        <div id="globalScore" class="text-xs sm:text-sm font-extrabold text-white leading-none">0 pts</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MOBILE SCROLLABLE NAVIGATION TABS -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[57px] sm:top-[68px] z-40">
+        <div class="max-w-7xl mx-auto px-2 flex justify-start sm:justify-center gap-1.5 overflow-x-auto no-scrollbar py-2">
+            <button onclick="switchTab('topic1')" id="tab-topic1" class="tab-btn active-tab h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 transition whitespace-nowrap bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 touch-btn">
+                <i class="fa-solid fa-arrows-left-right text-indigo-600"></i> 1. Direction Vector
+            </button>
+            <button onclick="switchTab('topic2')" id="tab-topic2" class="tab-btn h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 touch-btn">
+                <i class="fa-solid fa-layer-group text-amber-500"></i> 2. Friction Types
+            </button>
+            <button onclick="switchTab('minigame')" id="tab-minigame" class="tab-btn h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 touch-btn">
+                <i class="fa-solid fa-flag-checkered text-orange-500"></i> 3. Surface Race
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 touch-btn">
+                <i class="fa-solid fa-graduation-cap text-purple-600"></i> 4. Quiz Arcade
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow w-full">
+
+        <!-- ========================================== -->
+        <!-- TOPIC 1: DIRECTION & ACTION OF FRICTION -->
+        <!-- ========================================== -->
+        <section id="section-topic1" class="space-y-4 sm:space-y-6">
+            
+            <!-- Learning Header Card -->
+            <div class="bg-indigo-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-indigo-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-indigo-500/30 text-indigo-200 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-400/30 uppercase tracking-wider">Concept 1 &bull; Force Vectors</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">Which Direction Does Friction Act?</h2>
+                    <p class="text-indigo-100 text-xs sm:text-sm mt-1 sm:mt-2 leading-relaxed">
+                        Friction is a resistive force that <strong>always opposes motion</strong>. It acts parallel to the contact surface in the exact opposite direction to applied push or movement!
+                    </p>
+                </div>
+            </div>
+
+            <!-- SIMULATOR + TOUCH CONTROLS -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                
+                <!-- CANVAS VISUALIZER -->
+                <div class="lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    
+                    <div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <h3 class="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-1.5">
+                                <i class="fa-solid fa-flask text-indigo-600"></i> Force Vector Simulator
+                            </h3>
+                            <div class="flex items-center gap-3 text-[11px] sm:text-xs font-semibold">
+                                <div class="flex items-center gap-1">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Applied Push
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Friction Force
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Touch Canvas Box -->
+                        <div class="relative w-full h-52 sm:h-64 bg-slate-100 rounded-xl sm:rounded-2xl border border-slate-300 overflow-hidden touch-canvas flex items-center justify-center">
+                            <canvas id="vectorCanvas" class="w-full h-full block"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Touch Push Controls -->
+                    <div class="mt-3 grid grid-cols-2 gap-2 sm:gap-3">
+                        <button onmousedown="startPush(-1)" onmouseup="stopPush()" onmouseleave="stopPush()" ontouchstart="startPush(-1); event.preventDefault();" ontouchend="stopPush()" class="h-12 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow transition flex items-center justify-center gap-1.5 touch-btn select-none">
+                            <i class="fa-solid fa-arrow-left"></i> Hold to Push Left
+                        </button>
+                        <button onmousedown="startPush(1)" onmouseup="stopPush()" onmouseleave="stopPush()" ontouchstart="startPush(1); event.preventDefault();" ontouchend="stopPush()" class="h-12 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow transition flex items-center justify-center gap-1.5 touch-btn select-none">
+                            Hold to Push Right <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- SURFACE CONTROLS & MICROSCOPIC VIEW -->
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between space-y-3 sm:space-y-4">
+                    
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base sm:text-lg mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-sliders text-indigo-600"></i> Touch Controls
+                        </h3>
+
+                        <!-- Surface Selector Buttons -->
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Surface Material</label>
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button onclick="setSurface('ice')" id="surf-ice" class="surf-btn h-11 p-1 rounded-xl border text-[11px] sm:text-xs font-bold text-center transition bg-slate-50 border-slate-200 touch-btn">
+                                    <i class="fa-solid fa-snowflake text-sky-400 block text-sm"></i> Ice
+                                </button>
+                                <button onclick="setSurface('wood')" id="surf-wood" class="surf-btn active-surf h-11 p-1 rounded-xl border text-[11px] sm:text-xs font-bold text-center transition bg-amber-50 border-amber-400 text-amber-900 touch-btn">
+                                    <i class="fa-solid fa-tree text-amber-600 block text-sm"></i> Wood
+                                </button>
+                                <button onclick="setSurface('sandpaper')" id="surf-sandpaper" class="surf-btn h-11 p-1 rounded-xl border text-[11px] sm:text-xs font-bold text-center transition bg-slate-50 border-slate-200 touch-btn">
+                                    <i class="fa-solid fa-rug text-amber-800 block text-sm"></i> Sandpaper
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Object Weight Touch Slider -->
+                        <div class="mt-3">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Object Mass</label>
+                                <span id="weightVal" class="text-xs font-extrabold text-indigo-600">10 kg</span>
+                            </div>
+                            <input type="range" id="weightSlider" min="5" max="50" value="10" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" oninput="updateWeight(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Microscopic Surface View Box -->
+                    <div class="bg-slate-900 text-white rounded-xl sm:rounded-2xl p-3 border border-slate-800 relative overflow-hidden">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <span class="text-[11px] sm:text-xs font-bold text-slate-300 flex items-center gap-1">
+                                <i class="fa-solid fa-microscope text-teal-400"></i> Microscopic Surface Zoom
+                            </span>
+                            <span class="text-[9px] font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">
+                                Interlocking Bumps
+                            </span>
+                        </div>
+                        
+                        <div class="h-20 w-full bg-slate-950 rounded-lg overflow-hidden relative border border-slate-800 touch-canvas">
+                            <canvas id="microCanvas" class="w-full h-full block"></canvas>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1.5 leading-tight">
+                            Microscopic irregularities interlock under pressure, creating friction resistance!
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- DIRECTION PRACTICE CHALLENGE -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 mb-3">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base sm:text-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-compass text-indigo-600"></i> Mobile Challenge: Direction Predictor
+                        </h3>
+                        <p class="text-xs text-slate-500">Tap the button corresponding to the direction <strong>Friction Force</strong> acts!</p>
+                    </div>
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
+                        Scenario <span id="dirQIndex">1</span> of 3
+                    </span>
+                </div>
+
+                <div id="dirQuizCard" class="bg-slate-50 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-200 flex flex-col md:flex-row items-center gap-4 sm:gap-6">
+                    <div id="dirImageContainer" class="w-full md:w-1/3 h-28 sm:h-36 bg-indigo-100 rounded-xl flex items-center justify-center text-4xl sm:text-6xl text-indigo-600 shadow-inner">
+                        <i id="dirIcon" class="fa-solid fa-sledding"></i>
+                    </div>
+                    <div class="w-full md:w-2/3 space-y-3">
+                        <h4 id="dirScenarioTitle" class="text-sm sm:text-lg font-bold text-slate-800">Scenario 1: Sled sliding DOWN a snowy hill</h4>
+                        <p id="dirScenarioDesc" class="text-xs sm:text-sm text-slate-600">A child is sledding down towards the left. In which direction is friction opposing this movement?</p>
+
+                        <div class="grid grid-cols-2 gap-2.5 pt-1">
+                            <button onclick="checkDirectionChoice('LEFT')" class="h-11 bg-white hover:bg-indigo-50 active:bg-indigo-100 border-2 border-slate-200 hover:border-indigo-400 font-bold text-xs sm:text-sm rounded-xl transition text-slate-700 flex items-center justify-center gap-1.5 touch-btn">
+                                <i class="fa-solid fa-arrow-left text-indigo-600"></i> Towards Left
+                            </button>
+                            <button onclick="checkDirectionChoice('RIGHT')" class="h-11 bg-white hover:bg-indigo-50 active:bg-indigo-100 border-2 border-slate-200 hover:border-indigo-400 font-bold text-xs sm:text-sm rounded-xl transition text-slate-700 flex items-center justify-center gap-1.5 touch-btn">
+                                Towards Right <i class="fa-solid fa-arrow-right text-indigo-600"></i>
+                            </button>
+                        </div>
+                        <div id="dirFeedback" class="hidden text-xs sm:text-sm font-bold p-3 rounded-xl"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TOPIC 2: TYPES OF FRICTION -->
+        <!-- ========================================== -->
+        <section id="section-topic2" class="space-y-4 sm:space-y-6 hidden">
+            
+            <div class="bg-amber-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-amber-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-amber-500/30 text-amber-200 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30 uppercase tracking-wider">Concept 2 &bull; Friction Types</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">Static vs Sliding vs Rolling Friction</h2>
+                    <p class="text-amber-100 text-xs sm:text-sm mt-1 sm:mt-2 leading-relaxed">
+                        Learn how friction changes when an object is stationary, sliding, or rolling!
+                    </p>
+                </div>
+            </div>
+
+            <!-- COMPARISON CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border-2 border-red-200 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-red-500 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-bl-xl uppercase">HIGHEST</div>
+                    <div class="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-lg font-bold mb-2">
+                        <i class="fa-solid fa-hand"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base">1. Static Friction</h3>
+                    <p class="text-xs text-slate-600 mt-1">
+                        Acts on stationary objects trying to move. High initial resistance.
+                    </p>
+                    <div class="mt-2.5 text-[11px] font-extrabold text-red-600 bg-red-50 p-2 rounded-lg border border-red-100">
+                        Threshold: HIGH (80 N)
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border-2 border-amber-200 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-bl-xl uppercase">MEDIUM</div>
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg font-bold mb-2">
+                        <i class="fa-solid fa-box"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base">2. Sliding Friction</h3>
+                    <p class="text-xs text-slate-600 mt-1">
+                        Acts when surfaces slide past each other continuously.
+                    </p>
+                    <div class="mt-2.5 text-[11px] font-extrabold text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100">
+                        Resistance: MEDIUM (40 N)
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border-2 border-emerald-200 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-bl-xl uppercase">LOWEST</div>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold mb-2">
+                        <i class="fa-solid fa-dharmachakra"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base">3. Rolling Friction</h3>
+                    <p class="text-xs text-slate-600 mt-1">
+                        Acts when wheels or round objects roll over surfaces.
+                    </p>
+                    <div class="mt-2.5 text-[11px] font-extrabold text-emerald-600 bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+                        Resistance: VERY LOW (10 N)
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE BENCH TEST -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base sm:text-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-scale-balanced text-amber-600"></i> Interactive Friction Test Bench
+                        </h3>
+                        <p class="text-xs text-slate-500">Apply force to observe how easily each friction type is overcome!</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-1.5 w-full sm:w-auto">
+                        <button onclick="applyBenchForce(20)" class="flex-1 sm:flex-none h-9 px-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition touch-btn">
+                            Apply 20N
+                        </button>
+                        <button onclick="applyBenchForce(60)" class="flex-1 sm:flex-none h-9 px-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition touch-btn">
+                            Apply 60N
+                        </button>
+                        <button onclick="resetBench()" class="flex-1 sm:flex-none h-9 px-3 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-xs font-bold rounded-xl transition touch-btn">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Canvas -->
+                <div class="w-full h-56 sm:h-64 bg-slate-100 rounded-xl sm:rounded-2xl border border-slate-300 overflow-hidden touch-canvas">
+                    <canvas id="typesCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- Live Force Chart -->
+                <div class="bg-slate-50 p-3.5 rounded-xl sm:rounded-2xl border border-slate-200 space-y-2.5">
+                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dynamic Force Comparison Gauge</h4>
+                    
+                    <div class="space-y-2">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-red-700">Static (Block at Rest)</span>
+                                <span>80 N</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-red-500 rounded-full transition-all duration-300" style="width: 80%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-amber-700">Sliding (Sled)</span>
+                                <span>40 N</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-amber-500 rounded-full transition-all duration-300" style="width: 40%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-emerald-700">Rolling (Wheel)</span>
+                                <span>10 N</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 10%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TOPIC 3: FRICTION RACE MINI-GAME -->
+        <!-- ========================================== -->
+        <section id="section-minigame" class="space-y-4 sm:space-y-6 hidden">
+            
+            <div class="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-orange-500 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-white/20 text-white text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-white/30 uppercase tracking-wider">Mini-Game</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">The 50m Friction Surface Race!</h2>
+                    <p class="text-orange-100 text-xs sm:text-sm mt-1 sm:mt-2">
+                        Tap your prediction and start the engines! Which mechanism encounters the least friction resistance?
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 space-y-4">
+                
+                <!-- Prediction Choices -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <button onclick="selectPrediction('box')" id="pred-box" class="pred-btn p-3 rounded-xl border-2 border-slate-200 text-left transition touch-btn">
+                        <div class="text-xl mb-0.5"><i class="fa-solid fa-box text-red-500"></i></div>
+                        <div class="font-bold text-slate-800 text-xs sm:text-sm">1. Static Box</div>
+                        <p class="text-[10px] sm:text-xs text-slate-500">Starts at rest with zero wheels.</p>
+                    </button>
+
+                    <button onclick="selectPrediction('sled')" id="pred-sled" class="pred-btn p-3 rounded-xl border-2 border-slate-200 text-left transition touch-btn">
+                        <div class="text-xl mb-0.5"><i class="fa-solid fa-person-skiing text-amber-500"></i></div>
+                        <div class="font-bold text-slate-800 text-xs sm:text-sm">2. Sliding Sled</div>
+                        <p class="text-[10px] sm:text-xs text-slate-500">Continuous surface sliding.</p>
+                    </button>
+
+                    <button onclick="selectPrediction('wheel')" id="pred-wheel" class="pred-btn p-3 rounded-xl border-2 border-slate-200 text-left transition touch-btn">
+                        <div class="text-xl mb-0.5"><i class="fa-solid fa-dharmachakra text-emerald-500"></i></div>
+                        <div class="font-bold text-slate-800 text-xs sm:text-sm">3. Wheeled Cart</div>
+                        <p class="text-[10px] sm:text-xs text-slate-500">Rolling rubber wheels.</p>
+                    </button>
+                </div>
+
+                <!-- Race Canvas Container -->
+                <div class="relative w-full h-64 sm:h-80 bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 overflow-hidden shadow-inner touch-canvas">
+                    <canvas id="raceCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- Status & Launch -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div id="raceStatus" class="text-xs sm:text-sm font-bold text-slate-700 text-center sm:text-left">
+                        Select your predicted winner above and click START RACE!
+                    </div>
+                    <button id="startRaceBtn" onclick="startRace()" disabled class="w-full sm:w-auto h-12 px-8 bg-slate-300 text-slate-500 font-bold text-sm rounded-xl cursor-not-allowed shadow transition touch-btn shrink-0">
+                        Start Race!
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TOPIC 4: QUIZ ARCADE -->
+        <!-- ========================================== -->
+        <section id="section-quiz" class="space-y-4 sm:space-y-6 hidden">
+            
+            <div class="bg-purple-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-purple-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-purple-500/30 text-purple-200 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-purple-400/30 uppercase tracking-wider">Assessment Arcade</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">Class 8 Physics Friction Quiz</h2>
+                    <p class="text-purple-100 text-xs sm:text-sm mt-1 sm:mt-2">
+                        Earn school points and physics stars by solving questions!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Card Container -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 max-w-3xl mx-auto space-y-4">
+                
+                <div id="quizContainer">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <span id="quizProgress" class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
+                            Question 1 of 5
+                        </span>
+                        <div class="flex gap-1" id="starContainer">
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Question & Touch Choices -->
+                    <div class="py-3 space-y-3">
+                        <h3 id="quizQuestionText" class="text-base sm:text-xl font-bold text-slate-800 leading-snug">
+                            Loading Question...
+                        </h3>
+
+                        <div id="quizOptions" class="space-y-2 pt-1">
+                            <!-- Dynamically Rendered -->
+                        </div>
+                    </div>
+
+                    <!-- Feedback Banner -->
+                    <div id="quizFeedbackBox" class="hidden p-3.5 rounded-xl border text-xs sm:text-sm font-semibold"></div>
+
+                    <!-- Next Button -->
+                    <div class="pt-3 flex justify-end">
+                        <button id="nextQuizBtn" onclick="nextQuestion()" class="hidden h-11 px-6 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold rounded-xl shadow transition text-xs sm:text-sm touch-btn">
+                            Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Final Score Result Screen -->
+                <div id="quizScoreScreen" class="hidden text-center py-6 space-y-4">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-100 rounded-full flex items-center justify-center text-3xl sm:text-4xl text-amber-500 mx-auto shadow-inner">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Quiz Completed!</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm">Great job representing Amardeep School Physics Lab!</p>
+                    
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 inline-block px-8">
+                        <div class="text-2xl sm:text-3xl font-black text-purple-600" id="finalQuizScore">0 / 5</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Final Score</p>
+                    </div>
+
+                    <div>
+                        <button onclick="restartQuiz()" class="h-12 px-6 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow transition touch-btn text-xs sm:text-sm">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Retake Quiz
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-[11px] sm:text-xs py-4 border-t border-slate-800 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-1">
+            <p class="font-bold text-slate-300">Amardeep School &bull; Science & Technology Department</p>
+            <p>Designed for Class 8 Physics Curriculum. Optimized for Touch & Mobile Devices.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT LOGIC (MOBILE OPTIMIZED) -->
+    <script>
+        /* ===================================================
+           GLOBAL STATE & AUDIO (Web Audio API)
+           =================================================== */
+        let soundEnabled = true;
+        let globalScore = 0;
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'pop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(180, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            const text = document.getElementById('soundText');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-emerald-400";
+                if(text) text.innerText = "Sound ON";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-slate-500";
+                if(text) text.innerText = "Sound OFF";
+            }
+        }
+
+        function addScore(pts) {
+            globalScore += pts;
+            document.getElementById('globalScore').innerText = globalScore + " pts";
+        }
+
+        /* TAB NAVIGATION */
+        function switchTab(tabId) {
+            playSound('pop');
+            const tabs = ['topic1', 'topic2', 'minigame', 'quiz'];
+            tabs.forEach(t => {
+                const sec = document.getElementById('section-' + t);
+                const btn = document.getElementById('tab-' + t);
+                if (t === tabId) {
+                    sec.classList.remove('hidden');
+                    btn.classList.add('bg-indigo-50', 'text-indigo-700', 'border', 'border-indigo-200');
+                    btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                } else {
+                    sec.classList.add('hidden');
+                    btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'border', 'border-indigo-200');
+                    btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+                }
+            });
+
+            setTimeout(() => {
+                resizeCanvases();
+            }, 60);
+        }
+
+        /* HIGH-DPI CANVAS SETUP FOR RETINA MOBILE DISPLAYS */
+        function setupCanvasDPI(canvas, ctx) {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            return { width: rect.width, height: rect.height };
+        }
+
+        /* TOPIC 1: SIMULATOR & MICROSCOPIC CANVAS */
+        let vectorCanvas, vCtx;
+        let microCanvas, mCtx;
+
+        let boxX = 0;
+        let boxVelX = 0;
+        let pushDirection = 0;
+        let currentSurface = 'wood';
+        let weightKg = 10;
+
+        const surfaceCoeffs = { 'ice': 0.1, 'wood': 0.4, 'sandpaper': 0.8 };
+
+        function setSurface(type) {
+            playSound('pop');
+            currentSurface = type;
+            document.querySelectorAll('.surf-btn').forEach(btn => {
+                btn.className = "surf-btn h-11 p-1 rounded-xl border text-[11px] sm:text-xs font-bold text-center transition bg-slate-50 border-slate-200 touch-btn";
+            });
+            const activeBtn = document.getElementById('surf-' + type);
+            activeBtn.className = "surf-btn active-surf h-11 p-1 rounded-xl border text-[11px] sm:text-xs font-bold text-center transition bg-amber-50 border-amber-400 text-amber-900 touch-btn";
+        }
+
+        function updateWeight(val) {
+            weightKg = parseFloat(val);
+            document.getElementById('weightVal').innerText = weightKg + " kg";
+        }
+
+        function startPush(dir) {
+            pushDirection = dir;
+            playSound('pop');
+        }
+
+        function stopPush() {
+            pushDirection = 0;
+        }
+
+        function initTopic1Canvases() {
+            vectorCanvas = document.getElementById('vectorCanvas');
+            vCtx = vectorCanvas.getContext('2d');
+            microCanvas = document.getElementById('microCanvas');
+            mCtx = microCanvas.getContext('2d');
+
+            resizeTopic1Canvases();
+            const rect = vectorCanvas.parentElement.getBoundingClientRect();
+            boxX = rect.width / 2;
+        }
+
+        function resizeTopic1Canvases() {
+            if (!vectorCanvas || !microCanvas) return;
+            setupCanvasDPI(vectorCanvas, vCtx);
+            setupCanvasDPI(microCanvas, mCtx);
+        }
+
+        function renderTopic1() {
+            if (!vCtx) return;
+
+            const rect = vectorCanvas.parentElement.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            const groundY = height - 40;
+            const mu = surfaceCoeffs[currentSurface];
+
+            const appliedForceMag = pushDirection !== 0 ? 100 : 0;
+            const appliedForce = pushDirection * appliedForceMag;
+            
+            const normalForce = weightKg * 9.8;
+            const maxFriction = mu * normalForce;
+
+            let frictionForce = 0;
+            if (Math.abs(boxVelX) > 0.1 || appliedForce !== 0) {
+                if (pushDirection !== 0) {
+                    frictionForce = -pushDirection * Math.min(appliedForceMag, maxFriction);
+                } else if (boxVelX !== 0) {
+                    frictionForce = -Math.sign(boxVelX) * maxFriction * 0.5;
+                }
+            }
+
+            const netForce = appliedForce + frictionForce;
+            const accel = netForce / weightKg;
+            boxVelX += accel * 0.1;
+            boxX += boxVelX;
+            boxVelX *= 0.85;
+
+            const boxW = Math.min(70, width * 0.22);
+            const boxH = 50;
+            if (boxX < boxW / 2 + 5) { boxX = boxW / 2 + 5; boxVelX = 0; }
+            if (boxX > width - boxW / 2 - 5) { boxX = width - boxW / 2 - 5; boxVelX = 0; }
+
+            vCtx.clearRect(0, 0, width, height);
+
+            // Ground Surface
+            vCtx.fillStyle = currentSurface === 'ice' ? '#E0F2FE' : (currentSurface === 'wood' ? '#FDE68A' : '#D97706');
+            vCtx.fillRect(0, groundY, width, 40);
+            vCtx.strokeStyle = '#94A3B8';
+            vCtx.lineWidth = 2;
+            vCtx.beginPath();
+            vCtx.moveTo(0, groundY);
+            vCtx.lineTo(width, groundY);
+            vCtx.stroke();
+
+            // Moving Box
+            const boxY = groundY - boxH;
+            vCtx.fillStyle = '#3B82F6';
+            vCtx.strokeStyle = '#1D4ED8';
+            vCtx.lineWidth = 2.5;
+            vCtx.beginPath();
+            vCtx.roundRect(boxX - boxW / 2, boxY, boxW, boxH, 6);
+            vCtx.fill();
+            vCtx.stroke();
+
+            vCtx.fillStyle = '#FFFFFF';
+            vCtx.font = 'bold 12px "Plus Jakarta Sans"';
+            vCtx.textAlign = 'center';
+            vCtx.fillText(`${weightKg} kg`, boxX, boxY + boxH / 2 + 4);
+
+            // Arrows
+            const arrowY = boxY + boxH / 2;
+            if (appliedForce !== 0) {
+                drawArrow(vCtx, boxX, arrowY, boxX + pushDirection * 55, arrowY, '#2563EB', 'Push');
+            }
+            if (Math.abs(frictionForce) > 0.5) {
+                const fDir = Math.sign(frictionForce);
+                drawArrow(vCtx, boxX, groundY, boxX + fDir * Math.min(Math.abs(frictionForce) * 0.7, 60), groundY, '#EF4444', 'Friction');
+            }
+
+            renderMicroscopicCanvas();
+        }
+
+        function drawArrow(ctx, fromx, fromy, tox, toy, color, label) {
+            const headlen = 8;
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+
+            if (label) {
+                ctx.font = 'bold 10px "Plus Jakarta Sans"';
+                ctx.fillText(label, tox + Math.sign(dx) * 8, toy - 6);
+            }
+        }
+
+        function renderMicroscopicCanvas() {
+            if (!mCtx) return;
+            const rect = microCanvas.parentElement.getBoundingClientRect();
+            const mw = rect.width;
+            const mh = rect.height;
+
+            mCtx.clearRect(0, 0, mw, mh);
+
+            mCtx.fillStyle = '#3B82F6';
+            mCtx.beginPath();
+            mCtx.moveTo(0, 0);
+            for (let x = 0; x <= mw; x += 12) {
+                const offset = Math.sin((x + boxX * 2) * 0.1) * (currentSurface === 'sandpaper' ? 10 : (currentSurface === 'wood' ? 6 : 2));
+                mCtx.lineTo(x, mh / 2 - 4 + offset);
+            }
+            mCtx.lineTo(mw, 0);
+            mCtx.closePath();
+            mCtx.fill();
+
+            mCtx.fillStyle = currentSurface === 'ice' ? '#38BDF8' : (currentSurface === 'wood' ? '#D97706' : '#92400E');
+            mCtx.beginPath();
+            mCtx.moveTo(0, mh);
+            for (let x = 0; x <= mw; x += 12) {
+                const offset = Math.cos(x * 0.1) * (currentSurface === 'sandpaper' ? 10 : (currentSurface === 'wood' ? 6 : 2));
+                mCtx.lineTo(x, mh / 2 + 4 + offset);
+            }
+            mCtx.lineTo(mw, mh);
+            mCtx.closePath();
+            mCtx.fill();
+        }
+
+        /* DIRECTION CHALLENGE MINI-GAME */
+        const dirScenarios = [
+            {
+                title: "Scenario 1: Sled sliding DOWN a snowy hill",
+                desc: "A child is sledding down towards the left. In which direction is friction opposing this movement?",
+                icon: "fa-solid fa-sledding",
+                correctDir: "RIGHT"
+            },
+            {
+                title: "Scenario 2: Car braking while moving FORWARD",
+                desc: "A car drives forward (Right) and hits the brakes. Which direction does friction act on the tires?",
+                icon: "fa-solid fa-car",
+                correctDir: "LEFT"
+            },
+            {
+                title: "Scenario 3: Book pushed towards the Right",
+                desc: "You push a textbook across your desk towards the Right. Which direction does friction push back?",
+                icon: "fa-solid fa-book",
+                correctDir: "LEFT"
+            }
+        ];
+
+        let currentDirIndex = 0;
+
+        function checkDirectionChoice(choice) {
+            const sc = dirScenarios[currentDirIndex];
+            const feedback = document.getElementById('dirFeedback');
+            feedback.classList.remove('hidden');
+
+            if (choice === sc.correctDir) {
+                playSound('correct');
+                feedback.className = "text-xs sm:text-sm font-bold p-3 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300";
+                feedback.innerText = "Correct! Friction always opposes motion!";
+                addScore(20);
+
+                setTimeout(() => {
+                    currentDirIndex = (currentDirIndex + 1) % dirScenarios.length;
+                    updateDirQuizCard();
+                }, 1600);
+            } else {
+                playSound('wrong');
+                feedback.className = "text-xs sm:text-sm font-bold p-3 rounded-xl bg-red-100 text-red-800 border border-red-300";
+                feedback.innerText = "Incorrect! Friction acts in the opposite direction of motion.";
+            }
+        }
+
+        function updateDirQuizCard() {
+            const sc = dirScenarios[currentDirIndex];
+            document.getElementById('dirQIndex').innerText = currentDirIndex + 1;
+            document.getElementById('dirScenarioTitle').innerText = sc.title;
+            document.getElementById('dirScenarioDesc').innerText = sc.desc;
+            document.getElementById('dirIcon').className = sc.icon;
+            document.getElementById('dirFeedback').classList.add('hidden');
+        }
+
+        /* TOPIC 2: TYPES OF FRICTION SIMULATION */
+        let typesCanvas, tCtx;
+        let benchAppliedForce = 0;
+
+        let objStaticX = 20;
+        let objSlidingX = 20;
+        let objRollingX = 20;
+
+        function initTopic2Canvas() {
+            typesCanvas = document.getElementById('typesCanvas');
+            tCtx = typesCanvas.getContext('2d');
+            resizeTopic2Canvas();
+        }
+
+        function resizeTopic2Canvas() {
+            if (!typesCanvas) return;
+            setupCanvasDPI(typesCanvas, tCtx);
+        }
+
+        function applyBenchForce(force) {
+            playSound('pop');
+            benchAppliedForce = force;
+        }
+
+        function resetBench() {
+            playSound('pop');
+            benchAppliedForce = 0;
+            objStaticX = 20;
+            objSlidingX = 20;
+            objRollingX = 20;
+        }
+
+        function renderTopic2() {
+            if (!tCtx) return;
+            const rect = typesCanvas.parentElement.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+
+            if (benchAppliedForce >= 80) {
+                objStaticX += (benchAppliedForce - 80) * 0.04;
+            }
+            if (benchAppliedForce > 40) {
+                objSlidingX += (benchAppliedForce - 40) * 0.07;
+            }
+            if (benchAppliedForce > 10) {
+                objRollingX += (benchAppliedForce - 10) * 0.11;
+            }
+
+            tCtx.clearRect(0, 0, w, h);
+
+            const laneH = h / 3;
+
+            for (let i = 0; i < 3; i++) {
+                const y = i * laneH;
+                tCtx.fillStyle = i % 2 === 0 ? '#F8FAFC' : '#F1F5F9';
+                tCtx.fillRect(0, y, w, laneH);
+                tCtx.strokeStyle = '#E2E8F0';
+                tCtx.beginPath();
+                tCtx.moveTo(0, y + laneH);
+                tCtx.lineTo(w, y + laneH);
+                tCtx.stroke();
+            }
+
+            // Lane 1: Static
+            tCtx.fillStyle = '#EF4444';
+            tCtx.fillRect(objStaticX, laneH - 35, 40, 30);
+            tCtx.fillStyle = '#FFFFFF';
+            tCtx.font = 'bold 9px "Plus Jakarta Sans"';
+            tCtx.fillText('STATIC', objStaticX + 4, laneH - 16);
+
+            // Lane 2: Sliding
+            tCtx.fillStyle = '#F59E0B';
+            tCtx.beginPath();
+            tCtx.roundRect(objSlidingX, laneH * 2 - 28, 48, 20, 4);
+            tCtx.fill();
+            tCtx.fillStyle = '#FFFFFF';
+            tCtx.fillText('SLIDING', objSlidingX + 4, laneH * 2 - 15);
+
+            // Lane 3: Rolling
+            tCtx.fillStyle = '#10B981';
+            tCtx.beginPath();
+            tCtx.arc(objRollingX + 15, laneH * 3 - 20, 15, 0, Math.PI * 2);
+            tCtx.fill();
+            tCtx.strokeStyle = '#047857';
+            tCtx.lineWidth = 2;
+            tCtx.stroke();
+            tCtx.fillStyle = '#FFFFFF';
+            tCtx.fillText('ROLLING', objRollingX + 1, laneH * 3 - 16);
+        }
+
+        /* TOPIC 3: FRICTION RACE MINI-GAME */
+        let raceCanvas, rCtx;
+        let racePrediction = null;
+        let raceRunning = false;
+
+        let racerBox = { x: 20, speed: 0, resistance: 0.85, name: 'Box', color: '#EF4444' };
+        let racerSled = { x: 20, speed: 0, resistance: 0.95, name: 'Sled', color: '#F59E0B' };
+        let racerWheel = { x: 20, speed: 0, resistance: 0.99, name: 'Wheel', color: '#10B981' };
+
+        function selectPrediction(type) {
+            playSound('pop');
+            racePrediction = type;
+            document.querySelectorAll('.pred-btn').forEach(btn => {
+                btn.className = "pred-btn p-3 rounded-xl border-2 border-slate-200 text-left transition touch-btn";
+            });
+            document.getElementById('pred-' + type).className = "pred-btn p-3 rounded-xl border-2 border-amber-500 bg-amber-50 text-left transition shadow-sm touch-btn";
+
+            const startBtn = document.getElementById('startRaceBtn');
+            startBtn.disabled = false;
+            startBtn.className = "w-full sm:w-auto h-12 px-8 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-bold text-sm rounded-xl cursor-pointer shadow transition touch-btn pulse-btn shrink-0";
+        }
+
+        function initRaceCanvas() {
+            raceCanvas = document.getElementById('raceCanvas');
+            rCtx = raceCanvas.getContext('2d');
+            resizeRaceCanvas();
+        }
+
+        function resizeRaceCanvas() {
+            if (!raceCanvas) return;
+            setupCanvasDPI(raceCanvas, rCtx);
+        }
+
+        function startRace() {
+            if (!racePrediction || raceRunning) return;
+            playSound('pop');
+            raceRunning = true;
+
+            racerBox.x = 20; racerBox.speed = 0;
+            racerSled.x = 20; racerSled.speed = 0;
+            racerWheel.x = 20; racerWheel.speed = 0;
+
+            document.getElementById('startRaceBtn').disabled = true;
+            document.getElementById('raceStatus').innerText = "Race in progress... Engine Force Applied!";
+        }
+
+        function renderRace() {
+            if (!rCtx) return;
+            const rect = raceCanvas.parentElement.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+
+            rCtx.clearRect(0, 0, w, h);
+
+            const finishLineX = w - 50;
+            const laneH = h / 3;
+
+            // Finish Line
+            rCtx.fillStyle = '#FFFFFF';
+            for (let y = 0; y < h; y += 16) {
+                rCtx.fillRect(finishLineX, y, 10, 8);
+                rCtx.fillRect(finishLineX + 10, y + 8, 10, 8);
+            }
+
+            if (raceRunning) {
+                racerBox.speed = (racerBox.speed + 0.3) * racerBox.resistance;
+                racerSled.speed = (racerSled.speed + 0.4) * racerSled.resistance;
+                racerWheel.speed = (racerWheel.speed + 0.5) * racerWheel.resistance;
+
+                racerBox.x += racerBox.speed;
+                racerSled.x += racerSled.speed;
+                racerWheel.x += racerWheel.speed;
+
+                if (racerWheel.x >= finishLineX || racerSled.x >= finishLineX || racerBox.x >= finishLineX) {
+                    raceRunning = false;
+                    let winner = 'wheel';
+
+                    if (racePrediction === winner) {
+                        playSound('correct');
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                        document.getElementById('raceStatus').innerHTML = "<span class='text-emerald-600 font-extrabold'>🎉 CORRECT PREDICTION! Rolling friction requires the least force! (+50 pts)</span>";
+                        addScore(50);
+                    } else {
+                        playSound('wrong');
+                        document.getElementById('raceStatus').innerHTML = "<span class='text-red-600 font-extrabold'>Wheel Wins! Rolling friction resistance is minimal compared to sliding/static friction.</span>";
+                    }
+                }
+            }
+
+            // Racers
+            rCtx.fillStyle = racerBox.color;
+            rCtx.fillRect(racerBox.x, laneH / 2 - 12, 32, 24);
+            rCtx.fillStyle = '#FFF';
+            rCtx.font = 'bold 9px "Plus Jakarta Sans"';
+            rCtx.fillText('BOX', racerBox.x + 6, laneH / 2 + 3);
+
+            rCtx.fillStyle = racerSled.color;
+            rCtx.fillRect(racerSled.x, laneH * 1.5 - 8, 36, 16);
+            rCtx.fillStyle = '#FFF';
+            rCtx.fillText('SLED', racerSled.x + 6, laneH * 1.5 + 4);
+
+            rCtx.fillStyle = racerWheel.color;
+            rCtx.beginPath();
+            rCtx.arc(racerWheel.x + 14, laneH * 2.5, 14, 0, Math.PI * 2);
+            rCtx.fill();
+            rCtx.fillStyle = '#FFF';
+            rCtx.fillText('WHEEL', racerWheel.x + 1, laneH * 2.5 + 3);
+        }
+
+        /* TOPIC 4: QUIZ ARCADE */
+        const quizQuestions = [
+            {
+                q: "1. Which direction does friction act relative to an object's motion?",
+                options: [
+                    "In the same direction of motion",
+                    "Opposite to the direction of motion",
+                    "Perpendicular upwards",
+                    "It acts in random directions"
+                ],
+                correct: 1,
+                explanation: "Friction strictly opposes motion!"
+            },
+            {
+                q: "2. Which type of friction is the GREATEST in magnitude?",
+                options: [
+                    "Sliding Friction",
+                    "Rolling Friction",
+                    "Static Friction",
+                    "Fluid Friction"
+                ],
+                correct: 2,
+                explanation: "Static friction is highest because surface bumps interlock completely at rest."
+            },
+            {
+                q: "3. Why are ball bearings used in machinery & bicycle wheels?",
+                options: [
+                    "To convert sliding friction into rolling friction",
+                    "To increase friction force",
+                    "To change static friction into sliding friction",
+                    "To make parts heavier"
+                ],
+                correct: 0,
+                explanation: "Ball bearings reduce resistance by converting sliding friction into rolling friction!"
+            },
+            {
+                q: "4. What causes friction between two contact surfaces?",
+                options: [
+                    "Magnetic pull",
+                    "Interlocking of microscopic surface irregularities",
+                    "Gravitational attraction",
+                    "Air pressure"
+                ],
+                correct: 1,
+                explanation: "Microscopic bumps interlock when surfaces press against each other."
+            },
+            {
+                q: "5. A crate is sliding across a wooden floor. Which friction acts on it?",
+                options: [
+                    "Static Friction",
+                    "Sliding Friction",
+                    "Rolling Friction",
+                    "Zero Friction"
+                ],
+                correct: 1,
+                explanation: "Once an object is actively sliding, sliding friction acts upon it."
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            document.getElementById('quizProgress').innerText = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quizQuestionText').innerText = q.q;
+
+            const optsContainer = document.getElementById('quizOptions');
+            optsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border-2 border-slate-200 hover:border-purple-400 active:bg-purple-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between touch-btn";
+                btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle text-slate-300"></i>`;
+                btn.onclick = () => checkQuizAnswer(idx, btn);
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quizFeedbackBox').classList.add('hidden');
+            document.getElementById('nextQuizBtn').classList.add('hidden');
+        }
+
+        function checkQuizAnswer(selectedIdx, btnElement) {
+            const q = quizQuestions[currentQuizIndex];
+            const feedback = document.getElementById('quizFeedbackBox');
+            feedback.classList.remove('hidden');
+
+            const allBtns = document.getElementById('quizOptions').children;
+            for (let b of allBtns) {
+                b.disabled = true;
+            }
+
+            if (selectedIdx === q.correct) {
+                playSound('correct');
+                quizScore++;
+                addScore(20);
+                btnElement.className = "w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border-2 border-emerald-500 bg-emerald-50 font-bold text-xs sm:text-sm text-emerald-900 transition flex items-center justify-between touch-btn";
+                btnElement.innerHTML += `<i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+                
+                feedback.className = "p-3.5 rounded-xl border bg-emerald-100 text-emerald-900 border-emerald-300 text-xs sm:text-sm font-semibold";
+                feedback.innerText = "Correct! " + q.explanation;
+            } else {
+                playSound('wrong');
+                btnElement.className = "w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border-2 border-red-500 bg-red-50 font-bold text-xs sm:text-sm text-red-900 transition flex items-center justify-between touch-btn";
+                btnElement.innerHTML += `<i class="fa-solid fa-circle-xmark text-red-600"></i>`;
+
+                feedback.className = "p-3.5 rounded-xl border bg-red-100 text-red-900 border-red-300 text-xs sm:text-sm font-semibold";
+                feedback.innerText = "Incorrect! " + q.explanation;
+            }
+
+            document.getElementById('nextQuizBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('pop');
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            const scoreScreen = document.getElementById('quizScoreScreen');
+            scoreScreen.classList.remove('hidden');
+            document.getElementById('finalQuizScore').innerText = `${quizScore} / ${quizQuestions.length}`;
+
+            if (quizScore >= 4) {
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
+            }
+        }
+
+        function restartQuiz() {
+            playSound('pop');
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quizScoreScreen').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        function resizeCanvases() {
+            resizeTopic1Canvases();
+            resizeTopic2Canvas();
+            resizeRaceCanvas();
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeCanvases, 200);
+        });
+
+        window.onload = function() {
+            initTopic1Canvases();
+            initTopic2Canvas();
+            initRaceCanvas();
+            loadQuizQuestion();
+
+            function mainLoop() {
+                renderTopic1();
+                renderTopic2();
+                renderRace();
+                requestAnimationFrame(mainLoop);
+            }
+            mainLoop();
+        };
+    </script>
+</body>
+</html>
