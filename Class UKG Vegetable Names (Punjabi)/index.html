@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ਸਬਜ਼ੀਆਂ ਦੀ ਪਛਾਣ - UKG Punjabi Learning</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti CDN for rewards -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts for kids-friendly display & Gurmukhi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+Gurmukhi:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', 'Noto Sans Gurmukhi', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #fce7f3 100%);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .gurmukhi {
+            font-family: 'Noto Sans Gurmukhi', sans-serif;
+        }
+
+        /* Custom Dotted Circle matching the worksheet */
+        .dotted-circle {
+            border: 4px dashed #94a3b8;
+            transition: all 0.2s ease-in-out;
+        }
+        .dotted-circle:hover {
+            border-color: #3b82f6;
+            transform: scale(1.05);
+        }
+
+        /* Gentle pulse animation for interactive icons */
+        @keyframes gentle-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .bounce-gentle {
+            animation: gentle-bounce 2s infinite;
+        }
+
+        /* Smooth canvas drawing styling */
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 pb-8">
+
+    <!-- Top Navigation & Score Bar -->
+    <header class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50 px-4 py-3 border-b-4 border-amber-300">
+        <div class="max-w-4xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <!-- App Title -->
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🥕</span>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-amber-600 gurmukhi leading-tight">ਸਬਜ਼ੀਆਂ ਦੀ ਪਛਾਣ</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 font-semibold">UKG Punjabi Learning Worksheet</p>
+                </div>
+            </div>
+
+            <!-- Stars / Score counter & Speaker -->
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-100 border-2 border-amber-400 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-sm">
+                    <span class="text-2xl animate-spin-slow">⭐</span>
+                    <span id="star-count" class="text-xl font-bold text-amber-700">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode Selector Buttons -->
+        <nav class="max-w-4xl mx-auto mt-3 flex justify-center gap-2 sm:gap-4">
+            <button onclick="switchMode('identify')" id="nav-identify" class="mode-btn flex-1 sm:flex-none px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl font-bold text-sm sm:text-base border-b-4 transition-all duration-150 bg-amber-500 text-white border-amber-700 shadow-md">
+                🎯 Identify (ਪਛਾਣ)
+            </button>
+            <button onclick="switchMode('tracing')" id="nav-tracing" class="mode-btn flex-1 sm:flex-none px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl font-bold text-sm sm:text-base border-b-4 transition-all duration-150 bg-white text-slate-700 border-slate-300 hover:bg-slate-50">
+                ✍️ Tracing (ਲਿਖੋ)
+            </button>
+            <button onclick="switchMode('flashcards')" id="nav-flashcards" class="mode-btn flex-1 sm:flex-none px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl font-bold text-sm sm:text-base border-b-4 transition-all duration-150 bg-white text-slate-700 border-slate-300 hover:bg-slate-50">
+                📚 Cards (ਕਾਰਡ)
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Dynamic Content Area -->
+    <main class="max-w-4xl mx-auto w-full px-4 flex-grow mt-4">
+
+        <!-- MODE 1: IDENTIFY THE VEGETABLE (Worksheet Style Circle Choice) -->
+        <section id="mode-identify" class="space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-amber-200 text-center relative overflow-hidden">
+                <!-- Instruction Header -->
+                <div class="inline-block bg-amber-100 text-amber-900 rounded-full px-4 py-1.5 text-sm sm:text-base font-bold mb-3 gurmukhi shadow-inner">
+                    ਸਹੀ ਸਬਜ਼ੀ ਦੀ ਤਸਵੀਰ ਦੇ ਦੁਆਲੇ ਗੋਲਾ (ਸਰਕਲ) ਲਗਾਓ।
+                </div>
+                <p class="text-xs text-slate-500 mb-4">(Tap the correct vegetable picture for the given word)</p>
+
+                <!-- Target Word Display Box -->
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border-2 border-amber-300 mb-6 max-w-sm mx-auto shadow-sm">
+                    <div class="flex items-center justify-center gap-3">
+                        <span id="target-gurmukhi" class="text-4xl sm:text-5xl font-extrabold text-amber-700 gurmukhi">ਆਲੂ</span>
+                        <button onclick="speakCurrentWord()" class="bg-amber-500 hover:bg-amber-600 text-white p-2.5 rounded-full shadow-md active:scale-95 transition" title="Listen Audio">
+                            🔊
+                        </button>
+                    </div>
+                    <div id="target-english" class="text-lg font-bold text-slate-600 mt-1">(Aalu / Potato)</div>
+                </div>
+
+                <!-- Choice Options Grid (Dotted circles like worksheet) -->
+                <div class="grid grid-cols-2 gap-4 sm:gap-8 max-w-md mx-auto my-6">
+                    <button id="option-btn-0" onclick="checkChoice(0)" class="dotted-circle bg-white rounded-full p-6 flex flex-col items-center justify-center aspect-square shadow-sm active:scale-95 hover:bg-amber-50/50">
+                        <div id="svg-container-0" class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center"></div>
+                    </button>
+
+                    <button id="option-btn-1" onclick="checkChoice(1)" class="dotted-circle bg-white rounded-full p-6 flex flex-col items-center justify-center aspect-square shadow-sm active:scale-95 hover:bg-amber-50/50">
+                        <div id="svg-container-1" class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center"></div>
+                    </button>
+                </div>
+
+                <!-- Feedback & Next Button -->
+                <div id="identify-feedback" class="h-12 flex items-center justify-center text-xl font-bold"></div>
+
+                <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-100">
+                    <span id="question-progress" class="text-sm font-semibold text-slate-500">Question 1 of 4</span>
+                    <button onclick="nextQuestion()" id="next-q-btn" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-md transition active:scale-95">
+                        Next Question ➔
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODE 2: MATCHING & TRACING PRACTICE -->
+        <section id="mode-tracing" class="hidden space-y-4">
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-teal-200">
+                <div class="text-center mb-4">
+                    <h2 class="text-2xl font-bold text-teal-700 gurmukhi">ਮਿਲਾਓ ਅਤੇ ਲਿਖੋ (Match and Trace)</h2>
+                    <p class="text-xs text-slate-500">Trace the Gurmukhi word using your finger or mouse!</p>
+                </div>
+
+                <!-- Tracing Item Selector Tabs -->
+                <div class="flex flex-wrap justify-center gap-2 mb-6" id="tracing-tabs">
+                    <!-- Dynamic tabs populated via JS -->
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <!-- Left Info: Vegetable SVG + Audio -->
+                    <div class="md:col-span-4 bg-teal-50 rounded-2xl p-4 text-center border-2 border-teal-200 flex flex-col items-center justify-center min-h-[220px]">
+                        <div id="tracing-svg" class="w-32 h-32 mb-2"></div>
+                        <h3 id="tracing-gurmukhi-title" class="text-3xl font-extrabold text-teal-800 gurmukhi">ਆਲੂ</h3>
+                        <p id="tracing-english-title" class="text-sm font-semibold text-slate-600">(Potato)</p>
+                        <button onclick="speakTracingWord()" class="mt-2 bg-teal-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow flex items-center gap-1.5 hover:bg-teal-700">
+                            🔊 Pronounce
+                        </button>
+                    </div>
+
+                    <!-- Right Tracing Canvas Box -->
+                    <div class="md:col-span-8 flex flex-col items-center">
+                        <div class="relative w-full max-w-lg bg-slate-50 rounded-2xl border-4 border-dashed border-teal-300 overflow-hidden shadow-inner flex justify-center items-center">
+                            <!-- Background Template Guide Text -->
+                            <div id="tracing-guide-text" class="absolute inset-0 flex items-center justify-center text-7xl sm:text-8xl font-black text-slate-200 gurmukhi select-none pointer-events-none tracking-widest">
+                                ਆਲੂ
+                            </div>
+
+                            <!-- Interactive Canvas Layer -->
+                            <canvas id="tracing-canvas" class="relative z-10 cursor-crosshair w-full h-64 sm:h-72"></canvas>
+                        </div>
+
+                        <!-- Canvas Actions -->
+                        <div class="flex gap-3 mt-4">
+                            <button onclick="clearCanvas()" class="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-xl font-bold text-sm shadow transition active:scale-95 flex items-center gap-1">
+                                🗑️ Clear / ਛੱਡੋ
+                            </button>
+                            <button onclick="completeTracing()" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-xl font-bold text-sm shadow transition active:scale-95 flex items-center gap-1">
+                                ✨ Done / ਹੋ ਗਿਆ!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODE 3: FLASHCARDS / AUDIO PRONUNCIATION -->
+        <section id="mode-flashcards" class="hidden space-y-4">
+            <div class="text-center mb-4">
+                <h2 class="text-2xl font-bold text-purple-700 gurmukhi">ਸਬਜ਼ੀਆਂ ਦਾ ਕੋਸ਼ (Vegetable Flashcards)</h2>
+                <p class="text-xs text-slate-500">Tap any card to listen to Punjabi pronunciation</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="flashcards-grid">
+                <!-- Dynamically populated cards -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-xs text-slate-500 font-medium">
+        UKG Punjabi Worksheet Educational Tool • Designed for Kids Learning
+    </footer>
+
+    <!-- Audio Web API & Game Logic Script -->
+    <script>
+        // Data derived directly from uploaded worksheet
+        const worksheetData = [
+            {
+                id: 'aalu',
+                gurmukhi: 'ਆਲੂ',
+                translit: 'Aalu',
+                english: 'Potato',
+                distractorName: 'Apple',
+                svgType: 'potato',
+                distractorSvgType: 'apple'
+            },
+            {
+                id: 'tamatar',
+                gurmukhi: 'ਟਮਾਟਰ',
+                translit: 'Tamatar',
+                english: 'Tomato',
+                distractorName: 'Banana',
+                svgType: 'tomato',
+                distractorSvgType: 'banana'
+            },
+            {
+                id: 'gajar',
+                gurmukhi: 'ਗਾਜਰ',
+                translit: 'Gajar',
+                english: 'Carrot',
+                distractorName: 'Ice Cream',
+                svgType: 'carrot',
+                distractorSvgType: 'icecream'
+            },
+            {
+                id: 'bhindi',
+                gurmukhi: 'ਭਿੰਡੀ',
+                translit: 'Bhindi',
+                english: 'Okra',
+                distractorName: 'Orange',
+                svgType: 'bhindi',
+                distractorSvgType: 'orange'
+            }
+        ];
+
+        // Web Audio API Synthesizer for Kids Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                const now = audioCtx.currentTime;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                const now = audioCtx.currentTime;
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.linearRampToValueAtTime(180, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'click') {
+                const now = audioCtx.currentTime;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+        }
+
+        // Audio element for fallback TTS
+        let ttsAudioElement = null;
+
+        // Robust Speech Synthesis & Voice Fallback for Gurmukhi
+        function speakGurmukhi(text) {
+            // Unlock AudioContext on user action
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Stop any ongoing TTS audio stream
+            if (ttsAudioElement) {
+                ttsAudioElement.pause();
+                ttsAudioElement = null;
+            }
+
+            // Method 1: SpeechSynthesis API if native voice is available
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop active speech
+
+                const voices = window.speechSynthesis.getVoices();
+                const punjabiVoice = voices.find(v => v.lang.startsWith('pa') || v.lang.startsWith('hi'));
+
+                if (punjabiVoice || voices.length > 0) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    if (punjabiVoice) utterance.voice = punjabiVoice;
+                    utterance.lang = punjabiVoice ? punjabiVoice.lang : 'pa-IN';
+                    utterance.rate = 0.8; // Slower speed suitable for UKG kids
+                    utterance.pitch = 1.1;
+
+                    // Try native speech output
+                    let spokenSuccess = false;
+                    utterance.onstart = () => { spokenSuccess = true; };
+                    
+                    window.speechSynthesis.speak(utterance);
+
+                    // Fallback to online TTS endpoint if SpeechSynthesis fails silently (common on mobile browsers without Punjabi pack)
+                    setTimeout(() => {
+                        if (!spokenSuccess && !window.speechSynthesis.speaking) {
+                            fallbackOnlineTTS(text);
+                        }
+                    }, 250);
+                    return;
+                }
+            }
+
+            // Method 2: Fallback TTS Stream
+            fallbackOnlineTTS(text);
+        }
+
+        function fallbackOnlineTTS(text) {
+            try {
+                const encodedText = encodeURIComponent(text);
+                // Google Speech TTS endpoint fallback for Punjabi (pa)
+                const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=pa&client=tw-ob`;
+                
+                ttsAudioElement = new Audio(ttsUrl);
+                ttsAudioElement.play().catch(() => {
+                    // Play synthesized tone if web audio network request is blocked
+                    playSound('click');
+                });
+            } catch (err) {
+                playSound('click');
+            }
+        }
+
+        // Ensure voices are pre-loaded
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
+        // SVG Graphics Generator (Clean vector graphics for all items)
+        function getSVG(type) {
+            switch(type) {
+                case 'potato':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <ellipse cx="50" cy="50" rx="38" ry="30" fill="#d97706" transform="rotate(-10 50 50)"/>
+                        <ellipse cx="50" cy="50" rx="35" ry="27" fill="#f59e0b" transform="rotate(-10 50 50)"/>
+                        <circle cx="35" cy="45" r="2.5" fill="#92400e"/>
+                        <circle cx="58" cy="40" r="2" fill="#92400e"/>
+                        <circle cx="48" cy="60" r="2" fill="#92400e"/>
+                        <circle cx="65" cy="55" r="1.5" fill="#92400e"/>
+                    </svg>`;
+                case 'tomato':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <circle cx="50" cy="54" r="35" fill="#dc2626"/>
+                        <circle cx="42" cy="46" r="30" fill="#ef4444"/>
+                        <ellipse cx="36" cy="38" rx="8" ry="4" fill="#fca5a5" transform="rotate(-30 36 38)"/>
+                        <!-- Stem -->
+                        <path d="M50 22 L50 12 M50 22 L42 16 M50 22 L58 16 M50 22 L46 26 M50 22 L54 26" stroke="#15803d" stroke-width="4" stroke-linecap="round"/>
+                    </svg>`;
+                case 'carrot':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <!-- Leaves -->
+                        <path d="M48 28 C30 10, 25 5, 20 12 C25 22, 40 30, 48 30 Z" fill="#22c55e"/>
+                        <path d="M52 28 C70 10, 75 5, 80 12 C75 22, 60 30, 52 30 Z" fill="#15803d"/>
+                        <path d="M50 28 L50 8" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Body -->
+                        <path d="M30 30 C30 22, 70 22, 70 30 C68 55, 54 88, 50 92 C46 88, 32 55, 30 30 Z" fill="#f97316"/>
+                        <!-- Lines -->
+                        <path d="M38 42 Q50 45 42 48" stroke="#ea580c" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M55 58 Q62 60 52 63" stroke="#ea580c" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    </svg>`;
+                case 'bhindi':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <!-- Cap -->
+                        <path d="M35 25 L65 25 L58 15 L42 15 Z" fill="#15803d"/>
+                        <path d="M50 15 L50 8" stroke="#15803d" stroke-width="3"/>
+                        <!-- Body -->
+                        <path d="M35 25 L65 25 C60 55, 54 85, 50 92 C46 85, 40 55, 35 25 Z" fill="#22c55e"/>
+                        <path d="M50 25 L50 88" stroke="#16a34a" stroke-width="2.5" fill="none"/>
+                        <path d="M42 25 L46 82" stroke="#4ade80" stroke-width="1.5" fill="none"/>
+                    </svg>`;
+                case 'apple':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <path d="M50 30 C35 15, 15 30, 20 60 C25 82, 45 88, 50 78 C55 88, 75 82, 80 60 C85 30, 65 15, 50 30 Z" fill="#b91c1c"/>
+                        <path d="M50 30 C38 18, 22 32, 25 58 C28 78, 45 82, 50 78 Z" fill="#ef4444"/>
+                        <!-- Stem and Leaf -->
+                        <path d="M50 30 Q54 18 58 12" stroke="#78350f" stroke-width="4" stroke-linecap="round" fill="none"/>
+                        <path d="M54 20 Q68 15 65 25 Z" fill="#22c55e"/>
+                    </svg>`;
+                case 'banana':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <path d="M20 30 C45 25, 75 45, 78 80 C65 80, 35 60, 20 30 Z" fill="#eab308"/>
+                        <path d="M22 32 C45 42, 60 58, 75 78" stroke="#ca8a04" stroke-width="2" fill="none"/>
+                        <circle cx="20" cy="30" r="3" fill="#78350f"/>
+                        <circle cx="78" cy="80" r="3" fill="#78350f"/>
+                    </svg>`;
+                case 'icecream':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <!-- Cone -->
+                        <polygon points="32,50 68,50 50,92" fill="#d97706"/>
+                        <path d="M38,50 L50,92 M62,50 L50,92 M42,60 L58,60 M46,72 L54,72" stroke="#b45309" stroke-width="1.5"/>
+                        <!-- Scoops -->
+                        <circle cx="50" cy="40" r="22" fill="#ec4899"/>
+                        <circle cx="50" cy="32" r="16" fill="#f472b6"/>
+                        <!-- Cherry -->
+                        <circle cx="50" cy="16" r="6" fill="#dc2626"/>
+                    </svg>`;
+                case 'orange':
+                    return `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <circle cx="50" cy="52" r="34" fill="#ea580c"/>
+                        <circle cx="44" cy="46" r="30" fill="#f97316"/>
+                        <circle cx="50" cy="20" r="3" fill="#15803d"/>
+                        <path d="M50 20 Q58 12 62 18 Z" fill="#22c55e"/>
+                    </svg>`;
+                default:
+                    return '';
+            }
+        }
+
+        // Global State Variables
+        let currentScore = 0;
+        let currentQuestionIdx = 0;
+        let currentTargetData = null;
+        let correctOptionIndex = 0;
+
+        // Tracing State Variables
+        let activeTracingIdx = 0;
+        let isDrawing = false;
+        let canvas, ctx;
+
+        // Mode Switching Logic
+        function switchMode(mode) {
+            playSound('click');
+            ['identify', 'tracing', 'flashcards'].forEach(m => {
+                document.getElementById(`mode-${m}`).classList.add('hidden');
+                const navBtn = document.getElementById(`nav-${m}`);
+                navBtn.className = "mode-btn flex-1 sm:flex-none px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl font-bold text-sm sm:text-base border-b-4 transition-all duration-150 bg-white text-slate-700 border-slate-300 hover:bg-slate-50";
+            });
+
+            document.getElementById(`mode-${mode}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${mode}`);
+            
+            if(mode === 'identify') {
+                activeNav.className = "mode-btn flex-1 sm:flex-none px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl font-bold text-sm sm:text-base border-b-4 transition-all duration-150 bg-amber-500 text-white border-amber-700 shadow-md";
+            } else if(mode === 'tracing') {
+                activeNav.className = "mode-btn flex-1 sm:flex-none px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl font-bold text-sm sm:text-base border-b-4 transition-all duration-150 bg-teal-500 text-white border-teal-700 shadow-md";
+                initTracingCanvas();
+            } else if(mode === 'flashcards') {
+                activeNav.className = "mode-btn flex-1 sm:flex-none px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl font-bold text-sm sm:text-base border-b-4 transition-all duration-150 bg-purple-500 text-white border-purple-700 shadow-md";
+                renderFlashcards();
+            }
+        }
+
+        // ---------------- MODE 1 LOGIC ----------------
+        function loadQuestion(index) {
+            currentQuestionIdx = index;
+            currentTargetData = worksheetData[index];
+
+            document.getElementById('target-gurmukhi').textContent = currentTargetData.gurmukhi;
+            document.getElementById('target-english').textContent = `(${currentTargetData.translit} / ${currentTargetData.english})`;
+            document.getElementById('question-progress').textContent = `Question ${index + 1} of ${worksheetData.length}`;
+            
+            // Reset feedback and buttons
+            document.getElementById('identify-feedback').innerHTML = '';
+            document.getElementById('next-q-btn').classList.add('hidden');
+
+            const btn0 = document.getElementById('option-btn-0');
+            const btn1 = document.getElementById('option-btn-1');
+            btn0.disabled = false;
+            btn1.disabled = false;
+            btn0.className = "dotted-circle bg-white rounded-full p-6 flex flex-col items-center justify-center aspect-square shadow-sm active:scale-95 hover:bg-amber-50/50";
+            btn1.className = "dotted-circle bg-white rounded-full p-6 flex flex-col items-center justify-center aspect-square shadow-sm active:scale-95 hover:bg-amber-50/50";
+
+            // Randomize correct option position (0 or 1)
+            correctOptionIndex = Math.random() < 0.5 ? 0 : 1;
+            const wrongOptionIndex = correctOptionIndex === 0 ? 1 : 0;
+
+            document.getElementById(`svg-container-${correctOptionIndex}`).innerHTML = getSVG(currentTargetData.svgType);
+            document.getElementById(`svg-container-${wrongOptionIndex}`).innerHTML = getSVG(currentTargetData.distractorSvgType);
+
+            // Pronounce target word automatically
+            setTimeout(() => {
+                speakGurmukhi(currentTargetData.gurmukhi);
+            }, 300);
+        }
+
+        function speakCurrentWord() {
+            if(currentTargetData) speakGurmukhi(currentTargetData.gurmukhi);
+        }
+
+        function checkChoice(selectedIndex) {
+            const btn0 = document.getElementById('option-btn-0');
+            const btn1 = document.getElementById('option-btn-1');
+            btn0.disabled = true;
+            btn1.disabled = true;
+
+            const feedbackEl = document.getElementById('identify-feedback');
+
+            if(selectedIndex === correctOptionIndex) {
+                // Correct
+                playSound('correct');
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                
+                document.getElementById(`option-btn-${selectedIndex}`).classList.remove('dotted-circle');
+                document.getElementById(`option-btn-${selectedIndex}`).classList.add('border-4', 'border-emerald-500', 'bg-emerald-50');
+
+                feedbackEl.innerHTML = `<span class="text-emerald-600 flex items-center gap-2">🎉 ਸ਼ਾਬਾਸ਼! (Great Job! Correct)</span>`;
+                
+                currentScore += 10;
+                document.getElementById('star-count').textContent = currentScore;
+            } else {
+                // Wrong
+                playSound('wrong');
+                document.getElementById(`option-btn-${selectedIndex}`).classList.add('border-4', 'border-rose-400', 'bg-rose-50');
+                document.getElementById(`option-btn-${correctOptionIndex}`).classList.add('border-4', 'border-emerald-500', 'bg-emerald-50');
+
+                feedbackEl.innerHTML = `<span class="text-rose-500">ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ! (Try Again Next Time)</span>`;
+            }
+
+            document.getElementById('next-q-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            if(currentQuestionIdx + 1 < worksheetData.length) {
+                loadQuestion(currentQuestionIdx + 1);
+            } else {
+                // Finished all questions
+                currentQuestionIdx = 0;
+                confetti({ particleCount: 120, spread: 100, origin: { y: 0.5 } });
+                loadQuestion(0);
+            }
+        }
+
+        // ---------------- MODE 2: TRACING LOGIC ----------------
+        function initTracingCanvas() {
+            const container = document.getElementById('tracing-canvas').parentElement;
+            canvas = document.getElementById('tracing-canvas');
+            ctx = canvas.getContext('2d');
+
+            // Set internal resolution based on rendered size
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            // Render Tab Buttons
+            const tabsContainer = document.getElementById('tracing-tabs');
+            tabsContainer.innerHTML = '';
+            worksheetData.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-xl font-bold text-sm gurmukhi transition ${index === activeTracingIdx ? 'bg-teal-600 text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`;
+                btn.textContent = `${item.gurmukhi} (${item.translit})`;
+                btn.onclick = () => selectTracingItem(index);
+                tabsContainer.appendChild(btn);
+            });
+
+            selectTracingItem(activeTracingIdx);
+            setupCanvasEvents();
+        }
+
+        function selectTracingItem(index) {
+            playSound('click');
+            activeTracingIdx = index;
+            const item = worksheetData[index];
+
+            // Highlight tab
+            const tabs = document.getElementById('tracing-tabs').children;
+            for(let i=0; i<tabs.length; i++) {
+                tabs[i].className = `px-4 py-2 rounded-xl font-bold text-sm gurmukhi transition ${i === index ? 'bg-teal-600 text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`;
+            }
+
+            document.getElementById('tracing-svg').innerHTML = getSVG(item.svgType);
+            document.getElementById('tracing-gurmukhi-title').textContent = item.gurmukhi;
+            document.getElementById('tracing-english-title').textContent = `(${item.translit} / ${item.english})`;
+            document.getElementById('tracing-guide-text').textContent = item.gurmukhi;
+
+            clearCanvas();
+            speakGurmukhi(item.gurmukhi);
+        }
+
+        function speakTracingWord() {
+            speakGurmukhi(worksheetData[activeTracingIdx].gurmukhi);
+        }
+
+        function clearCanvas() {
+            if (ctx && canvas) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function completeTracing() {
+            playSound('correct');
+            confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+            currentScore += 5;
+            document.getElementById('star-count').textContent = currentScore;
+        }
+
+        function setupCanvasEvents() {
+            // Mouse & Touch events for Canvas Tracing
+            function startDrawing(e) {
+                isDrawing = true;
+                draw(e);
+            }
+            function stopDrawing() {
+                isDrawing = false;
+                ctx.beginPath();
+            }
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+
+                ctx.lineWidth = 14;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#0d9488'; // Vibrant Teal Stroke
+
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mousemove', draw);
+
+            canvas.addEventListener('touchstart', startDrawing, {passive: false});
+            canvas.addEventListener('touchend', stopDrawing);
+            canvas.addEventListener('touchmove', draw, {passive: false});
+        }
+
+        // ---------------- MODE 3: FLASHCARDS ----------------
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcards-grid');
+            grid.innerHTML = '';
+
+            worksheetData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-3xl p-5 shadow-lg border-2 border-purple-200 flex items-center justify-between cursor-pointer hover:shadow-xl hover:scale-[1.02] transition active:scale-95";
+                card.onclick = () => {
+                    playSound('click');
+                    speakGurmukhi(item.gurmukhi);
+                };
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="w-20 h-20 bg-purple-50 rounded-2xl p-2 border border-purple-100 flex items-center justify-center">
+                            ${getSVG(item.svgType)}
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-extrabold text-purple-800 gurmukhi">${item.gurmukhi}</h3>
+                            <p class="text-base font-bold text-slate-600">${item.translit} / ${item.english}</p>
+                        </div>
+                    </div>
+                    <button class="bg-purple-500 text-white p-3 rounded-full shadow hover:bg-purple-600 transition">
+                        🔊
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Window Resize recalculation for canvas
+        window.addEventListener('resize', () => {
+            if (!document.getElementById('mode-tracing').classList.contains('hidden')) {
+                initTracingCanvas();
+            }
+        });
+
+        // Initialize App on Page Load
+        window.onload = function() {
+            loadQuestion(0);
+        };
+    </script>
+</body>
+</html>
