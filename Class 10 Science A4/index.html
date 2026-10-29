@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amardeep School - Class 10 Biology Interactive Module</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for Game Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        amberCustom: {
+                            500: '#f59e0b',
+                            600: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Custom animations */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        /* Stomata simulation transition */
+        .guard-cell {
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Tab active indicator styling */
+        .active-tab {
+            background-color: #16a34a !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP HEADER: AMARDEEP SCHOOL -->
+    <header class="bg-gradient-to-r from-brand-900 via-brand-800 to-emerald-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
+                    <i class="fa-solid me-0 fa-graduation-cap text-2xl text-amber-400"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-amber-400 text-brand-900 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">CBSE Class 10</span>
+                        <span class="text-emerald-200 text-xs font-medium">Biology Module</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">AMARDEEP PUBLIC SR. SEC. SCHOOL</h1>
+                </div>
+            </div>
+
+            <!-- Global Navigation Tabs -->
+            <nav class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 bg-brand-950/40 p-1.5 rounded-2xl border border-white/10">
+                <button onclick="switchTab('section1')" id="tab-section1" class="tab-btn active-tab px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-leaf"></i> <span>1. Autotrophs & Heterotrophs</span>
+                </button>
+                <button onclick="switchTab('section2')" id="tab-section2" class="tab-btn text-slate-300 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-sun"></i> <span>2. Photosynthesis</span>
+                </button>
+                <button onclick="switchTab('section3')" id="tab-section3" class="tab-btn text-slate-300 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-microscope"></i> <span>3. Chlorophyll & Stomata</span>
+                </button>
+                <button onclick="switchTab('section4')" id="tab-section4" class="tab-btn text-slate-300 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30">
+                    <i class="fa-solid fa-gamepad text-amber-400"></i> <span>4. Games & Quiz</span>
+                </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ========================================== -->
+        <!-- SECTION 1: AUTOTROPHS VS HETEROTROPHS -->
+        <!-- ========================================== -->
+        <section id="section1" class="tab-content block space-y-6 animate-fade-in">
+            <!-- Hero Title Box -->
+            <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
+                <div class="max-w-3xl">
+                    <span class="inline-block px-3 py-1 bg-emerald-200/60 text-emerald-800 rounded-full text-xs font-bold tracking-wide uppercase mb-3">Topic 1: Modes of Nutrition</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Autotrophic vs. Heterotrophic Nutrition</h2>
+                    <p class="mt-2 text-slate-600 text-sm sm:text-base leading-relaxed">
+                        All living organisms require energy to carry out life processes. Based on how they obtain food, nutrition is divided into two primary modes: <strong>Autotrophic</strong> (self-nourishing) and <strong>Heterotrophic</strong> (other-nourished).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Comparison Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Autotrophs Card -->
+                <div class="bg-white rounded-3xl p-6 border-2 border-emerald-200 shadow-sm hover:shadow-md transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 font-bold text-2xl">
+                            🌱
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900">Autotrophic Nutrition</h3>
+                            <p class="text-xs text-emerald-600 font-semibold">Auto = Self | Trophe = Nourishment</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-500 mt-1"></i>
+                            <span>Organisms synthesize their own organic food from simple inorganic materials (CO<sub>2</sub>, H<sub>2</sub>O) using sunlight.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-500 mt-1"></i>
+                            <span>Contains photosynthetic pigments like <strong>Chlorophyll</strong>.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-500 mt-1"></i>
+                            <span><strong>Examples:</strong> Green plants, Euglena, Cyanobacteria (Blue-green algae).</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Heterotrophs Card -->
+                <div class="bg-white rounded-3xl p-6 border-2 border-amber-200 shadow-sm hover:shadow-md transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 font-bold text-2xl">
+                            🦁
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900">Heterotrophic Nutrition</h3>
+                            <p class="text-xs text-amber-600 font-semibold">Hetero = Other | Trophe = Nourishment</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-amber-500 mt-1"></i>
+                            <span>Organisms cannot prepare their own food; they depend directly or indirectly on autotrophs.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-amber-500 mt-1"></i>
+                            <span>Lacks photosynthetic pigments; complex food is broken down by enzymes.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-amber-500 mt-1"></i>
+                            <span><strong>Examples:</strong> Animals, Humans, Fungi (Bread mould, Yeast), Amoeba.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE QUICK SORTING EXERCISE -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-hand-pointer text-brand-600"></i> Interactive Sorting Tray
+                        </h3>
+                        <p class="text-xs text-slate-500">Click on an organism to classify it as an Autotroph or Heterotroph!</p>
+                    </div>
+                    <button onclick="resetSortingTray()" class="text-xs font-bold text-slate-500 hover:text-brand-600 bg-slate-100 hover:bg-brand-50 px-3 py-1.5 rounded-lg transition-all self-start sm:self-auto">
+                        <i class="fa-solid fa-rotate-right"></i> Reset Tray
+                    </button>
+                </div>
+
+                <!-- Organisms Pool -->
+                <div id="organisms-pool" class="flex flex-wrap gap-2.5 p-4 bg-slate-50 rounded-2xl min-h-[70px] mb-6 border border-dashed border-slate-300">
+                    <!-- Dynamic JS elements -->
+                </div>
+
+                <!-- Sorting Drop Targets -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div id="autotroph-target" class="bg-emerald-50/60 border-2 border-emerald-300 rounded-2xl p-4 min-h-[140px] transition-all">
+                        <h4 class="font-bold text-emerald-800 text-sm flex items-center gap-2 mb-2">
+                            🌱 Autotrophs Box
+                        </h4>
+                        <div id="autotroph-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div id="heterotroph-target" class="bg-amber-50/60 border-2 border-amber-300 rounded-2xl p-4 min-h-[140px] transition-all">
+                        <h4 class="font-bold text-amber-800 text-sm flex items-center gap-2 mb-2">
+                            🦁 Heterotrophs Box
+                        </h4>
+                        <div id="heterotroph-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- SECTION 2: PHOTOSYNTHESIS IN AUTOTROPHS -->
+        <!-- ========================================== -->
+        <section id="section2" class="tab-content hidden space-y-6 animate-fade-in">
+            <!-- Hero Title -->
+            <div class="bg-gradient-to-br from-emerald-900 to-green-800 text-white rounded-3xl p-6 sm:p-8 shadow-md">
+                <span class="inline-block px-3 py-1 bg-emerald-700/80 text-emerald-200 rounded-full text-xs font-bold tracking-wide uppercase mb-3">Topic 2: Process of Photosynthesis</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">How Green Plants Make Food</h2>
+                <p class="mt-2 text-emerald-100 text-sm sm:text-base leading-relaxed">
+                    Photosynthesis is the biochemical process by which autotrophs take in substances from the outside (CO<sub>2</sub> and H<sub>2</sub>O) and convert them into stored chemical energy (Carbohydrates) in the presence of sunlight and chlorophyll.
+                </p>
+            </div>
+
+            <!-- Chemical Equation Banner -->
+            <div class="bg-white rounded-3xl p-6 border-2 border-brand-500 shadow-md">
+                <div class="text-center mb-4">
+                    <span class="text-xs font-bold tracking-wider text-brand-600 uppercase bg-brand-50 px-3 py-1 rounded-full">Balanced Chemical Equation</span>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 mt-2">Photosynthesis Reaction</h3>
+                </div>
+
+                <div class="bg-slate-900 text-white p-4 sm:p-6 rounded-2xl overflow-x-auto text-center shadow-inner font-mono text-base sm:text-xl font-bold tracking-wider leading-relaxed flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+                    <span class="text-blue-400 hover:scale-110 transition-transform cursor-pointer" title="6 Molecules of Carbon Dioxide">6CO<sub>2</sub></span>
+                    <span class="text-slate-400">+</span>
+                    <span class="text-cyan-400 hover:scale-110 transition-transform cursor-pointer" title="12 Molecules of Water">12H<sub>2</sub>O</span>
+                    
+                    <div class="flex flex-col items-center px-2">
+                        <span class="text-xs text-amber-400 font-sans font-semibold">Sunlight</span>
+                        <span class="text-emerald-400 text-xl font-bold">➔</span>
+                        <span class="text-xs text-emerald-400 font-sans font-semibold">Chlorophyll</span>
+                    </div>
+
+                    <span class="text-emerald-300 hover:scale-110 transition-transform cursor-pointer" title="Glucose (Carbohydrate)">C<sub>6</sub>H<sub>12</sub>O<sub>6</sub></span>
+                    <span class="text-slate-400">+</span>
+                    <span class="text-emerald-400 hover:scale-110 transition-transform cursor-pointer" title="6 Molecules of Oxygen Gas">6O<sub>2</sub></span>
+                    <span class="text-slate-400">+</span>
+                    <span class="text-cyan-300 hover:scale-110 transition-transform cursor-pointer" title="6 Molecules of Water Vapor">6H<sub>2</sub>O</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-center text-xs">
+                    <div class="p-2 bg-blue-50 text-blue-800 rounded-xl font-semibold">Carbon Dioxide (from Air)</div>
+                    <div class="p-2 bg-cyan-50 text-cyan-800 rounded-xl font-semibold">Water (from Soil)</div>
+                    <div class="p-2 bg-emerald-50 text-emerald-800 rounded-xl font-semibold">Glucose (Stored as Starch)</div>
+                    <div class="p-2 bg-teal-50 text-teal-800 rounded-xl font-semibold">Oxygen Released</div>
+                </div>
+            </div>
+
+            <!-- THE 3 STEPS OF PHOTOSYNTHESIS (NCERT SPECIFIC) -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-slate-900">3 Key Events / Steps in Photosynthesis</h3>
+                    <p class="text-xs text-slate-500 mt-1">Class 10 NCERT Curriculum Core Focus. Click each step to explore!</p>
+                </div>
+
+                <!-- Interactive Timeline Step Viewer -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Step 1 Card -->
+                    <div onclick="selectPhotoStep(1)" id="step-card-1" class="step-card cursor-pointer p-5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 transition-all hover:shadow-md relative overflow-hidden">
+                        <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm mb-3">1</div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Absorption</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Absorption of light energy by <strong>chlorophyll</strong> present in the leaves.
+                        </p>
+                        <div class="mt-4 flex items-center gap-2 text-xs font-bold text-emerald-700">
+                            <span>Light Energy Harvested</span> <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 Card -->
+                    <div onclick="selectPhotoStep(2)" id="step-card-2" class="step-card cursor-pointer p-5 rounded-2xl border-2 border-slate-200 bg-white transition-all hover:shadow-md relative overflow-hidden">
+                        <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 font-bold flex items-center justify-center text-sm mb-3">2</div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Conversion & Photolysis</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Conversion of light energy to chemical energy & <strong>splitting of water (H<sub>2</sub>O)</strong> molecules into hydrogen and oxygen.
+                        </p>
+                        <div class="mt-4 flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <span>Water Splitting</span> <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 Card -->
+                    <div onclick="selectPhotoStep(3)" id="step-card-3" class="step-card cursor-pointer p-5 rounded-2xl border-2 border-slate-200 bg-white transition-all hover:shadow-md relative overflow-hidden">
+                        <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 font-bold flex items-center justify-center text-sm mb-3">3</div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Reduction</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>Reduction of Carbon Dioxide (CO<sub>2</sub>)</strong> to carbohydrates (Glucose).
+                        </p>
+                        <div class="mt-4 flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <span>Carbohydrate Formed</span> <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Detail Display Area -->
+                <div id="step-detail-box" class="mt-6 p-5 bg-slate-900 text-white rounded-2xl border border-slate-800 transition-all">
+                    <!-- Dynamic content injected via JS -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- SECTION 3: CHLOROPHYLL & STOMATA -->
+        <!-- ========================================== -->
+        <section id="section3" class="tab-content hidden space-y-6 animate-fade-in">
+            <!-- Header -->
+            <div class="bg-gradient-to-br from-teal-800 to-emerald-900 text-white rounded-3xl p-6 sm:p-8 shadow-md">
+                <span class="inline-block px-3 py-1 bg-teal-700/80 text-teal-200 rounded-full text-xs font-bold tracking-wide uppercase mb-3">Topic 3: Key Plant Structures</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Chlorophyll & Stomata Mechanics</h2>
+                <p class="mt-2 text-teal-100 text-sm sm:text-base leading-relaxed">
+                    Explore the green organelle that traps sunlight and the microscopic pores that allow plants to breathe and regulate water.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Chlorophyll Explainer Card -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 font-bold text-xl">
+                                🧪
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900">Role of Chlorophyll</h3>
+                                <p class="text-xs text-slate-500">Green Photosynthetic Pigment</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 text-xs sm:text-sm text-slate-600">
+                            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                <strong class="text-emerald-900 block mb-0.5">1. Location:</strong>
+                                Chlorophyll pigments are housed inside cell organelles called <strong>Chloroplasts</strong> in plant leaves.
+                            </div>
+                            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                <strong class="text-emerald-900 block mb-0.5">2. Light Absorption:</strong>
+                                It absorbs sunlight (specifically blue and red wavelengths) and reflects green light, giving leaves their green color.
+                            </div>
+                            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                <strong class="text-emerald-900 block mb-0.5">3. Energy Transduction:</strong>
+                                It converts trapped solar light energy into chemical energy during the light phase of photosynthesis.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-500 flex items-center gap-3">
+                        <i class="fa-solid fa-lightbulb text-amber-500 text-xl"></i>
+                        <span><strong>NCERT Key Fact:</strong> Desert plants take up CO<sub>2</sub> at night and prepare an intermediate which is acted upon by energy absorbed by chlorophyll during the day!</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Stomata Simulator -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600 font-bold text-xl">
+                                    🔬
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900">Stomata Simulator</h3>
+                                    <p class="text-xs text-slate-500">Microscopic pores on leaf surface</p>
+                                </div>
+                            </div>
+                            <!-- Toggle Button -->
+                            <button onclick="toggleStomata()" id="stomata-toggle-btn" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm">
+                                Open Stomata
+                            </button>
+                        </div>
+
+                        <!-- Stomata Canvas Visualization -->
+                        <div class="relative bg-slate-900 rounded-2xl p-6 min-h-[220px] flex items-center justify-center overflow-hidden">
+                            <!-- Background Chloroplast Dots -->
+                            <div class="absolute inset-0 opacity-20 flex flex-wrap gap-4 p-4 justify-around pointer-events-none">
+                                <span class="w-3 h-3 bg-emerald-400 rounded-full"></span>
+                                <span class="w-4 h-4 bg-emerald-400 rounded-full"></span>
+                                <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                                <span class="w-3 h-3 bg-emerald-400 rounded-full"></span>
+                                <span class="w-4 h-4 bg-emerald-400 rounded-full"></span>
+                            </div>
+
+                            <!-- Guard Cells Wrapper -->
+                            <div class="relative flex items-center justify-center w-48 h-32">
+                                <!-- Left Guard Cell -->
+                                <div id="guard-left" class="guard-cell absolute left-4 w-20 h-28 bg-emerald-600 border-4 border-emerald-400 rounded-[50%_20%_20%_50%] flex items-center justify-center shadow-lg">
+                                    <span class="w-3 h-3 bg-emerald-300 rounded-full shadow-inner" title="Chloroplast"></span>
+                                </div>
+
+                                <!-- Stomatal Pore (Center gap) -->
+                                <div id="stomatal-pore" class="absolute w-2 h-24 bg-slate-950 rounded-full transition-all duration-700 border border-emerald-800/50 flex flex-col items-center justify-around py-2">
+                                    <!-- Dynamic gas particles -->
+                                    <span id="gas-co2" class="text-[9px] font-bold text-cyan-300 opacity-0 transition-opacity">CO₂↓</span>
+                                    <span id="gas-o2" class="text-[9px] font-bold text-emerald-300 opacity-0 transition-opacity">O₂↑</span>
+                                </div>
+
+                                <!-- Right Guard Cell -->
+                                <div id="guard-right" class="guard-cell absolute right-4 w-20 h-28 bg-emerald-600 border-4 border-emerald-400 rounded-[20%_50%_50%_20%] flex items-center justify-center shadow-lg">
+                                    <span class="w-3 h-3 bg-emerald-300 rounded-full shadow-inner" title="Chloroplast"></span>
+                                </div>
+                            </div>
+
+                            <!-- Indicator Status Badge -->
+                            <div class="absolute bottom-3 right-3 bg-slate-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-[11px] font-semibold border border-slate-700">
+                                Status: <span id="stomata-status-text" class="text-amber-400 font-bold">CLOSED</span>
+                            </div>
+                        </div>
+
+                        <!-- Function Breakdown List -->
+                        <div class="mt-4 space-y-2 text-xs text-slate-600">
+                            <div class="flex items-start gap-2">
+                                <i class="fa-solid fa-gear text-brand-600 mt-0.5"></i>
+                                <span><strong>Guard Cells Control:</strong> Swell when water flows into them (Opening pore) & shrink when water flows out (Closing pore).</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fa-solid fa-arrows-rotate text-teal-600 mt-0.5"></i>
+                                <span><strong>Gas Exchange:</strong> Takes in CO<sub>2</sub> for photosynthesis & releases O<sub>2</sub> product.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fa-solid fa-droplet text-blue-500 mt-0.5"></i>
+                                <span><strong>Transpiration:</strong> Massive amounts of water vapor are lost through stomata when open.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- SECTION 4: GAMIFIED QUIZ & MINI-GAMES HUB -->
+        <!-- ========================================== -->
+        <section id="section4" class="tab-content hidden space-y-8 animate-fade-in">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white rounded-3xl p-6 sm:p-8 shadow-md">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-white/20 text-white rounded-full text-xs font-bold tracking-wide uppercase mb-2">Interactive Assessment</span>
+                        <h2 class="text-2xl sm:text-3xl font-black">Biology Game & Challenge Arena</h2>
+                        <p class="mt-1 text-amber-100 text-xs sm:text-sm">Test your mastery of Autotrophs, Heterotrophs, Photosynthesis & Stomata!</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-center">
+                        <div class="text-xs uppercase font-bold text-amber-200">Total Score</div>
+                        <div id="total-score-display" class="text-3xl font-black text-white">0 XP</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAME 1: SPEED CLASSIFICATION GAME -->
+            <div class="bg-white rounded-3xl p-6 border-2 border-amber-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold text-amber-600 uppercase tracking-wider">Mini Game 1</span>
+                        <h3 class="text-xl font-bold text-slate-900">Rapid Categorization Challenge</h3>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="game1-score" class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">Score: 0/5</span>
+                    </div>
+                </div>
+
+                <div id="game1-container" class="space-y-4">
+                    <!-- Target Question -->
+                    <div class="text-center py-6 bg-amber-50/50 rounded-2xl border border-amber-100">
+                        <p class="text-xs text-slate-500 font-semibold mb-1">Classify this organism correctly:</p>
+                        <div id="g1-organism-name" class="text-2xl sm:text-3xl font-extrabold text-slate-900">🌿 Cyanobacteria</div>
+                        <div id="g1-feedback" class="text-xs font-bold mt-2 min-h-[18px]"></div>
+                    </div>
+
+                    <!-- Choice Buttons -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="checkGame1Answer('Autotroph')" class="py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-sm transition-all text-sm flex items-center justify-center gap-2">
+                            🌱 Autotroph
+                        </button>
+                        <button onclick="checkGame1Answer('Heterotroph')" class="py-3 px-4 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl shadow-sm transition-all text-sm flex items-center justify-center gap-2">
+                            🦁 Heterotroph
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- GAME 2: PHOTOSYNTHESIS STEP SEQUENCE PUZZLE -->
+            <div class="bg-white rounded-3xl p-6 border-2 border-emerald-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold text-emerald-600 uppercase tracking-wider">Mini Game 2</span>
+                        <h3 class="text-xl font-bold text-slate-900">Photosynthesis Steps Sequence Puzzle</h3>
+                        <p class="text-xs text-slate-500">Arrange the 3 steps in correct chronological order as per Class 10 NCERT.</p>
+                    </div>
+                    <button onclick="resetGame2Sequence()" class="text-xs font-bold text-slate-500 hover:text-emerald-600 bg-slate-100 hover:bg-emerald-50 px-3 py-1.5 rounded-lg transition-all">
+                        Reset Order
+                    </button>
+                </div>
+
+                <!-- Sequence Slots -->
+                <div id="game2-slots" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                    <!-- Drop slots created by JS -->
+                </div>
+
+                <!-- Unordered Options -->
+                <div id="game2-options" class="flex flex-col sm:flex-row gap-3">
+                    <!-- Option buttons created by JS -->
+                </div>
+
+                <div class="mt-4 flex items-center justify-between">
+                    <div id="game2-feedback" class="text-xs font-bold min-h-[20px]"></div>
+                    <button onclick="verifyGame2Sequence()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm transition-all">
+                        Check Sequence
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- GAME 3: KNOWLEDGE MASTERY MULTIPLE CHOICE QUIZ -->
+            <div class="bg-white rounded-3xl p-6 border-2 border-teal-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold text-teal-600 uppercase tracking-wider">Mini Game 3</span>
+                        <h3 class="text-xl font-bold text-slate-900">Class 10 Biology Master Quiz</h3>
+                    </div>
+                    <span id="quiz-progress" class="text-xs font-bold bg-teal-100 text-teal-800 px-3 py-1 rounded-full">Question 1 of 4</span>
+                </div>
+
+                <div id="quiz-container">
+                    <h4 id="quiz-question-text" class="text-base sm:text-lg font-bold text-slate-900 mb-4">Question loading...</h4>
+                    
+                    <div id="quiz-options-container" class="space-y-2.5 mb-6">
+                        <!-- Options injected via JS -->
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div id="quiz-feedback-text" class="text-xs font-bold"></div>
+                        <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm">
+                            Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Final Score Card (Hidden initially) -->
+                <div id="quiz-result-card" class="hidden text-center py-8 space-y-4">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-500 text-3xl rounded-full flex items-center justify-center mx-auto">🏆</div>
+                    <h3 class="text-2xl font-black text-slate-900">Module Completed!</h3>
+                    <p id="quiz-final-score" class="text-sm text-slate-600">You scored 100% on the interactive module.</p>
+                    <button onclick="restartFullQuiz()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-6 py-3 rounded-2xl shadow-md transition-all">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Retake All Challenges
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-12 py-6 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-amber-400 text-base"></i>
+                <span class="font-bold text-slate-200">Amardeep Public Sr. Sec. School</span> - Class 10 Interactive Learning Toolkit
+            </div>
+            <p>© Class 10 Biology Curriculum - Life Processes (Nutrition)</p>
+        </div>
+    </footer>
+
+
+    <!-- JAVASCRIPT INTERACTIVE LOGIC -->
+    <script>
+        // Global App State
+        let currentTab = 'section1';
+        let userXP = 0;
+
+        // Audio Effects Synthesizer (Web Audio API)
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15); // E5
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+                    osc.frequency.exponentialRampToValueAtTime(130.81, ctx.currentTime + 0.2); // C4
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                }
+            } catch (e) {
+                // Audio fallback silence
+            }
+        }
+
+        // Add XP Points
+        function addXP(pts) {
+            userXP += pts;
+            document.getElementById('total-score-display').innerText = `${userXP} XP`;
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active-tab');
+                btn.classList.add('text-slate-300');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.add('active-tab');
+            activeBtn.classList.remove('text-slate-300');
+        }
+
+        // ==========================================
+        // SECTION 1: SORTING TRAY LOGIC
+        // ==========================================
+        const initialOrganisms = [
+            { id: 'org1', name: '🌿 Green Plants', type: 'Autotroph' },
+            { id: 'org2', name: '🦠 Cyanobacteria', type: 'Autotroph' },
+            { id: 'org3', name: '👤 Humans', type: 'Heterotroph' },
+            { id: 'org4', name: '🦁 Lions', type: 'Heterotroph' },
+            { id: 'org5', name: '🍄 Fungi (Bread Mould)', type: 'Heterotroph' },
+            { id: 'org6', name: '🦠 Amoeba', type: 'Heterotroph' },
+            { id: 'org7', name: '🧪 Euglena', type: 'Autotroph' }
+        ];
+
+        let poolOrganisms = [...initialOrganisms];
+
+        function renderSortingTray() {
+            const poolEl = document.getElementById('organisms-pool');
+            poolEl.innerHTML = '';
+
+            if (poolOrganisms.length === 0) {
+                poolEl.innerHTML = '<span class="text-xs font-semibold text-emerald-600 flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Great job! All organisms classified correctly.</span>';
+                return;
+            }
+
+            poolOrganisms.forEach(org => {
+                const btn = document.createElement('button');
+                btn.className = 'px-3 py-1.5 bg-white border border-slate-300 hover:border-brand-500 rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5';
+                btn.innerText = org.name;
+                btn.onclick = () => classifyOrganism(org);
+                poolEl.appendChild(btn);
+            });
+        }
+
+        function classifyOrganism(org) {
+            if (org.type === 'Autotroph') {
+                const list = document.getElementById('autotroph-list');
+                const tag = document.createElement('span');
+                tag.className = 'bg-emerald-200 text-emerald-900 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-300 animate-bounce';
+                tag.innerText = org.name;
+                list.appendChild(tag);
+                playSound('correct');
+                addXP(10);
+            } else {
+                const list = document.getElementById('heterotroph-list');
+                const tag = document.createElement('span');
+                tag.className = 'bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-300 animate-bounce';
+                tag.innerText = org.name;
+                list.appendChild(tag);
+                playSound('correct');
+                addXP(10);
+            }
+
+            poolOrganisms = poolOrganisms.filter(item => item.id !== org.id);
+            renderSortingTray();
+        }
+
+        function resetSortingTray() {
+            poolOrganisms = [...initialOrganisms];
+            document.getElementById('autotroph-list').innerHTML = '';
+            document.getElementById('heterotroph-list').innerHTML = '';
+            renderSortingTray();
+        }
+
+
+        // ==========================================
+        // SECTION 2: PHOTOSYNTHESIS STEPS LOGIC
+        // ==========================================
+        const stepDetails = {
+            1: {
+                title: "Step 1: Absorption of Light Energy",
+                text: "Chlorophyll pigments situated in the chloroplasts trap photon energy from solar radiation. This absorbed energy drives the subsequent chemical reactions.",
+                icon: "☀️"
+            },
+            2: {
+                title: "Step 2: Conversion & Water Splitting (Photolysis)",
+                text: "Light energy is converted into chemical energy. Simultaneously, water molecules (H₂O) absorbed by roots are split into Hydrogen ions and Oxygen gas (O₂ release).",
+                icon: "💧"
+            },
+            3: {
+                title: "Step 3: Reduction of CO₂ to Carbohydrates",
+                text: "Carbon dioxide (CO₂) taken in through stomata is reduced using hydrogen/chemical energy to synthesize carbohydrates such as Glucose (stored as Starch).",
+                icon: "🧪"
+            }
+        };
+
+        function selectPhotoStep(stepNum) {
+            [1, 2, 3].forEach(n => {
+                const card = document.getElementById(`step-card-${n}`);
+                const badge = card.querySelector('div');
+                if (n === stepNum) {
+                    card.classList.add('border-emerald-500', 'bg-emerald-50/50');
+                    card.classList.remove('border-slate-200', 'bg-white');
+                    badge.classList.add('bg-emerald-600', 'text-white');
+                    badge.classList.remove('bg-slate-300', 'text-slate-700');
+                } else {
+                    card.classList.remove('border-emerald-500', 'bg-emerald-50/50');
+                    card.classList.add('border-slate-200', 'bg-white');
+                    badge.classList.remove('bg-emerald-600', 'text-white');
+                    badge.classList.add('bg-slate-300', 'text-slate-700');
+                }
+            });
+
+            const details = stepDetails[stepNum];
+            document.getElementById('step-detail-box').innerHTML = `
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">${details.icon}</span>
+                    <h4 class="font-bold text-emerald-400 text-sm sm:text-base">${details.title}</h4>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${details.text}</p>
+            `;
+        }
+
+
+        // ==========================================
+        // SECTION 3: STOMATA TOGGLE SIMULATOR
+        // ==========================================
+        let isStomataOpen = false;
+
+        function toggleStomata() {
+            isStomataOpen = !isStomataOpen;
+            const btn = document.getElementById('stomata-toggle-btn');
+            const guardLeft = document.getElementById('guard-left');
+            const guardRight = document.getElementById('guard-right');
+            const pore = document.getElementById('stomatal-pore');
+            const statusText = document.getElementById('stomata-status-text');
+            const co2 = document.getElementById('gas-co2');
+            const o2 = document.getElementById('gas-o2');
+
+            if (isStomataOpen) {
+                btn.innerText = "Close Stomata";
+                btn.className = "bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm";
+                
+                // Guard cells curve outward when turgid (swollen with water)
+                guardLeft.style.transform = "translateX(-12px) scaleX(0.85)";
+                guardRight.style.transform = "translateX(12px) scaleX(0.85)";
+                pore.style.width = "28px";
+                pore.style.backgroundColor = "#0284c7"; // open pore color
+
+                statusText.innerText = "OPEN (Turgid Guard Cells)";
+                statusText.className = "text-emerald-400 font-bold";
+
+                co2.style.opacity = "1";
+                o2.style.opacity = "1";
+                playSound('correct');
+            } else {
+                btn.innerText = "Open Stomata";
+                btn.className = "bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm";
+
+                guardLeft.style.transform = "translateX(0px) scaleX(1)";
+                guardRight.style.transform = "translateX(0px) scaleX(1)";
+                pore.style.width = "4px";
+                pore.style.backgroundColor = "#020617";
+
+                statusText.innerText = "CLOSED (Flaccid Guard Cells)";
+                statusText.className = "text-amber-400 font-bold";
+
+                co2.style.opacity = "0";
+                o2.style.opacity = "0";
+            }
+        }
+
+
+        // ==========================================
+        // SECTION 4: MINI GAME 1 LOGIC
+        // ==========================================
+        const game1Questions = [
+            { name: "🌿 Green Grass", answer: "Autotroph" },
+            { name: "🦁 Bengal Tiger", answer: "Heterotroph" },
+            { name: "🍞 Bread Mould (Mucor)", answer: "Heterotroph" },
+            { name: "🦠 Cyanobacteria", answer: "Autotroph" },
+            { name: "👤 Human Being", answer: "Heterotroph" }
+        ];
+
+        let g1Index = 0;
+        let g1Score = 0;
+
+        function renderGame1() {
+            if (g1Index >= game1Questions.length) {
+                document.getElementById('g1-organism-name').innerText = "🎉 Game Completed!";
+                document.getElementById('g1-feedback').innerText = `Final Score: ${g1Score}/${game1Questions.length}`;
+                document.getElementById('g1-feedback').className = "text-xs font-bold text-emerald-600 mt-2";
+                return;
+            }
+
+            const current = game1Questions[g1Index];
+            document.getElementById('g1-organism-name').innerText = current.name;
+            document.getElementById('g1-feedback').innerText = "";
+            document.getElementById('game1-score').innerText = `Score: ${g1Score}/${game1Questions.length}`;
+        }
+
+        function checkGame1Answer(userChoice) {
+            if (g1Index >= game1Questions.length) return;
+
+            const current = game1Questions[g1Index];
+            const feedback = document.getElementById('g1-feedback');
+
+            if (userChoice === current.answer) {
+                g1Score++;
+                addXP(15);
+                playSound('correct');
+                feedback.innerText = "Correct Classification! +15 XP";
+                feedback.className = "text-xs font-bold text-emerald-600 mt-2";
+            } else {
+                playSound('wrong');
+                feedback.innerText = `Incorrect! ${current.name} is a ${current.answer}.`;
+                feedback.className = "text-xs font-bold text-rose-600 mt-2";
+            }
+
+            g1Index++;
+            setTimeout(renderGame1, 1200);
+        }
+
+
+        // ==========================================
+        // SECTION 4: MINI GAME 2 (SEQUENCE PUZZLE) LOGIC
+        // ==========================================
+        const correctSequence = [
+            "Absorption of light energy by chlorophyll",
+            "Conversion of light energy to chemical energy & splitting of water into hydrogen and oxygen",
+            "Reduction of carbon dioxide to carbohydrates"
+        ];
+
+        let currentSequence = [];
+
+        function renderGame2() {
+            const slotsContainer = document.getElementById('game2-slots');
+            const optionsContainer = document.getElementById('game2-options');
+            
+            slotsContainer.innerHTML = '';
+            optionsContainer.innerHTML = '';
+
+            // Render 3 slots
+            for (let i = 0; i < 3; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'p-3 bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl min-h-[60px] flex items-center justify-center text-xs font-bold text-slate-600 text-center relative';
+                
+                if (currentSequence[i]) {
+                    slot.innerText = `${i+1}. ${currentSequence[i]}`;
+                    slot.className = 'p-3 bg-emerald-50 border-2 border-emerald-400 text-emerald-900 rounded-2xl min-h-[60px] flex items-center justify-center text-xs font-bold text-center';
+                } else {
+                    slot.innerText = `Slot ${i+1} (Click option below)`;
+                }
+                slotsContainer.appendChild(slot);
+            }
+
+            // Render available options
+            correctSequence.forEach((item) => {
+                if (!currentSequence.includes(item)) {
+                    const btn = document.createElement('button');
+                    btn.className = 'p-3 bg-white border border-slate-300 hover:border-emerald-500 rounded-2xl text-xs font-bold text-slate-700 shadow-sm hover:shadow transition-all text-left flex-1';
+                    btn.innerText = item;
+                    btn.onclick = () => {
+                        if (currentSequence.length < 3) {
+                            currentSequence.push(item);
+                            renderGame2();
+                        }
+                    };
+                    optionsContainer.appendChild(btn);
+                }
+            });
+        }
+
+        function resetGame2Sequence() {
+            currentSequence = [];
+            document.getElementById('game2-feedback').innerText = '';
+            renderGame2();
+        }
+
+        function verifyGame2Sequence() {
+            const feedback = document.getElementById('game2-feedback');
+            if (currentSequence.length < 3) {
+                feedback.innerText = "Please select all 3 steps first!";
+                feedback.className = "text-xs font-bold text-amber-600";
+                return;
+            }
+
+            let isCorrect = true;
+            for (let i = 0; i < 3; i++) {
+                if (currentSequence[i] !== correctSequence[i]) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                playSound('correct');
+                addXP(30);
+                feedback.innerText = "🎉 Perfect Order! All 3 steps of Photosynthesis are in exact NCERT sequence! (+30 XP)";
+                feedback.className = "text-xs font-bold text-emerald-600";
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+            } else {
+                playSound('wrong');
+                feedback.innerText = "❌ Incorrect sequence. Remember: Absorption ➔ Conversion/Splitting ➔ Reduction.";
+                feedback.className = "text-xs font-bold text-rose-600";
+            }
+        }
+
+
+        // ==========================================
+        // SECTION 4: MINI GAME 3 (QUIZ) LOGIC
+        // ==========================================
+        const quizQuestions = [
+            {
+                q: "1. Which photosynthetic pigment traps light energy in plant leaves?",
+                options: ["Hemoglobin", "Chlorophyll", "Xanthophyll", "Carotene"],
+                correct: 1,
+                explanation: "Chlorophyll is the green pigment that absorbs light energy."
+            },
+            {
+                q: "2. Opening and closing of stomatal pores is regulated by:",
+                options: ["Guard cells", "Chloroplasts", "Epidermal cells", "Xylem vessels"],
+                correct: 0,
+                explanation: "Guard cells swell when water flows in (opening) and shrink when water leaves (closing)."
+            },
+            {
+                q: "3. What are the end products of photolysis (splitting of water) during photosynthesis?",
+                options: ["Glucose and Carbon Dioxide", "Hydrogen and Oxygen", "Nitrogen and Water", "Starch and Cellulose"],
+                correct: 1,
+                explanation: "Water (H₂O) splits into Hydrogen ions and Oxygen gas (O₂)."
+            },
+            {
+                q: "4. Carbon dioxide is reduced to carbohydrates during which step of photosynthesis?",
+                options: ["Step 1", "Step 2", "Step 3", "It is not reduced"],
+                correct: 2,
+                explanation: "The 3rd NCERT step involves the reduction of CO₂ to carbohydrates."
+            }
+        ];
+
+        let quizIdx = 0;
+        let quizScore = 0;
+
+        function renderQuizQuestion() {
+            if (quizIdx >= quizQuestions.length) {
+                showQuizResults();
+                return;
+            }
+
+            const current = quizQuestions[quizIdx];
+            document.getElementById('quiz-progress').innerText = `Question ${quizIdx + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-question-text').innerText = current.q;
+            document.getElementById('quiz-feedback-text').innerText = '';
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            current.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-3.5 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-2xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-between group';
+                btn.innerHTML = `<span>${opt}</span> <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-emerald-500"></i>`;
+                btn.onclick = () => handleQuizAnswer(i, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(selectedIdx, btnElement) {
+            const current = quizQuestions[quizIdx];
+            const feedbackEl = document.getElementById('quiz-feedback-text');
+            const options = document.querySelectorAll('#quiz-options-container button');
+
+            // Disable all options
+            options.forEach(b => b.onclick = null);
+
+            if (selectedIdx === current.correct) {
+                playSound('correct');
+                quizScore++;
+                addXP(20);
+                btnElement.className = 'w-full text-left p-3.5 bg-emerald-100 border-2 border-emerald-500 text-emerald-900 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between';
+                feedbackEl.innerText = `Correct! ${current.explanation} (+20 XP)`;
+                feedbackEl.className = 'text-xs font-bold text-emerald-600';
+            } else {
+                playSound('wrong');
+                btnElement.className = 'w-full text-left p-3.5 bg-rose-100 border-2 border-rose-400 text-rose-900 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between';
+                options[current.correct].className = 'w-full text-left p-3.5 bg-emerald-100 border-2 border-emerald-500 text-emerald-900 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between';
+                feedbackEl.innerText = `Incorrect. ${current.explanation}`;
+                feedbackEl.className = 'text-xs font-bold text-rose-600';
+            }
+
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            quizIdx++;
+            renderQuizQuestion();
+        }
+
+        function showQuizResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result-card').classList.remove('hidden');
+            const pct = Math.round((quizScore / quizQuestions.length) * 100);
+            document.getElementById('quiz-final-score').innerText = `You scored ${quizScore}/${quizQuestions.length} (${pct}%) on the quiz!`;
+            
+            if (pct >= 75) {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }
+        }
+
+        function restartFullQuiz() {
+            quizIdx = 0;
+            quizScore = 0;
+            g1Index = 0;
+            g1Score = 0;
+            resetGame2Sequence();
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-result-card').classList.add('hidden');
+            renderGame1();
+            renderQuizQuestion();
+        }
+
+
+        // INITIALIZATION ON PAGE LOAD
+        window.onload = function() {
+            renderSortingTray();
+            selectPhotoStep(1);
+            renderGame1();
+            renderGame2();
+            renderQuizQuestion();
+        };
+    </script>
+</body>
+</html>
