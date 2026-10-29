@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Amardeep School - Science Lab: Applied Friction & Fluid Mechanics</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    colors: {
+                        school: {
+                            navy: '#0F2C59',
+                            gold: '#FFC436',
+                            blue: '#00A9FF',
+                            bg: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            touch-action: manipulation;
+        }
+        .heading-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .touch-canvas {
+            touch-action: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes pulse-light {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.02); opacity: 1; }
+        }
+        .pulse-btn {
+            animation: pulse-light 2s infinite;
+        }
+        .touch-btn:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- TOP HEADER / BRANDING -->
+    <header class="bg-gradient-to-r from-school-navy via-slate-900 to-school-navy text-white shadow-md border-b-4 border-school-gold sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-3 py-2.5 sm:px-6 lg:px-8 flex flex-row items-center justify-between gap-2">
+            
+            <!-- School Crest & Title -->
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-school-gold to-amber-500 flex items-center justify-center text-school-navy text-lg sm:text-2xl font-black shadow-md shrink-0">
+                    <i class="fa-solid fa-school"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-base sm:text-2xl font-bold tracking-tight text-white heading-font leading-none">
+                            AMARDEEP SCHOOL
+                        </h1>
+                        <span class="bg-school-gold text-slate-900 font-extrabold text-[9px] sm:text-xs px-2 py-0.5 rounded-full uppercase tracking-wider hidden xs:inline-block">
+                            PHYSICS LAB
+                        </span>
+                    </div>
+                    <p class="text-slate-300 text-[10px] sm:text-xs font-medium flex items-center gap-1 mt-0.5">
+                        <i class="fa-solid fa-atom text-school-gold"></i> Class 8 &bull; <span class="text-school-gold font-semibold">Friction Module 2</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Global Controls & Score Bar -->
+            <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                <button id="soundToggleBtn" onclick="toggleSound()" class="h-9 px-2.5 sm:px-3 bg-slate-800/90 hover:bg-slate-700 active:bg-slate-900 text-slate-200 rounded-xl border border-slate-700 transition flex items-center gap-1.5 text-xs font-semibold touch-btn">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-emerald-400"></i>
+                    <span id="soundText" class="hidden sm:inline">Sound ON</span>
+                </button>
+
+                <div class="bg-slate-800/90 h-9 px-3 rounded-xl border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-star text-school-gold text-sm sm:text-base"></i>
+                    <div>
+                        <div id="globalScore" class="text-xs sm:text-sm font-extrabold text-white leading-none">0 pts</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[57px] sm:top-[68px] z-40">
+        <div class="max-w-7xl mx-auto px-2 flex justify-start sm:justify-center gap-1.5 overflow-x-auto no-scrollbar py-2">
+            <button onclick="switchTab('topic1')" id="tab-topic1" class="tab-btn active-tab h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 transition whitespace-nowrap bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 touch-btn">
+                <i class="fa-solid fa-scale-balanced text-indigo-600"></i> 1. Pros & Cons
+            </button>
+            <button onclick="switchTab('topic2')" id="tab-topic2" class="tab-btn h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 touch-btn">
+                <i class="fa-solid fa-gears text-amber-500"></i> 2. Modify Friction
+            </button>
+            <button onclick="switchTab('topic3')" id="tab-topic3" class="tab-btn h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 touch-btn">
+                <i class="fa-solid fa-water text-cyan-600"></i> 3. Fluid Friction (Drag)
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn h-10 px-3.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 touch-btn">
+                <i class="fa-solid fa-graduation-cap text-purple-600"></i> 4. Quiz Arcade
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow w-full">
+
+        <!-- ========================================== -->
+        <!-- TOPIC 1: ADVANTAGES & DISADVANTAGES -->
+        <!-- ========================================== -->
+        <section id="section-topic1" class="space-y-4 sm:space-y-6">
+            
+            <div class="bg-indigo-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-indigo-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-indigo-500/30 text-indigo-200 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-400/30 uppercase tracking-wider">Concept 1 &bull; Necessary Evil</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">Advantages & Disadvantages of Friction</h2>
+                    <p class="text-indigo-100 text-xs sm:text-sm mt-1 sm:mt-2 leading-relaxed">
+                        Friction is called a <strong>"Necessary Evil"</strong> because while it wastes energy and causes wear & tear, life would be impossible without it (walking, writing, braking)!
+                    </p>
+                </div>
+            </div>
+
+            <!-- PROS VS CONS COMPARISON CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                
+                <!-- ADVANTAGES -->
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border-2 border-emerald-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-emerald-100 pb-2.5">
+                        <h3 class="font-bold text-emerald-800 text-base sm:text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-xl"></i> Advantages (Why We Need It)
+                        </h3>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">Essential</span>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">
+                                <i class="fa-solid fa-shoe-prints"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Enables Walking & Grip</h4>
+                                <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">Prevents our shoes from slipping on the ground while taking steps.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">
+                                <i class="fa-solid fa-pen-nib"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Writing & Holding Objects</h4>
+                                <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">Allows pen nibs to deposit ink on paper and chalk on blackboards.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">
+                                <i class="fa-solid fa-car-rear"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Braking & Stopping Vehicles</h4>
+                                <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">Brake pads rub against wheels to bring moving vehicles to a quick stop.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DISADVANTAGES -->
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border-2 border-red-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-red-100 pb-2.5">
+                        <h3 class="font-bold text-red-800 text-base sm:text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i> Disadvantages (The Downsides)
+                        </h3>
+                        <span class="bg-red-100 text-red-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">Loss & Damage</span>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <div class="p-3 bg-red-50/60 rounded-xl border border-red-100 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">
+                                <i class="fa-solid fa-fire"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Heat Generation & Energy Loss</h4>
+                                <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">Converts useful kinetic energy into unwanted heat inside engines and machinery.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-red-50/60 rounded-xl border border-red-100 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">
+                                <i class="fa-solid fa-compact-disc"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Wear and Tear of Parts</h4>
+                                <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">Worsens machine gears, damages shoe soles, and wears down car tires over time.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-red-50/60 rounded-xl border border-red-100 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center shrink-0 font-bold text-sm mt-0.5">
+                                <i class="fa-solid fa-gauge-simple-high"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Reduces Mechanical Efficiency</h4>
+                                <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">Requires motors to work much harder to overcome surface resistance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- INTERACTIVE SORTING GAME -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base sm:text-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-layer-group text-indigo-600"></i> Interactive Challenge: Advantage vs Disadvantage
+                        </h3>
+                        <p class="text-xs text-slate-500">Is the scenario below a helpful Advantage or a harmful Disadvantage?</p>
+                    </div>
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
+                        Score: <span id="sortScore">0</span> / 4
+                    </span>
+                </div>
+
+                <div id="sortCard" class="bg-slate-50 rounded-2xl p-4 sm:p-6 border border-slate-200 text-center space-y-4">
+                    <div id="sortIcon" class="w-16 h-16 sm:w-20 sm:h-20 bg-indigo-100 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl text-indigo-600 mx-auto shadow-inner">
+                        <i class="fa-solid fa-car-burst"></i>
+                    </div>
+                    <div>
+                        <h4 id="sortTitle" class="text-base sm:text-lg font-bold text-slate-800">Tires wearing out after long road trips</h4>
+                        <p id="sortDesc" class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-1">Rubber grooves disappear over time, requiring expensive tire replacements.</p>
+                    </div>
+
+                    <div class="flex justify-center gap-3 pt-2 max-w-sm mx-auto">
+                        <button onclick="checkSortChoice('ADVANTAGE')" class="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow flex items-center justify-center gap-1.5 touch-btn">
+                            <i class="fa-solid fa-thumbs-up"></i> Advantage
+                        </button>
+                        <button onclick="checkSortChoice('DISADVANTAGE')" class="flex-1 h-12 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow flex items-center justify-center gap-1.5 touch-btn">
+                            <i class="fa-solid fa-thumbs-down"></i> Disadvantage
+                        </button>
+                    </div>
+
+                    <div id="sortFeedback" class="hidden text-xs sm:text-sm font-bold p-3 rounded-xl max-w-md mx-auto"></div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TOPIC 2: WAYS TO INCREASE & DECREASE FRICTION -->
+        <!-- ========================================== -->
+        <section id="section-topic2" class="space-y-4 sm:space-y-6 hidden">
+            
+            <div class="bg-amber-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-amber-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-amber-500/30 text-amber-200 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30 uppercase tracking-wider">Concept 2 &bull; Surface Modification</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">Methods to Increase & Decrease Friction</h2>
+                    <p class="text-amber-100 text-xs sm:text-sm mt-1 sm:mt-2 leading-relaxed">
+                        We can control friction depending on our needs! Treaded tires and powder increase grip, while lubricants, ball bearings, and air cushions reduce it.
+                    </p>
+                </div>
+            </div>
+
+            <!-- METHODS OVERVIEW TABS/CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- INCREASING FRICTION -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-amber-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-trend-up text-amber-600"></i> Ways to INCREASE Friction
+                    </h3>
+                    <ul class="space-y-2 text-xs text-slate-700">
+                        <li class="flex items-start gap-2 bg-amber-50/50 p-2.5 rounded-xl border border-amber-100">
+                            <i class="fa-solid fa-check text-amber-600 mt-0.5"></i>
+                            <div><strong>Grooving / Treading:</strong> Treaded tires and spiked shoes (cleats) bite into surfaces for better traction.</div>
+                        </li>
+                        <li class="flex items-start gap-2 bg-amber-50/50 p-2.5 rounded-xl border border-amber-100">
+                            <i class="fa-solid fa-check text-amber-600 mt-0.5"></i>
+                            <div><strong>Coarsening Surfaces:</strong> Gymnasts & Kabaddi players apply coarse powder/sand to hands for firm grip.</div>
+                        </li>
+                        <li class="flex items-start gap-2 bg-amber-50/50 p-2.5 rounded-xl border border-amber-100">
+                            <i class="fa-solid fa-check text-amber-600 mt-0.5"></i>
+                            <div><strong>Applying Force:</strong> Pressing brake pads tighter against bicycle rims increases friction to stop fast.</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- DECREASING FRICTION -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-blue-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-blue-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-trend-down text-blue-600"></i> Ways to DECREASE Friction
+                    </h3>
+                    <ul class="space-y-2 text-xs text-slate-700">
+                        <li class="flex items-start gap-2 bg-blue-50/50 p-2.5 rounded-xl border border-blue-100">
+                            <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                            <div><strong>Lubrication:</strong> Applying oil, grease, or graphite creates a thin layer between surfaces so micro-bumps don't interlock.</div>
+                        </li>
+                        <li class="flex items-start gap-2 bg-blue-50/50 p-2.5 rounded-xl border border-blue-100">
+                            <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                            <div><strong>Ball Bearings:</strong> Replaces harsh sliding friction with smooth rolling friction in wheels and motors.</div>
+                        </li>
+                        <li class="flex items-start gap-2 bg-blue-50/50 p-2.5 rounded-xl border border-blue-100">
+                            <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                            <div><strong>Fine Powder / Air Cushion:</strong> Talcum powder on Carrom boards fills micro-pits, making strikers glide effortlessly!</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE MODIFIER LAB -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base sm:text-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-vial text-amber-600"></i> Interactive Surface Modifier Workshop
+                        </h3>
+                        <p class="text-xs text-slate-500">Apply treatments to the test ramp and release the slider block!</p>
+                    </div>
+
+                    <!-- Treatment Selector Buttons -->
+                    <div class="flex flex-wrap gap-1.5 w-full sm:w-auto">
+                        <button onclick="applyTreatment('dry')" id="treat-dry" class="treat-btn active-treat flex-1 sm:flex-none h-9 px-3 bg-amber-500 text-white text-xs font-bold rounded-xl transition touch-btn">
+                            Dry Rough
+                        </button>
+                        <button onclick="applyTreatment('powder')" id="treat-powder" class="treat-btn flex-1 sm:flex-none h-9 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition touch-btn">
+                            Talcum Powder
+                        </button>
+                        <button onclick="applyTreatment('grease')" id="treat-grease" class="treat-btn flex-1 sm:flex-none h-9 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition touch-btn">
+                            Heavy Grease
+                        </button>
+                        <button onclick="applyTreatment('bearings')" id="treat-bearings" class="treat-btn flex-1 sm:flex-none h-9 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition touch-btn">
+                            Ball Bearings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mod Canvas -->
+                <div class="w-full h-56 sm:h-64 bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 overflow-hidden touch-canvas">
+                    <canvas id="modCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <div>
+                        <span id="treatName" class="font-extrabold text-xs sm:text-sm text-slate-800">Selected Treatment: Dry Rough Ramp</span>
+                        <p id="treatDesc" class="text-[11px] text-slate-500">High surface interlocking. Block moves slowly with high friction heat.</p>
+                    </div>
+                    <button onclick="releaseBlock()" class="w-full sm:w-auto h-11 px-6 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-xs sm:text-sm font-bold rounded-xl transition shadow touch-btn shrink-0">
+                        <i class="fa-solid fa-play mr-1"></i> Release Block
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TOPIC 3: FLUID FRICTION (DRAG) -->
+        <!-- ========================================== -->
+        <section id="section-topic3" class="space-y-4 sm:space-y-6 hidden">
+            
+            <div class="bg-gradient-to-r from-cyan-900 via-teal-900 to-slate-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-cyan-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-cyan-500/30 text-cyan-200 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-cyan-400/30 uppercase tracking-wider">Concept 3 &bull; Fluid Mechanics</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">Fluid Friction (Drag) & Streamlining</h2>
+                    <p class="text-cyan-100 text-xs sm:text-sm mt-1 sm:mt-2 leading-relaxed">
+                        Fluids (liquids and gases) exert a friction force called <strong>DRAG</strong> on objects moving through them!
+                    </p>
+                </div>
+            </div>
+
+            <!-- KEY FACTS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-cyan-200 shadow-sm space-y-1.5">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-wind"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-sm">1. What is Fluid Drag?</h3>
+                    <p class="text-xs text-slate-600">
+                        The resistive force exerted by water or air opposing an object moving through it.
+                    </p>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-cyan-200 shadow-sm space-y-1.5">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-arrows-left-right text-indigo-600"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-sm">2. Direction of Drag</h3>
+                    <p class="text-xs text-slate-600">
+                        Drag <strong>always acts opposite</strong> to the direction of motion relative to the fluid.
+                    </p>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-cyan-200 shadow-sm space-y-1.5">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-plane"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-sm">3. How to Reduce Drag?</h3>
+                    <p class="text-xs text-slate-600">
+                        By giving objects a <strong>STREAMLINED shape</strong> (tapered ends, smooth body like birds, fish, aeroplanes).
+                    </p>
+                </div>
+            </div>
+
+            <!-- STREAMLINING WIND TUNNEL SIMULATOR -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base sm:text-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-fan text-cyan-600"></i> Aerodynamic Wind Tunnel Lab
+                        </h3>
+                        <p class="text-xs text-slate-500">Test different body shapes in high-speed air fluid flow!</p>
+                    </div>
+
+                    <!-- Shape Toggles -->
+                    <div class="grid grid-cols-3 gap-1.5 w-full sm:w-auto">
+                        <button onclick="setShape('flat')" id="shape-flat" class="shape-btn active-shape h-10 px-3 bg-cyan-600 text-white text-xs font-bold rounded-xl transition touch-btn">
+                            <i class="fa-solid fa-square"></i> Flat Box
+                        </button>
+                        <button onclick="setShape('sphere')" id="shape-sphere" class="shape-btn h-10 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition touch-btn">
+                            <i class="fa-solid fa-circle"></i> Sphere
+                        </button>
+                        <button onclick="setShape('streamlined')" id="shape-streamlined" class="shape-btn h-10 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition touch-btn">
+                            <i class="fa-solid fa-plane"></i> Streamlined
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fluid Canvas -->
+                <div class="w-full h-60 sm:h-72 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800 overflow-hidden touch-canvas relative">
+                    <canvas id="fluidCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- Drag Telemetry Gauge -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <div class="text-center sm:text-left">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Fluid Drag Resistance</span>
+                        <span id="dragVal" class="text-base sm:text-lg font-black text-red-600">HIGH (85 N)</span>
+                    </div>
+                    <div class="text-center sm:text-left">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Air Flow Turbulence</span>
+                        <span id="turbVal" class="text-base sm:text-lg font-black text-amber-600">Severe Eddies</span>
+                    </div>
+                    <div class="text-center sm:text-left">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Nature's Inspiration</span>
+                        <span id="natureVal" class="text-xs sm:text-sm font-bold text-cyan-700">None (Unnatural)</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TOPIC 4: QUIZ ARCADE -->
+        <!-- ========================================== -->
+        <section id="section-quiz" class="space-y-4 sm:space-y-6 hidden">
+            
+            <div class="bg-purple-900 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-purple-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="bg-purple-500/30 text-purple-200 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-purple-400/30 uppercase tracking-wider">Assessment Arcade</span>
+                    <h2 class="text-xl sm:text-3xl font-bold heading-font mt-1 sm:mt-2">Class 8 Physics Friction Quiz</h2>
+                    <p class="text-purple-100 text-xs sm:text-sm mt-1 sm:mt-2">
+                        Earn school points and physics stars by solving questions!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Card Container -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 max-w-3xl mx-auto space-y-4">
+                
+                <div id="quizContainer">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <span id="quizProgress" class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
+                            Question 1 of 5
+                        </span>
+                        <div class="flex gap-1" id="starContainer">
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                            <i class="fa-regular fa-star text-amber-400 text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Question & Touch Choices -->
+                    <div class="py-3 space-y-3">
+                        <h3 id="quizQuestionText" class="text-base sm:text-xl font-bold text-slate-800 leading-snug">
+                            Loading Question...
+                        </h3>
+
+                        <div id="quizOptions" class="space-y-2 pt-1">
+                            <!-- Dynamically Rendered -->
+                        </div>
+                    </div>
+
+                    <!-- Feedback Banner -->
+                    <div id="quizFeedbackBox" class="hidden p-3.5 rounded-xl border text-xs sm:text-sm font-semibold"></div>
+
+                    <!-- Next Button -->
+                    <div class="pt-3 flex justify-end">
+                        <button id="nextQuizBtn" onclick="nextQuestion()" class="hidden h-11 px-6 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold rounded-xl shadow transition text-xs sm:text-sm touch-btn">
+                            Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Final Score Result Screen -->
+                <div id="quizScoreScreen" class="hidden text-center py-6 space-y-4">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-100 rounded-full flex items-center justify-center text-3xl sm:text-4xl text-amber-500 mx-auto shadow-inner">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Quiz Completed!</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm">Great job representing Amardeep School Physics Lab!</p>
+                    
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 inline-block px-8">
+                        <div class="text-2xl sm:text-3xl font-black text-purple-600" id="finalQuizScore">0 / 5</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Final Score</p>
+                    </div>
+
+                    <div>
+                        <button onclick="restartQuiz()" class="h-12 px-6 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow transition touch-btn text-xs sm:text-sm">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Retake Quiz
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-[11px] sm:text-xs py-4 border-t border-slate-800 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-1">
+            <p class="font-bold text-slate-300">Amardeep School &bull; Science & Technology Department</p>
+            <p>Designed for Class 8 Physics Curriculum. Fluid Drag & Mechanics Edition.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        /* ===================================================
+           GLOBAL STATE & AUDIO
+           =================================================== */
+        let soundEnabled = true;
+        let globalScore = 0;
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'pop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(180, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            const text = document.getElementById('soundText');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-emerald-400";
+                if(text) text.innerText = "Sound ON";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-slate-500";
+                if(text) text.innerText = "Sound OFF";
+            }
+        }
+
+        function addScore(pts) {
+            globalScore += pts;
+            document.getElementById('globalScore').innerText = globalScore + " pts";
+        }
+
+        /* TAB NAVIGATION */
+        function switchTab(tabId) {
+            playSound('pop');
+            const tabs = ['topic1', 'topic2', 'topic3', 'quiz'];
+            tabs.forEach(t => {
+                const sec = document.getElementById('section-' + t);
+                const btn = document.getElementById('tab-' + t);
+                if (t === tabId) {
+                    sec.classList.remove('hidden');
+                    btn.classList.add('bg-indigo-50', 'text-indigo-700', 'border', 'border-indigo-200');
+                    btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                } else {
+                    sec.classList.add('hidden');
+                    btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'border', 'border-indigo-200');
+                    btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+                }
+            });
+
+            setTimeout(() => {
+                resizeCanvases();
+            }, 60);
+        }
+
+        /* HIGH-DPI CANVAS SETUP */
+        function setupCanvasDPI(canvas, ctx) {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            return { width: rect.width, height: rect.height };
+        }
+
+        /* TOPIC 1: SORTING GAME DATA */
+        const sortScenarios = [
+            {
+                title: "Tires wearing out after long road trips",
+                desc: "Rubber grooves disappear over time, requiring expensive replacements.",
+                icon: "fa-solid fa-car-burst",
+                type: "DISADVANTAGE"
+            },
+            {
+                title: "Brake pads gripping bicycle wheels to stop",
+                desc: "Brake pads rub hard against metal rims to slow down quickly.",
+                icon: "fa-solid fa-bicycle",
+                type: "ADVANTAGE"
+            },
+            {
+                title: "Machine engines overheating during operation",
+                desc: "Unwanted heat generated inside internal gears wastes electrical energy.",
+                icon: "fa-solid fa-fire text-red-500",
+                type: "DISADVANTAGE"
+            },
+            {
+                title: "Chalk sticking to a classroom blackboard",
+                desc: "Microscopic friction enables chalk particles to leave clear white notes.",
+                icon: "fa-solid fa-chalkboard-user",
+                type: "ADVANTAGE"
+            }
+        ];
+
+        let currentSortIndex = 0;
+        let sortScore = 0;
+
+        function checkSortChoice(choice) {
+            const sc = sortScenarios[currentSortIndex];
+            const feedback = document.getElementById('sortFeedback');
+            feedback.classList.remove('hidden');
+
+            if (choice === sc.type) {
+                playSound('correct');
+                feedback.className = "text-xs sm:text-sm font-bold p-3 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 max-w-md mx-auto";
+                feedback.innerText = "Correct classification!";
+                sortScore++;
+                document.getElementById('sortScore').innerText = sortScore;
+                addScore(15);
+
+                setTimeout(() => {
+                    currentSortIndex = (currentSortIndex + 1) % sortScenarios.length;
+                    updateSortCard();
+                }, 1400);
+            } else {
+                playSound('wrong');
+                feedback.className = "text-xs sm:text-sm font-bold p-3 rounded-xl bg-red-100 text-red-800 border border-red-300 max-w-md mx-auto";
+                feedback.innerText = choice === 'ADVANTAGE' ? "Incorrect! Energy loss and wear are Disadvantages." : "Incorrect! Grip and stopping power are Advantages.";
+            }
+        }
+
+        function updateSortCard() {
+            const sc = sortScenarios[currentSortIndex];
+            document.getElementById('sortTitle').innerText = sc.title;
+            document.getElementById('sortDesc').innerText = sc.desc;
+            document.getElementById('sortIcon').innerHTML = `<i class="${sc.icon}"></i>`;
+            document.getElementById('sortFeedback').classList.add('hidden');
+        }
+
+
+        /* TOPIC 2: MODIFIER CANVAS LAB */
+        let modCanvas, mCtx;
+        let currentTreatment = 'dry';
+        let blockX = 20;
+        let blockMoving = false;
+
+        const treatments = {
+            'dry': { name: 'Dry Rough Ramp', friction: 0.8, color: '#D97706', desc: 'High surface interlocking. Block moves slowly with high friction heat.' },
+            'powder': { name: 'Talcum Powder Applied', friction: 0.3, color: '#F1F5F9', desc: 'Fine powder fills surface pits, allowing smooth sliding.' },
+            'grease': { name: 'Heavy Grease Lubrication', friction: 0.15, color: '#1E293B', desc: 'Liquid layer prevents direct solid-to-solid contact.' },
+            'bearings': { name: 'Ball Bearings Installed', friction: 0.05, color: '#38BDF8', desc: 'Replaces harsh sliding friction with ultra-low rolling friction!' }
+        };
+
+        function applyTreatment(type) {
+            playSound('pop');
+            currentTreatment = type;
+            document.querySelectorAll('.treat-btn').forEach(btn => {
+                btn.className = "treat-btn flex-1 sm:flex-none h-9 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition touch-btn";
+            });
+            const active = document.getElementById('treat-' + type);
+            active.className = "treat-btn active-treat flex-1 sm:flex-none h-9 px-3 bg-amber-500 text-white text-xs font-bold rounded-xl transition touch-btn";
+
+            const t = treatments[type];
+            document.getElementById('treatName').innerText = "Selected Treatment: " + t.name;
+            document.getElementById('treatDesc').innerText = t.desc;
+            blockX = 20;
+            blockMoving = false;
+        }
+
+        function releaseBlock() {
+            playSound('pop');
+            blockX = 20;
+            blockMoving = true;
+        }
+
+        function initModCanvas() {
+            modCanvas = document.getElementById('modCanvas');
+            mCtx = modCanvas.getContext('2d');
+            resizeModCanvas();
+        }
+
+        function resizeModCanvas() {
+            if (!modCanvas) return;
+            setupCanvasDPI(modCanvas, mCtx);
+        }
+
+        function renderModCanvas() {
+            if (!mCtx) return;
+            const rect = modCanvas.parentElement.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+
+            mCtx.clearRect(0, 0, w, h);
+
+            const rampY = h - 40;
+            const t = treatments[currentTreatment];
+
+            // Ramp Base
+            mCtx.fillStyle = t.color;
+            mCtx.fillRect(0, rampY, w, 40);
+
+            // Ball Bearings Visual
+            if (currentTreatment === 'bearings') {
+                mCtx.fillStyle = '#CBD5E1';
+                for (let x = 10; x < w; x += 25) {
+                    mCtx.beginPath();
+                    mCtx.arc(x, rampY - 5, 5, 0, Math.PI * 2);
+                    mCtx.fill();
+                }
+            }
+
+            // Block Movement Logic
+            if (blockMoving) {
+                const speed = (1 - t.friction) * 8 + 1;
+                blockX += speed;
+                if (blockX > w - 60) {
+                    blockX = w - 60;
+                    blockMoving = false;
+                }
+            }
+
+            // Block Render
+            const blockY = currentTreatment === 'bearings' ? rampY - 35 : rampY - 25;
+            mCtx.fillStyle = '#3B82F6';
+            mCtx.beginPath();
+            mCtx.roundRect(blockX, blockY, 50, 25, 4);
+            mCtx.fill();
+
+            mCtx.fillStyle = '#FFF';
+            mCtx.font = 'bold 10px "Plus Jakarta Sans"';
+            mCtx.fillText('BLOCK', blockX + 8, blockY + 16);
+        }
+
+
+        /* TOPIC 3: FLUID DRAG & WIND TUNNEL SIMULATOR */
+        let fluidCanvas, fCtx;
+        let currentShape = 'flat';
+        let particles = [];
+
+        const shapeProps = {
+            'flat': { drag: 'HIGH (85 N)', turb: 'Severe Eddies', nature: 'None (Unnatural)', dragCoeff: 1.2 },
+            'sphere': { drag: 'MEDIUM (40 N)', turb: 'Moderate Wake', nature: 'Raindrops', dragCoeff: 0.5 },
+            'streamlined': { drag: 'LOW (10 N)', turb: 'Smooth Laminar', nature: 'Birds / Fish / Aeroplanes', dragCoeff: 0.1 }
+        };
+
+        function setShape(shape) {
+            playSound('pop');
+            currentShape = shape;
+            document.querySelectorAll('.shape-btn').forEach(btn => {
+                btn.className = "shape-btn h-10 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition touch-btn";
+            });
+            const active = document.getElementById('shape-' + shape);
+            active.className = "shape-btn active-shape h-10 px-3 bg-cyan-600 text-white text-xs font-bold rounded-xl transition touch-btn";
+
+            const p = shapeProps[shape];
+            document.getElementById('dragVal').innerText = p.drag;
+            document.getElementById('turbVal').innerText = p.turb;
+            document.getElementById('natureVal').innerText = p.nature;
+        }
+
+        function initFluidCanvas() {
+            fluidCanvas = document.getElementById('fluidCanvas');
+            fCtx = fluidCanvas.getContext('2d');
+            resizeFluidCanvas();
+
+            // Init Fluid Streamlines
+            const rect = fluidCanvas.parentElement.getBoundingClientRect();
+            particles = [];
+            for (let i = 0; i < 70; i++) {
+                particles.push({
+                    x: Math.random() * rect.width,
+                    y: Math.random() * rect.height,
+                    speed: 3 + Math.random() * 2
+                });
+            }
+        }
+
+        function resizeFluidCanvas() {
+            if (!fluidCanvas) return;
+            setupCanvasDPI(fluidCanvas, fCtx);
+        }
+
+        function renderFluidCanvas() {
+            if (!fCtx) return;
+            const rect = fluidCanvas.parentElement.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+
+            fCtx.clearRect(0, 0, w, h);
+
+            const centerX = w / 2;
+            const centerY = h / 2;
+
+            // Render Air Streamlines
+            fCtx.strokeStyle = '#22D3EE';
+            fCtx.lineWidth = 1.5;
+
+            particles.forEach(p => {
+                p.x += p.speed;
+                if (p.x > w) p.x = 0;
+
+                let drawY = p.y;
+                const distToCenter = Math.hypot(p.x - centerX, p.y - centerY);
+
+                if (distToCenter < 60) {
+                    if (currentShape === 'flat') {
+                        drawY += (p.y < centerY ? -25 : 25);
+                    } else if (currentShape === 'sphere') {
+                        drawY += (p.y < centerY ? -15 : 15);
+                    } else { // Streamlined
+                        drawY += (p.y < centerY ? -5 : 5);
+                    }
+                }
+
+                fCtx.beginPath();
+                fCtx.moveTo(p.x, drawY);
+                fCtx.lineTo(p.x - 12, drawY);
+                fCtx.stroke();
+            });
+
+            // Render Tested Object Shape
+            fCtx.fillStyle = '#0F172A';
+            fCtx.strokeStyle = '#38BDF8';
+            fCtx.lineWidth = 3;
+
+            if (currentShape === 'flat') {
+                fCtx.beginPath();
+                fCtx.roundRect(centerX - 15, centerY - 40, 30, 80, 4);
+                fCtx.fill();
+                fCtx.stroke();
+            } else if (currentShape === 'sphere') {
+                fCtx.beginPath();
+                fCtx.arc(centerX, centerY, 35, 0, Math.PI * 2);
+                fCtx.fill();
+                fCtx.stroke();
+            } else { // Streamlined Airfoil
+                fCtx.beginPath();
+                fCtx.moveTo(centerX - 50, centerY);
+                fCtx.quadraticCurveTo(centerX, centerY - 35, centerX + 50, centerY);
+                fCtx.quadraticCurveTo(centerX, centerY + 35, centerX - 50, centerY);
+                fCtx.closePath();
+                fCtx.fill();
+                fCtx.stroke();
+            }
+
+            // Drag Vector Force Arrow (Red, Opposite to motion)
+            const dragLen = shapeProps[currentShape].dragCoeff * 50;
+            drawArrow(fCtx, centerX + 10, centerY, centerX + 10 + dragLen, centerY, '#EF4444', 'Fluid Drag');
+        }
+
+        function drawArrow(ctx, fromx, fromy, tox, toy, color, label) {
+            const headlen = 8;
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+
+            if (label) {
+                ctx.font = 'bold 10px "Plus Jakarta Sans"';
+                ctx.fillText(label, tox + 5, toy - 5);
+            }
+        }
+
+
+        /* TOPIC 4: QUIZ ARCADE */
+        const quizQuestions = [
+            {
+                q: "1. Why is friction often called a 'Necessary Evil'?",
+                options: [
+                    "It causes wear and tear but is essential for walking & braking",
+                    "It only causes harm without any advantages",
+                    "It creates electricity inside vehicles",
+                    "It makes objects completely weightless"
+                ],
+                correct: 0,
+                explanation: "Friction wastes energy and wears parts, but life is impossible without grip!"
+            },
+            {
+                q: "2. Which of the following is a method to INCREASE friction?",
+                options: [
+                    "Applying lubricant oil to machine gears",
+                    "Treading car tires and shoe soles with deep grooves",
+                    "Sprinkling talcum powder on a board",
+                    "Installing smooth ball bearings"
+                ],
+                correct: 1,
+                explanation: "Treads and grooves increase surface roughness and traction."
+            },
+            {
+                q: "3. What is the friction force exerted by fluids (liquids & gases) called?",
+                options: [
+                    "Static Pressure",
+                    "Fluid Drag",
+                    "Gravitational Resistance",
+                    "Rolling Thrust"
+                ],
+                correct: 1,
+                explanation: "Resistive fluid force opposing movement through water or air is Drag."
+            },
+            {
+                q: "4. In what direction does Fluid Drag act on a flying aeroplane?",
+                options: [
+                    "In the exact same direction as flight speed",
+                    "Opposite to the direction of motion relative to air",
+                    "Straight downward towards the Earth",
+                    "Randomly in all directions"
+                ],
+                correct: 1,
+                explanation: "Drag ALWAYS opposes motion through fluid."
+            },
+            {
+                q: "5. How do engineers REDUCE fluid drag for rockets, birds, and fish?",
+                options: [
+                    "By making front surfaces flat and square",
+                    "By giving them a Streamlined shape (tapered ends)",
+                    "By making the surfaces as rough as possible",
+                    "By increasing the vehicle weight"
+                ],
+                correct: 1,
+                explanation: "Streamlined bodies allow air/water to flow smoothly without turbulence."
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            document.getElementById('quizProgress').innerText = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quizQuestionText').innerText = q.q;
+
+            const optsContainer = document.getElementById('quizOptions');
+            optsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border-2 border-slate-200 hover:border-purple-400 active:bg-purple-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between touch-btn";
+                btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle text-slate-300"></i>`;
+                btn.onclick = () => checkQuizAnswer(idx, btn);
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quizFeedbackBox').classList.add('hidden');
+            document.getElementById('nextQuizBtn').classList.add('hidden');
+        }
+
+        function checkQuizAnswer(selectedIdx, btnElement) {
+            const q = quizQuestions[currentQuizIndex];
+            const feedback = document.getElementById('quizFeedbackBox');
+            feedback.classList.remove('hidden');
+
+            const allBtns = document.getElementById('quizOptions').children;
+            for (let b of allBtns) {
+                b.disabled = true;
+            }
+
+            if (selectedIdx === q.correct) {
+                playSound('correct');
+                quizScore++;
+                addScore(20);
+                btnElement.className = "w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border-2 border-emerald-500 bg-emerald-50 font-bold text-xs sm:text-sm text-emerald-900 transition flex items-center justify-between touch-btn";
+                btnElement.innerHTML += `<i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+                
+                feedback.className = "p-3.5 rounded-xl border bg-emerald-100 text-emerald-900 border-emerald-300 text-xs sm:text-sm font-semibold";
+                feedback.innerText = "Correct! " + q.explanation;
+            } else {
+                playSound('wrong');
+                btnElement.className = "w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border-2 border-red-500 bg-red-50 font-bold text-xs sm:text-sm text-red-900 transition flex items-center justify-between touch-btn";
+                btnElement.innerHTML += `<i class="fa-solid fa-circle-xmark text-red-600"></i>`;
+
+                feedback.className = "p-3.5 rounded-xl border bg-red-100 text-red-900 border-red-300 text-xs sm:text-sm font-semibold";
+                feedback.innerText = "Incorrect! " + q.explanation;
+            }
+
+            document.getElementById('nextQuizBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('pop');
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            const scoreScreen = document.getElementById('quizScoreScreen');
+            scoreScreen.classList.remove('hidden');
+            document.getElementById('finalQuizScore').innerText = `${quizScore} / ${quizQuestions.length}`;
+
+            if (quizScore >= 4) {
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
+            }
+        }
+
+        function restartQuiz() {
+            playSound('pop');
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quizScoreScreen').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        function resizeCanvases() {
+            resizeModCanvas();
+            resizeFluidCanvas();
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeCanvases, 200);
+        });
+
+        window.onload = function() {
+            initModCanvas();
+            initFluidCanvas();
+            loadQuizQuestion();
+
+            function mainLoop() {
+                renderModCanvas();
+                renderFluidCanvas();
+                requestAnimationFrame(mainLoop);
+            }
+            mainLoop();
+        };
+    </script>
+</body>
+</html>
